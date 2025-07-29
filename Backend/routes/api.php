@@ -10,6 +10,7 @@ use App\Http\Controllers\ProdutoUsuarioController;
 use App\Http\Controllers\LookController;
 use App\Http\Controllers\MontadorController;
 use App\Http\Controllers\StorageController;
+use App\Http\Controllers\Admin\FilterController;
 
 Route::get('/', function () {
     return response()->json(['message' => 'API Brecho LoopLook is working!', 'version' => '1.0']);
@@ -53,6 +54,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/produto-usuario/{produtoUsuario}', [ProdutoUsuarioController::class, 'destroy']);
 
     Route::get('/montador/roupas', [MontadorController::class, 'getItensDisponiveis']);
+
+    // Rotas do Admin - Filtros
+    Route::prefix('admin')->group(function () {
+        Route::get('/filtros/tipos', [FilterController::class, 'types']);
+        Route::get('/filtros/{type}', [FilterController::class, 'index']);
+        Route::post('/filtros/{type}', [FilterController::class, 'store']);
+        Route::put('/filtros/{type}/{id}', [FilterController::class, 'update']);
+        Route::delete('/filtros/{type}/{id}', [FilterController::class, 'destroy']);
+    });
 });
 
 // Rota para servir imagens com CORS

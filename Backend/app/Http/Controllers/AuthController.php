@@ -192,6 +192,7 @@ class AuthController extends Controller
                 'data_nascimento' => $usuario->data_nascimento,
                 'foto_url' => $fotoUrlParaRetorno, // URL completa ou null
                 'bio' => $usuario->bio ?? null,
+                'role' => $usuario->role ?? 'user', // Adicionando o campo role
                 'created_at' => $usuario->created_at,
                 'updated_at' => $usuario->updated_at,
             ], 200);

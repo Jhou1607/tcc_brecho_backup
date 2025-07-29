@@ -23,6 +23,7 @@ class Usuario extends Authenticatable
         'data_nascimento',
         'foto_url',
         'bio',
+        'role',
     ];
 
     protected $hidden = [
@@ -35,6 +36,22 @@ class Usuario extends Authenticatable
         'data_nascimento' => 'date',
         'password' => 'hashed',
     ];
+
+    /**
+     * Verificar se o usuário é admin
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Verificar se o usuário tem uma role específica
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
 
     // RELACIONAMENTO PARA LOOKS
     public function looks(): HasMany // Este relacionamento é o que LookController@index e show usam

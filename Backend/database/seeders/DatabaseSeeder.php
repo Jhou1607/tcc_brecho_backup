@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\UsuarioSeeder;
 use Database\Seeders\ProdutoSeeder;
 use Database\Seeders\ImagemSeeder;
-
+use Database\Seeders\FilterOptionsSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UsuarioSeeder::class,
+            FilterOptionsSeeder::class, // Adicionar antes dos produtos
             ProdutoSeeder::class,
             ImagemSeeder::class,
             ProdutoUsuarioSeeder::class,

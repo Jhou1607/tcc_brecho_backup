@@ -144,6 +144,7 @@ export interface User {
   data_nascimento: string;
   foto_url?: string | null;
   bio?: string | null;
+  role?: string; // 'user' ou 'admin'
   created_at?: string;
   updated_at?: string;
 }

@@ -49,6 +49,10 @@ export const routes: Routes = [
     path: 'usuario/produtos/cadastro-usr',
     loadComponent: () => import('./pages/cadastro_produto/cadastro-usr/cadastro-usr.component').then(m => m.CadastroUsrComponent)
   },
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)
+  },
 
   { path: '**', redirectTo: '/catalogo' } 
 ];

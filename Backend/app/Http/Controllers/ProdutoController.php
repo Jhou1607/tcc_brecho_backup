@@ -82,34 +82,28 @@ class ProdutoController extends Controller
     public function getFiltros()
     {
         try {
-            $filtros = [
-                'genero' => ['masculino', 'feminino', 'unissex'],
-                'numeracao' => ['PP', 'P', 'M', 'G', 'GG', 'XG', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'],
-                'cor' => ['preto', 'branco', 'azul', 'vermelho', 'verde', 'amarelo', 'rosa', 'roxo', 'laranja', 'marrom', 'cinza', 'bege', 'dourado', 'prateado'],
-                'estado_conservacao' => ['novo', 'seminovo', 'usado', 'com defeito', 'restaurado'],
-                'estacao' => ['verao', 'outono', 'inverno', 'primavera', 'todas', 'neutra'],
-                'ocasioes' => ['trabalho', 'festa', 'casual', 'esporte', 'praia', 'balada', 'dia a dia', 'casamento', 'formatura', 'viagem'],
-                'estilos' => ['classico', 'moderno', 'boho', 'minimalista', 'rocker', 'romantico', 'esportivo', 'urbano', 'vintage'],
-                'material' => ['algodao', 'linho', 'la', 'seda', 'jeans', 'couro', 'moletom', 'viscose', 'poliester'],
-                'categoria' => [
-                    'chapeu', 'tiara', 'bone', 'lenco',
-                    'camiseta', 'camisa', 'blusa', 'jaqueta', 'casaco', 'sueter', 'regata', 'colete',
-                    'calca', 'saia', 'short', 'legging', 'bermuda', 'jardineira',
-                    'tenis', 'sandalia', 'bota', 'sapato', 'chinelo',
-                    'cinto', 'oculos', 'bolsa', 'relogio', 'brinco', 'colar', 'pulseira', 'anel',
-                    'outro_acessorios_cabeca', 'outro_tops', 'outro_calcas_saias', 'outro_calcados', 'outro_acessorios'
-                ]
-            ];
-
+            // Buscar filtros da tabela filter_options
+            $filterOptions = \App\Models\FilterOption::all()->groupBy('type');
+            
+            $filtros = [];
+            foreach ($filterOptions as $type => $options) {
+                $filtros[$type] = $options->pluck('value')->toArray();
+            }
+            
+            // Adicionar filtros que não estão na tabela (mantendo compatibilidade)
+            $filtros['numeracao'] = ['PP', 'P', 'M', 'G', 'GG', 'XG', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'];
+            $filtros['estado_conservacao'] = ['novo', 'seminovo', 'usado', 'com defeito', 'restaurado'];
+            
             return response()->json([
                 'success' => true,
                 'data' => $filtros
-            ], 200);
+            ]);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar filtros: ' . $e->getMessage());
+            Log::error('Erro em ProdutoController@getFiltros: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Erro ao buscar filtros.'
+                'message' => 'Erro ao buscar filtros.',
+                'error_details' => $e->getMessage()
             ], 500);
         }
     }
