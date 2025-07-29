@@ -1,0 +1,41 @@
+<app-header></app-header>
+<main class="meus-looks-page-container">
+  <div class="meus-looks-header">
+    <h1 class="meus-looks-title">Meus Looks</h1>
+    <button class="create-new-look-btn" (click)="criarNovoLook()">Criar um novo look</button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-indicator">Carregando seus looks...</div>
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+
+  <div class="look-grid-wrapper" *ngIf="!isLoading && !error">
+    <div class="look-grid" *ngIf="looks.length > 0; else noLooksMessage">
+      <div class="look-item" *ngFor="let look of looks">
+        <div class="look-image-container">
+          <img [src]="look.imagem_url ? 'http://localhost:8000/' + look.imagem_url : 'assets/images/placeholder-look.png'" alt="Look {{ look.nome_look || look.id }}">
+          <button type="button" class="delete-btn" (click)="deleteLook(look.id, $event)" aria-label="Remover look">
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+          <button type="button" class="edit-btn" (click)="editLook(look, $event)" aria-label="Editar look">
+            ✎
+          </button>
+        </div>
+        <div class="look-info">
+          <div class="look-name">{{ look.nome_look || 'Look #' + look.id }}</div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noLooksMessage>
+      <div class="no-results" *ngIf="!isLoading && !error">
+        Você não tem nenhum look salvo. Que tal <a (click)="criarNovoLook()">criar seu primeiro look</a>?
+      </div>
+    </ng-template>
+  </div>
+
+  <ng-template #noLooks>
+    <div *ngIf="!isLoading && !error" class="no-results">
+      Você não tem nenhum look salvo. Que tal <a (click)="criarNovoLook()">criar seu primeiro look</a>?
+    </div>
+  </ng-template>
+</main>
+<app-footer></app-footer>

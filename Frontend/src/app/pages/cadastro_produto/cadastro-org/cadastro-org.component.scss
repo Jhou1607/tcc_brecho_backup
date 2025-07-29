@@ -1,0 +1,114 @@
+@use '../../../../styles' as styles;
+@use 'sass:color';
+
+.cadastro-produto-page-wrapper {
+  background-color: styles.$brecho-page-bg; // Fundo claro da página
+  min-height: calc(100vh - var(--header-height) - var(--footer-height));
+  padding: styles.$brecho-spacing-medium;
+  display: flex;
+  justify-content: center;
+  align-items: center; // Centraliza o card na página
+  box-sizing: border-box;
+}
+
+.form-card-container {
+  width: 100%;
+  max-width: 700px; // Largura do card do formulário
+  background-color: styles.$brecho-header-bg; // Bege claro do mockup para o card
+  border-radius: 1rem; // Cantos arredondados
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+  .form-title {
+    font-family: styles.$brecho-font-headings;
+    color: styles.$brecho-primary-text; // Cor escura para o título principal
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: styles.$brecho-spacing-small * 0.5;
+  }
+
+  .form-subtitle {
+    font-family: styles.$brecho-font-primary;
+    color: styles.$brecho-secondary-text; // Cor secundária para o subtítulo
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: styles.$brecho-spacing-large;
+  }
+
+  ::ng-deep .ant-form-item-label > label { // Estiliza labels do NG-ZORRO
+    font-size: 0.85rem;
+    color: styles.$brecho-secondary-text; // Cor secundária para labels
+    font-weight: 500;
+  }
+
+  // Ajusta inputs e selects para o estilo do mockup
+  ::ng-deep .ant-input,
+  ::ng-deep .ant-input-number,
+  ::ng-deep .ant-select-selector {
+    border-radius: 0.5rem !important; // Cantos arredondados do mockup
+    border-color: styles.$brecho-input-border !important;
+    background-color: styles.$brecho-input-bg !important; // Fundo branco
+
+    &:hover, &:focus, &.ant-input-focused, &.ant-select-focused .ant-select-selector {
+      border-color: styles.$brecho-accent-color !important;
+      box-shadow: 0 0 0 2px rgba(styles.$brecho-accent-color, 0.2) !important;
+    }
+  }
+
+  .full-width-input { // Para o nz-input-number ocupar a largura
+    width: 100%;
+  }
+
+  ::ng-deep .ant-upload.ant-upload-select-picture-card { // Botão de upload
+    width: 100%; // Ocupar largura para o texto "Adicione a foto..."
+    height: auto;
+    min-height: 100px; // Altura mínima
+    padding: styles.$brecho-spacing-medium;
+    border-radius: 0.5rem;
+    border-color: styles.$brecho-input-border;
+    background-color: styles.$brecho-input-bg;
+    margin-bottom: styles.$brecho-spacing-small * 0.5; // Espaço antes da dica
+
+    .ant-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: styles.$brecho-secondary-text;
+      font-size: 0.9rem;
+    }
+    i {
+      font-size: 1.5rem;
+      margin-bottom: styles.$brecho-spacing-small;
+    }
+  }
+  ::ng-deep .ant-upload-list-picture-card .ant-upload-list-item-container {
+    width: 104px; // Ajusta o tamanho do preview
+    height: 104px;
+  }
+
+  .ant-form-item-extra { // Dica abaixo do upload
+    font-size: 0.75rem;
+    color: color.scale(styles.$brecho-secondary-text, $lightness: 10%);
+  }
+
+
+  .submit-button-container {
+    margin-top: styles.$brecho-spacing-large;
+    text-align: center; // Centraliza o botão
+
+    .login-form-button { // Reutilizando classe, mas poderia ser específica
+      min-width: 220px; // Largura do botão "Cadastrar"
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 50px; // Pill shape
+      background-color: styles.$brecho-accent-color; // Cor verde do mockup
+      border-color: styles.$brecho-accent-color;
+
+      &:hover:not([disabled]) {
+        background-color: color.adjust(styles.$brecho-accent-color, $lightness: -8%);
+        border-color: color.adjust(styles.$brecho-accent-color, $lightness: -8%);
+      }
+    }
+  }
+}

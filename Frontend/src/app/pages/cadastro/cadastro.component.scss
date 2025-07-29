@@ -1,0 +1,127 @@
+@use '../../../styles' as styles;
+@use 'sass:math';
+@use 'sass:color';
+
+.cadastro-page-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(#{styles.$header-height}) - var(#{styles.$footer-height}));
+  padding: styles.$brecho-spacing-large;
+  background-color: styles.$brecho-page-bg;
+  box-sizing: border-box;
+}
+
+.form-title {
+  font-family: styles.$brecho-font-headings;
+  font-size: 2rem;
+  color: styles.$brecho-primary-text;
+  margin-bottom: styles.$brecho-spacing-small;
+  text-align: center;
+  font-weight: 600;
+}
+
+.form-subtitle {
+  font-size: 1rem;
+  color: styles.$brecho-secondary-text;
+  margin-bottom: styles.$brecho-spacing-large;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.form-row {
+  display: flex;
+  gap: styles.$brecho-spacing-medium;
+  .form-field {
+    flex: 1;
+  }
+}
+
+.form-field {
+  margin-bottom: styles.$brecho-spacing-medium;
+
+  label {
+    display: block;
+    font-size: 0.875rem;
+    color: styles.$brecho-secondary-text;
+    margin-bottom: math.div(styles.$brecho-spacing-small, 2);
+    font-weight: 500;
+  }
+
+  input[type="text"], input[type="email"], input[type="password"], input[type="date"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid styles.$brecho-input-border;
+    border-radius: 0.5rem;
+    background-color: styles.$brecho-input-bg;
+    font-size: 1rem;
+    color: styles.$brecho-primary-text;
+
+    &::placeholder {
+      color: color.adjust(styles.$brecho-secondary-text, $lightness: 25%);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: styles.$brecho-accent-color;
+      box-shadow: 0 0 0 2px rgba(styles.$brecho-accent-color, 0.2);
+    }
+  }
+}
+
+.sexo-options {
+  display: flex;
+  gap: styles.$brecho-spacing-medium;
+  margin-top: styles.$brecho-spacing-small;
+  .radio-label {
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    color: styles.$brecho-primary-text;
+    input[type="radio"] {
+      margin-right: math.div(styles.$brecho-spacing-small, 2);
+      accent-color: styles.$brecho-primary-text;
+    }
+  }
+}
+
+
+.btn {
+  padding: 0.85rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  text-align: center;
+  border: none;
+  margin-top: styles.$brecho-spacing-small;
+
+  &.btn-primary {
+    background-color: styles.$brecho-accent-color;
+    color: styles.$brecho-button-text-color;
+    &:hover:not(:disabled) {
+      background-color: color.adjust(styles.$brecho-accent-color, $lightness: -10%);
+    }
+    &:disabled {
+      background-color: color.adjust(styles.$brecho-accent-color, $lightness: 15%);
+      cursor: not-allowed;
+    }
+  }
+
+  &.btn-full-width {
+    width: 100%;
+    display: block;
+  }
+}
+
+.form-footer-link {
+  text-align: center;
+  margin-top: styles.$brecho-spacing-medium;
+  font-size: 0.9rem;
+  color: styles.$brecho-secondary-text;
+  a {
+    color: styles.$brecho-link-color;
+    font-weight: bold;
+  }
+}

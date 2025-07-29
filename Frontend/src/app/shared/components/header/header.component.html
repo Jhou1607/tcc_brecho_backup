@@ -1,0 +1,72 @@
+<header class="app-header">
+  <div class="header-left-icons">
+    <button type="button" class="icon-button menu-icon" (click)="toggleMenu()">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+  <div class="logo-container" routerLink="/catalogo">
+    <img src="/assets/images/logo-looplook.png" alt="LoopLook" class="logo-image">
+  </div>
+  <div class="header-right-icons">
+    <button type="button" class="icon-button search-icon" routerLink="/pesquisa">
+      <i class="fas fa-search"></i>
+    </button>
+    <button type="button" class="icon-button profile-icon" (click)="irParaPerfil()">
+      <i class="fas fa-user"></i>
+    </button>
+  </div>
+</header>
+
+<div class="menu-overlay" [class.ativo]="menuAtivo" (click)="fecharMenu()"></div>
+<nav class="menu-lateral" [class.ativo]="menuAtivo">
+  <div class="menu-lateral-content animate__animated animate__fadeInLeft" (click)="$event.stopPropagation()">
+    <div class="menu-lateral-header d-flex align-items-center mb-4">
+      <button class="btn-x-fechar" (click)="fecharMenu()" aria-label="Fechar menu">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <span class="fechar-label">Fechar</span>
+    </div>
+    <ul class="nav flex-column gap-3 menu-nav-list">
+      <li class="nav-item">
+        <a class="nav-link d-flex align-items-center gap-2" routerLink="/perfil" (click)="fecharMenu()">
+          <i class="fas fa-user-circle fa-sm"></i> <span>Perfil</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link d-flex align-items-center gap-2" routerLink="/armario" (click)="fecharMenu()">
+          <i class="fas fa-tshirt fa-sm"></i> <span>Armário</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link d-flex align-items-center gap-2" routerLink="/favoritos" (click)="fecharMenu()">
+          <i class="fas fa-heart fa-sm"></i> <span>Lista de Favoritos</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link d-flex align-items-center gap-2" routerLink="/vista-me" (click)="fecharMenu()">
+          <i class="fas fa-tshirt fa-sm"></i> <span>Vista-me!</span>
+        </a>
+      </li>
+    </ul>
+    <hr class="divisoria">
+    <ul class="nav flex-column gap-3 menu-nav-list">
+      <li class="nav-item">
+        <a class="nav-link d-flex align-items-center gap-2" routerLink="/sobre-nos" (click)="fecharMenu()">
+          <i class="fas fa-info-circle fa-sm"></i> <span>Sobre Nossos Serviços</span>
+        </a>
+      </li>
+    </ul>
+    <hr class="divisoria">
+    <div class="menu-lateral-footer mt-auto pt-4">
+      <div class="ajuda-contato mb-3">
+        <span class="ajuda-titulo">Precisa de ajuda?</span>
+        <a class="ajuda-telefone d-block mb-2" href="tel:+551499111111"><i class="fas fa-phone-alt me-2"></i>+55 (14) 9911-1111</a>
+      </div>
+      <div class="social-links d-flex gap-3">
+        <a href="https://instagram.com/looplook" target="_blank" class="text-secondary"><i class="fab fa-instagram fa-lg"></i></a>
+        <a href="https://wa.me/551499111111" target="_blank" class="text-secondary"><i class="fab fa-whatsapp fa-lg"></i></a>
+        <a href="mailto:contato@looplook.com" class="text-secondary"><i class="fas fa-envelope fa-lg"></i></a>
+      </div>
+    </div>
+  </div>
+</nav>

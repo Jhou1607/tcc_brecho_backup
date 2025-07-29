@@ -1,0 +1,149 @@
+<app-header></app-header>
+<div class="cadastro-produto-page-wrapper">
+  <nz-card class="form-card-container">
+    <h1 class="form-title">Cadastro de produto</h1>
+    <p class="form-subtitle">Preencha os campos do formulário:</p>
+
+    <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+      <nz-form-item>
+        <nz-form-label nzFor="nome_produto" nzRequired>Nome do produto</nz-form-label>
+        <nz-form-control nzErrorTip="Por favor, insira o nome do produto!">
+          <input nz-input formControlName="nome_produto" id="nome_produto" placeholder="Ex: Camisa Social Branca" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzFor="marca">Marca do produto</nz-form-label>
+        <nz-form-control nzErrorTip="Máximo de 55 caracteres.">
+          <input nz-input formControlName="marca" id="marca" placeholder="Ex: Reserva" />
+        </nz-form-control>
+      </nz-form-item>
+
+
+
+      <nz-form-item>
+        <nz-form-label nzFor="preco" nzRequired>Preço do produto (R$)</nz-form-label>
+        <nz-form-control nzErrorTip="Por favor, insira um preço válido!">
+          <nz-input-number formControlName="preco" id="preco" [nzMin]="0" [nzStep]="0.01" [nzPrecision]="2" nzPlaceHolder="Ex: 59.90" class="full-width-input"></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-row [nzGutter]="16">
+        <nz-col [nzXs]="24" [nzSm]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="estado_conservacao">Estado de conservação</nz-form-label>
+            <nz-form-control>
+              <nz-select formControlName="estado_conservacao" id="estado_conservacao" nzPlaceHolder="Selecione o estado">
+                <nz-option *ngFor="let estado of opcoesEstadoConservacao" [nzLabel]="estado | titlecase" [nzValue]="estado"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <!-- Removido select de grupo -->
+      </nz-row>
+
+      <nz-row [nzGutter]="16">
+        <nz-col [nzXs]="24" [nzSm]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="categoria">Categoria</nz-form-label>
+            <nz-form-control>
+              <button type="button" class="categoria-btn" (click)="abrirCategoriaModal()">
+                {{ categoriaSelecionada ? categoriaSelecionada.grupo + ' > ' + categoriaSelecionada.categoria : 'Selecione o grupo e a categoria' }}
+              </button>
+              <app-categoria-selector-modal
+                [aberto]="categoriaModalAberto"
+                (fechar)="fecharCategoriaModal()"
+                (selecionar)="onCategoriaSelecionada($event)">
+              </app-categoria-selector-modal>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <nz-col [nzXs]="24" [nzSm]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="genero">Gênero</nz-form-label>
+            <nz-form-control>
+              <nz-select formControlName="genero" id="genero" nzPlaceHolder="Selecione o gênero">
+                <nz-option *ngFor="let g of opcoesGeneros" [nzLabel]="g | titlecase" [nzValue]="g"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+
+      <nz-row [nzGutter]="16">
+        <nz-col [nzXs]="24" [nzSm]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="cor">Coloração</nz-form-label>
+            <nz-form-control nzErrorTip="Máximo de 55 caracteres.">
+              <input nz-input formControlName="cor" id="cor" placeholder="Ex: Azul Marinho" />
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <nz-col [nzXs]="24" [nzSm]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="numeracao">Numeração ou Tamanho</nz-form-label>
+            <nz-form-control nzErrorTip="Insira um número ou P, M, G, GG.">
+              <input nz-input formControlName="numeracao" id="numeracao" placeholder="Ex: 42 ou M" />
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+
+      <nz-row [nzGutter]="16">
+        <nz-col [nzXs]="24" [nzSm]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="ocasioes">Ocasião de uso</nz-form-label>
+            <nz-form-control>
+              <nz-select formControlName="ocasioes" id="ocasioes" nzPlaceHolder="Selecione a(s) ocasião(ões)" nzMode="multiple">
+                <nz-option *ngFor="let o of opcoesOcasioes" [nzLabel]="o | titlecase" [nzValue]="o"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+        <nz-col [nzXs]="24" [nzSm]="12">
+          <nz-form-item>
+            <nz-form-label nzFor="estilos">Estilo</nz-form-label>
+            <nz-form-control>
+              <nz-select formControlName="estilos" id="estilos" nzPlaceHolder="Selecione o(s) estilo(s)" nzMode="multiple">
+                <nz-option *ngFor="let e of opcoesEstilos" [nzLabel]="e | titlecase" [nzValue]="e"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-col>
+      </nz-row>
+      <nz-form-item>
+        <nz-form-label nzFor="material">Material</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="material" id="material" nzPlaceHolder="Selecione o material">
+            <nz-option *ngFor="let m of opcoesMateriais" [nzLabel]="m | titlecase" [nzValue]="m"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzFor="imagem_principal">Adicione a foto do produto aqui</nz-form-label>
+        <nz-form-control>
+          <nz-upload
+            nzAccept="image/png,image/jpeg,image/gif,image/webp"
+            [nzFileList]="fileList"
+            [nzBeforeUpload]="beforeUpload"
+            (nzRemove)="handleRemove($event)"
+            [nzMultiple]="false"
+            [nzListType]="'picture-card'">
+            <button nz-button type="button"><i nz-icon nzType="upload"></i><span>Selecionar Foto</span></button>
+          </nz-upload>
+          <div class="ant-form-item-extra">Selecione a imagem principal do produto. Máx 2MB.</div>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="submit-button-container">
+        <nz-form-control>
+          <button nz-button class="login-form-button" [nzType]="'primary'" [nzLoading]="isSubmitting" [disabled]="!validateForm.valid && !isSubmitting">
+            Cadastrar
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </nz-card>
+</div>
+<app-footer></app-footer>

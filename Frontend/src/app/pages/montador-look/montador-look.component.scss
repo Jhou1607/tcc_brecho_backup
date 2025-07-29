@@ -1,0 +1,172 @@
+.editor-container {
+  padding: 20px;
+  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.main-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.canvas-column {
+  width: 500px;
+}
+
+.canvas-container {
+  margin-bottom: 20px;
+}
+
+canvas {
+  border: 1px solid #ccc;
+}
+
+.groups-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+nz-collapse {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+nz-collapse-panel {
+  padding: 10px;
+}
+
+nz-collapse-panel ::ng-deep .ant-collapse-header {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #ddd;
+}
+
+.items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px 0;
+  max-width: 580px;
+  max-height: 300px;
+}
+
+.item {
+  cursor: pointer;
+  text-align: center;
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  display: block;
+}
+
+.heart-icon {
+  position: absolute;
+  top: 0;
+  right: 5px;
+  z-index: 10;
+}
+
+.heart-icon nz-icon {
+  font-size: 16px;
+}
+
+/* Cor vermelha para o coração preenchido ou meio preenchido */
+.heart-icon ::ng-deep .ant-rate-star-full .ant-rate-star-first,
+.heart-icon ::ng-deep .ant-rate-star-full .ant-rate-star-second,
+.heart-icon ::ng-deep .ant-rate-star-half .ant-rate-star-first {
+  color: #ff4d4f !important; /* Vermelho com maior especificidade */
+}
+
+/* Cor cinza para o coração vazio */
+.heart-icon ::ng-deep .ant-rate-star-zero .ant-rate-star-first,
+.heart-icon ::ng-deep .ant-rate-star-zero .ant-rate-star-second,
+.heart-icon ::ng-deep .ant-rate-star-half .ant-rate-star-second {
+  color: #bfbfbf !important; /* Cinza para o coração vazio */
+}
+
+.item p {
+  margin: 5px 0 0;
+  font-size: 12px;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.add-item, .proccess-image{
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  display: block;
+  align-content: center;
+  font-size: 27px;
+  color: #858484;
+  cursor: pointer;
+}
+.proccess-image{
+  cursor: default;
+  background-color: #f7f7f7;
+}
+
+
+.steps-content {
+  margin-top: 5px;
+  border: 1px dashed #e9e9e9;
+  border-radius: 6px;
+  background-color: #fafafa;
+  min-height: 200px;
+  text-align: center;
+  padding: 15px;
+}
+
+.steps-action {
+  margin-top: 24px;
+}
+.dv-processing-img{
+  z-index: 999;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(49, 49, 49, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.show-mobile {
+  display: none;
+}
+
+@media only screen and (max-width: 768px) {
+  .hidden-mobile {
+    display: none;
+  }
+  .show-mobile {
+    display: flex !important;
+  }
+
+}

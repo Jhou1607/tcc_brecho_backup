@@ -1,0 +1,211 @@
+@font-face {
+  font-family: 'Intrepid';
+  src: url('assets/fonts/Intrepid.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+$brecho-page-bg: #fbf9f4;
+$brecho-content-bg: #fffefc;
+$brecho-dark-page-bg: #575757;
+$brecho-header-bg: #f7f2ec;
+$brecho-footer-bg: #ffffff;
+$brecho-primary-text: #385246;
+$brecho-secondary-text: #8c624d;
+$brecho-accent-color: #9bad9a;
+$brecho-button-text-color: #ffffff;
+$brecho-input-border: #d0c9c0;
+$brecho-input-bg: #ffffff;
+$brecho-link-color: #385246;
+$brecho-logo-color: #b5654c;
+$brecho-title-bar-bg: #385246;
+$brecho-title-bar-text: #e6d5b8;
+$brecho-placeholder-bg: #dde5db;
+$brecho-footer-text-color: #5a5a5a;
+$brecho-heart-icon-color: #6b4d38;
+$brecho-heart-favorited-color: #e74c3c;
+$brecho-product-item-bg: #fdfdfb;
+$brecho-product-border-color: #eee8e1;
+
+$header-height: 70px;
+$footer-height: 60px;
+
+$brecho-font-primary: 'Intrepid', 'SuaFontePrincipal', sans-serif;
+$brecho-font-headings: 'Intrepid', 'SuaFonteDeTitulos', serif;
+$brecho-font-logo: 'SuaFonteDoLogo', sans-serif;
+
+$brecho-border-radius: 8px;
+$brecho-border-radius-medium: 8px;
+$brecho-border-radius-large: 12px;
+
+$brecho-spacing-xsmall: 4px;
+$brecho-spacing-small: 8px;
+$brecho-spacing-medium: 16px;
+$brecho-spacing-large: 24px;
+$brecho-spacing-xlarge: 32px;
+
+:root {
+  --brecho-page-bg: #{$brecho-page-bg};
+  --brecho-content-bg: #{$brecho-content-bg};
+  --brecho-dark-page-bg: #{$brecho-dark-page-bg};
+  --brecho-header-bg: #{$brecho-header-bg};
+  --brecho-footer-bg: #{$brecho-footer-bg};
+  --brecho-primary-text: #{$brecho-primary-text};
+  --brecho-secondary-text: #{$brecho-secondary-text};
+  --brecho-accent-color: #{$brecho-accent-color};
+  --brecho-button-text-color: #{$brecho-button-text-color};
+  --brecho-input-border: #{$brecho-input-border};
+  --brecho-input-bg: #{$brecho-input-bg};
+  --brecho-link-color: #{$brecho-link-color};
+  --brecho-logo-color: #{$brecho-logo-color};
+  --brecho-title-bar-bg: #{$brecho-title-bar-bg};
+  --brecho-title-bar-text: #{$brecho-title-bar-text};
+  --brecho-placeholder-bg: #{$brecho-placeholder-bg};
+  --brecho-footer-text-color: #{$brecho-footer-text-color};
+  --brecho-heart-icon-color: #{$brecho-heart-icon-color};
+  --brecho-heart-favorited-color: #{$brecho-heart-favorited-color};
+  --brecho-product-item-bg: #{$brecho-product-item-bg};
+  --brecho-product-border-color: #{$brecho-product-border-color};
+  --header-height: #{$header-height};
+  --footer-height: #{$footer-height};
+  --brecho-border-radius: #{$brecho-border-radius};
+  --brecho-border-radius-large: #{$brecho-border-radius-large};
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: $brecho-font-primary;
+  color: $brecho-secondary-text;
+  background-color: $brecho-page-bg;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main, .page-content-area {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+input, textarea, button {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $brecho-font-headings;
+  color: $brecho-primary-text;
+  margin-top: 0;
+  margin-bottom: $brecho-spacing-medium;
+  font-weight: 600;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+
+a {
+  color: $brecho-link-color;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+  &:hover {
+    color: $brecho-logo-color;
+    text-decoration: none;
+  }
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-area {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: $brecho-spacing-medium;
+}
+
+.form-graphic-layout {
+  display: flex;
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  align-items: stretch;
+  border-radius: var(--brecho-border-radius-large);
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+  background-color: $brecho-content-bg;
+
+  .form-panel {
+    flex: 1.2;
+    padding: $brecho-spacing-large $brecho-spacing-xlarge;
+    background-color: $brecho-content-bg;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .graphic-panel {
+    flex: 0.8;
+    background-color: #cad2c5;
+    background-size: cover;
+    background-position: center;
+    display: none;
+
+    @media (min-width: 992px) {
+      display: block;
+    }
+  }
+}
+
+.loading-indicator, .error-message, .no-results {
+  text-align: center;
+  padding: $brecho-spacing-xlarge $brecho-spacing-medium;
+  color: $brecho-secondary-text;
+  font-size: 1.1rem;
+}
+
+.error-message {
+  color: #c0392b;
+  font-weight: 500;
+}
+
+.no-results {
+  color: $brecho-secondary-text;
+}

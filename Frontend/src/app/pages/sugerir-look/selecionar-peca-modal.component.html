@@ -1,0 +1,28 @@
+<div class="modal-overlay" *ngIf="aberto" (click)="fecharModal()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <span>Escolher Peça Base</span>
+      <button class="close-btn" (click)="fecharModal()">&times;</button>
+    </div>
+    <div class="modal-tabs">
+      <button [class.active]="abaAtiva === 'usuario'" (click)="trocarAba('usuario')">Minhas Peças</button>
+      <button [class.active]="abaAtiva === 'loja'" (click)="trocarAba('loja')">Peças da Loja</button>
+    </div>
+    <div class="modal-search">
+      <input type="text" [(ngModel)]="pesquisa" placeholder="Pesquisar peça..." />
+    </div>
+    <div class="pecas-lista">
+      <div *ngIf="(abaAtiva === 'usuario' && carregandoUsuario) || (abaAtiva === 'loja' && carregandoLoja)" class="loading">Carregando...</div>
+      <div *ngIf="!carregandoUsuario && !carregandoLoja && pecasFiltradas.length === 0" class="sem-pecas">Nenhuma peça encontrada.</div>
+      <div *ngFor="let peca of pecasFiltradas" class="peca-card" (click)="selecionarPeca(peca)">
+        <img [src]="peca.image_url" [alt]="peca.nome" />
+        <div class="peca-nome">{{ peca.nome }}</div>
+        <div class="peca-info-mini">
+          <small *ngIf="peca.tipo">Tipo: {{ peca.tipo | titlecase }}</small>
+          <small *ngIf="peca.cor">Cor: {{ peca.cor | titlecase }}</small>
+          <small *ngIf="peca.material">Material: {{ peca.material | titlecase }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

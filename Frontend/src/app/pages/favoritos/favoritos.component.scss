@@ -1,0 +1,45 @@
+@use '../../../styles' as styles;
+@use 'sass:math';
+@use 'sass:color';
+
+@import '../catalogo/catalogo.component.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+.favoritos-page-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: styles.$brecho-spacing-large styles.$brecho-spacing-medium;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.favoritos-title {
+  font-size: 2.5rem;
+  margin-bottom: styles.$brecho-spacing-xlarge;
+  color: styles.$brecho-primary-text;
+  font-family: styles.$brecho-font-headings;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: styles.$brecho-spacing-medium;
+  padding-right: styles.$brecho-spacing-medium;
+  box-sizing: border-box;
+
+  @media (min-width: 1200px) {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

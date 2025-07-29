@@ -1,0 +1,31 @@
+@use '../../../../styles' as styles;
+@use 'sass:math';
+@use 'sass:color';
+
+.app-footer {
+  text-align: center;
+  padding: 0 styles.$brecho-spacing-medium; // Padding horizontal, vertical controlado por flex
+  background-color: var(--brecho-footer-bg);
+  color: var(--brecho-footer-text-color);
+  font-size: 0.9rem; // Ligeiramente maior
+  border-top: 1px solid var(--brecho-product-border-color); // Usar cor de borda definida
+  // margin-top: auto; // Removido, pois app-root é flex e o footer é o último item
+  height: var(--footer-height); // Usando a variável CSS
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0; // Impede que o footer encolha
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: var(--brecho-primary-text);
+    font-weight: 600; // Mais destaque
+    &:hover {
+      color: var(--brecho-logo-color);
+    }
+  }
+}

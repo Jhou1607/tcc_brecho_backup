@@ -1,0 +1,106 @@
+@use '../../../styles' as styles;
+@use 'sass:color';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  height: 100%;
+}
+
+.vista-me-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-grow: 1;
+}
+
+.title-banner {
+  background-color: var(--brecho-primary-text);
+  color: var(--brecho-title-bar-text);
+  text-align: center;
+  padding: 0.75rem 1rem;
+  flex-shrink: 0;
+
+  h1 {
+    font-size: 1.8rem;
+    color: inherit;
+    margin: 0;
+    font-weight: 600;
+  }
+}
+
+.background-wrapper {
+  flex-grow: 1;
+  position: relative;
+  background-image: url('/assets/images/foto.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(styles.$brecho-primary-text, 0.2);
+    z-index: 1;
+  }
+}
+
+.menu-box {
+  position: relative;
+  z-index: 2;
+  background-color: rgba(styles.$brecho-page-bg, 0.7);
+  backdrop-filter: blur(5px);
+  width: 100%;
+  max-width: 380px;
+  padding: styles.$brecho-spacing-large;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: styles.$brecho-spacing-medium;
+  align-items: center;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  @media(max-width: 480px) {
+    padding: styles.$brecho-spacing-medium;
+    max-width: 90%;
+  }
+}
+
+.menu-button {
+  width: 100%;
+  padding: styles.$brecho-spacing-medium;
+  font-size: 1rem;
+  font-family: styles.$brecho-font-primary;
+  border: 1px solid rgba(styles.$brecho-primary-text, 0.1);
+  border-radius: 12px;
+  background-color: var(--brecho-content-bg);
+  color: var(--brecho-primary-text);
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: styles.$brecho-spacing-small;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background-color: color.adjust(styles.$brecho-content-bg, $lightness: -2%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  i {
+    font-size: 1.1rem;
+    color: var(--brecho-secondary-text);
+  }
+}

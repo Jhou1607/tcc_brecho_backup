@@ -1,0 +1,82 @@
+@use '../../../styles' as styles;
+@use 'sass:color';
+
+@import '../catalogo/catalogo.component.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+.armario-page-container {
+  @extend .catalogo-page-container;
+}
+
+.armario-header {
+  text-align: center;
+  margin-bottom: styles.$brecho-spacing-xlarge;
+}
+
+.armario-title {
+  @extend .catalogo-title;
+  margin-bottom: styles.$brecho-spacing-medium;
+}
+
+.add-new-piece-btn {
+  background-color: styles.$brecho-accent-color;
+  color: styles.$brecho-button-text-color;
+  border: none;
+  border-radius: 20px;
+  padding: styles.$brecho-spacing-small styles.$brecho-spacing-medium;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  display: inline-block;
+
+  &:hover {
+    background-color: color.scale(styles.$brecho-accent-color, $lightness: -10%);
+    transform: translateY(-1px);
+  }
+}
+
+.product-item {
+  .product-image-container {
+    .delete-btn {
+      position: absolute;
+      top: styles.$brecho-spacing-small;
+      right: styles.$brecho-spacing-small;
+      background-color: rgba(40, 40, 40, 0.6);
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #fff;
+      font-size: 0.9rem;
+      transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+
+      &:hover {
+        background-color: color.scale(styles.$brecho-heart-favorited-color, $lightness: -5%);
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  &:hover .delete-btn {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .product-price {
+    display: none;
+  }
+}
