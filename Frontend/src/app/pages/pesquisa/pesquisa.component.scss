@@ -1,5 +1,4 @@
 @use '../../../styles' as styles;
-@use '../../../styles/product-grid' as productGrid; // Se product-grid.scss também usar @use
 @use 'sass:math';
 @use 'sass:color';
 
@@ -200,7 +199,7 @@
       transform: translateY(-4px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 
-      .product-actions {
+      .favorite-btn {
         opacity: 1;
       }
     }
@@ -222,39 +221,40 @@
         transform: scale(1.05);
       }
 
-      .product-actions {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+      .favorite-btn {
+        position: absolute !important;
+        bottom: 83% !important;
+        left: 67% !important;
+        top: auto !important;
+        right: auto !important;
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 40px !important;
+        height: 40px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        color: #ccc !important;
+        font-size: 1.2rem !important;
+        transition: color 0.2s ease, transform 0.2s ease !important;
+        z-index: 10 !important;
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: opacity 0.3s ease, color 0.2s ease, transform 0.2s ease !important;
 
-        .action-btn {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          border: none;
-          background: white;
-          color: #666;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-          transition: all 0.2s;
+        &:hover {
+          transform: scale(1.1) !important;
+          color: #ff4d4f !important;
+        }
 
-          &:hover {
-            background: #8B4513;
-            color: white;
-            transform: scale(1.1);
-          }
+        &.favorited {
+          color: #ff4d4f !important;
+          animation: pulse 0.3s ease-out !important;
+        }
 
-          fa-icon, i {
-            font-size: 14px;
-          }
+        i {
+          display: block !important;
         }
       }
     }
@@ -597,6 +597,13 @@
   to {
     transform: translateX(0);
   }
+}
+
+// Animação pulse para favoritos
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 // Responsividade

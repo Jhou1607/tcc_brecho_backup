@@ -46,6 +46,8 @@
             "styles": [
               "src/theme.less",
               "src/styles.scss",
+              "src/app/shared/styles/global.scss",
+              "src/app/shared/styles/performance.scss",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
             ],
             "scripts": []

@@ -431,8 +431,27 @@ export class SugerirLookComponent implements AfterViewInit {
   }
 
   getTipoLabel(index: number): string {
-    const labels = ['Acessório de Cabeça', 'Top', 'Calça/Saia', 'Calçado', 'Acessório'];
-    return labels[index] || 'Item';
+    if (!this.pecaBaseSelecionada) {
+      const labels = ['Acessório de Cabeça', 'Top', 'Calça/Saia', 'Calçado', 'Acessório'];
+      return labels[index] || 'Item';
+    }
+
+    const tipoBase = this.categoriaParaTipo(this.pecaBaseSelecionada.categoria);
+    const tiposComplementares = this.getTiposComplementares(tipoBase);
+    
+    if (index < tiposComplementares.length) {
+      const tipo = tiposComplementares[index];
+      const mapeamentoLabels: { [key: string]: string } = {
+        'acessorio_cabeca': 'Acessório de Cabeça',
+        'top': 'Top',
+        'calca_saia': 'Calça/Saia',
+        'calcado': 'Calçado',
+        'acessorio': 'Acessório'
+      };
+      return mapeamentoLabels[tipo] || 'Item';
+    }
+    
+    return 'Item';
   }
 
   private renderCanvasLook() {

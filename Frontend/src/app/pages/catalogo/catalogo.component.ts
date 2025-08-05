@@ -65,7 +65,8 @@ export class CatalogoComponent implements OnInit {
   }
 
   viewProduct(product: Product): void {
-    this.router.navigate(['/telaproduto', product.id]);
+    console.log('Navegando para produto:', product.id, product.nome_produto);
+    this.router.navigate(['/produto', product.id]);
   }
 
   toggleFavorite(product: Product, event: Event): void {

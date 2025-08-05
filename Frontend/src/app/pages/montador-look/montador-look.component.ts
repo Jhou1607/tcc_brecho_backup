@@ -1,6 +1,6 @@
 // C:\Users\Jonathas\Downloads\TCC - Latest\Projeto TCC\Frontend\src\app\pages\montador-look\montador-look.component.ts
 
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, NgZone, OnInit, ViewChild, OnDestroy} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {NzCollapseModule} from 'ng-zorro-antd/collapse';
 import * as fabric from 'fabric';
@@ -10,6 +10,7 @@ import {NzIconDirective} from 'ng-zorro-antd/icon';
 import {removeBackground} from '@imgly/background-removal';
 import {NzSpinComponent} from 'ng-zorro-antd/spin';
 import {NgxPicaModule, NgxPicaService} from '@digitalascetic/ngx-pica';
+import { ImageOptimizerService } from '../../shared/services/image-optimizer.service';
 
 // <<<<<<< CORREÇÃO: Importar operadores de 'rxjs/operators' >>>>>>>
 import { from, map, Observable, Observer, of, Subscription, switchMap, throwError } from 'rxjs';
@@ -61,7 +62,7 @@ import { CategoriaAcessoriosCabeca, CategoriaTops, CategoriaCalcasSaias, Categor
   templateUrl: './montador-look.component.html',
   styleUrls: ['./montador-look.component.scss'],
 })
-export class MontadorLookComponent implements AfterViewInit, OnInit {
+export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
   faSolidHeart = faSolidHeart;
   @ViewChild('canvas', { static: false }) canvasElement!: ElementRef<HTMLCanvasElement>;
   private lookIdFromRoute: number | null = null;
@@ -78,9 +79,16 @@ export class MontadorLookComponent implements AfterViewInit, OnInit {
   protected currentStep = 0;
   protected showErroDownImg = false;
 
-  private groupItemsCache: { [groupName: string]: ClothingItem[] } = {};
-  public loadingLookImages = false;
-  public loadingGroups: { [groupName: string]: boolean } = {};
+    private groupItemsCache: { [groupName: string]: ClothingItem[] } = {};
+  public loadingLookImages = false;
+  public loadingGroups: { [groupName: string]: boolean } = {};
+  private subscriptions: Subscription[] = [];
+  private imageCache = new Map<string, string>();
+
+  // Variáveis para salvar look
+  showNomeLookModal = false;
+  nomeLook = '';
+  lookParaSalvar: any = null;
 
   getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
     new Promise((resolve, reject) => {
@@ -125,12 +133,23 @@ export class MontadorLookComponent implements AfterViewInit, OnInit {
 
   clothingGroups: ClothingGroup[] = [];
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router, private notification: NzNotificationService, private ngxPicaService: NgxPicaService, private productService: ProdutoService,  private zone: NgZone, private cdr: ChangeDetectorRef, private modalService: NzModalService, private sanitizer: DomSanitizer) {
-    const deleteIcon =
-      "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Ebene_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='595.275px' height='595.275px' viewBox='200 215 230 470' xml:space='preserve'%3E%3Ccircle style='fill:%23F44336;' cx='299.76' cy='439.067' r='218.516'/%3E%3Cg%3E%3Crect x='267.162' y='307.978' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -222.6202 340.6915)' style='fill:white;' width='65.545' height='262.18'/%3E%3Crect x='266.988' y='308.153' transform='matrix(0.7071 0.7071 -0.7071 0.7071 398.3889 -83.3116)' style='fill:white;' width='65.544' height='262.179'/%3E%3C/g%3E%3C/svg%3E";
-    this.deleteImg = document.createElement('img');
-    this.deleteImg.src = deleteIcon;
-  }
+  constructor(
+    private activatedRoute: ActivatedRoute, 
+    private router: Router, 
+    private notification: NzNotificationService, 
+    private ngxPicaService: NgxPicaService, 
+    private productService: ProdutoService,  
+    private zone: NgZone, 
+    private cdr: ChangeDetectorRef, 
+    private modalService: NzModalService, 
+    private sanitizer: DomSanitizer,
+    private imageOptimizer: ImageOptimizerService
+  ) {
+    const deleteIcon =
+      "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Ebene_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='595.275px' height='595.275px' viewBox='200 215 230 470' xml:space='preserve'%3E%3Ccircle style='fill:%23F44336;' cx='299.76' cy='439.067' r='218.516'/%3E%3Cg%3E%3Crect x='267.162' y='307.978' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -222.6202 340.6915)' style='fill:white;' width='65.545' height='262.18'/%3E%3Crect x='266.988' y='308.153' transform='matrix(0.7071 0.7071 -0.7071 0.7071 398.3889 -83.3116)' style='fill:white;' width='65.544' height='262.179'/%3E%3C/g%3E%3C/svg%3E";
+    this.deleteImg = document.createElement('img');
+    this.deleteImg.src = deleteIcon;
+  }
 
   ngAfterViewInit() {
     this.canvas = new fabric.Canvas(this.canvasElement.nativeElement, {
@@ -829,25 +848,67 @@ export class MontadorLookComponent implements AfterViewInit, OnInit {
     this.triggerLookUpdate();
   }
 
-  loadGroupItems(group: ClothingGroup) {
-    if (this.groupItemsCache[group.name]) {
-      group.items = this.groupItemsCache[group.name];
-      return;
-    }
-    this.loadingGroups[group.name] = true;
-    this.productService.getItensParaMontador().subscribe({
-      next: (groups) => {
-        const found = groups.find(g => g.name === group.name);
-        if (found) {
-          group.items = found.items;
-          this.groupItemsCache[group.name] = found.items;
-        }
-        this.loadingGroups[group.name] = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.loadingGroups[group.name] = false;
-      }
-    });
-  }
+    loadGroupItems(group: ClothingGroup) {
+    if (this.groupItemsCache[group.name]) {
+      group.items = this.groupItemsCache[group.name];
+      return;
+    }
+    this.loadingGroups[group.name] = true;
+    
+    const subscription = this.productService.getItensParaMontador().subscribe({
+      next: (groups) => {
+        const found = groups.find(g => g.name === group.name);
+        if (found) {
+          group.items = found.items;
+          this.groupItemsCache[group.name] = found.items;
+          
+          // Pré-carregar imagens para melhor performance
+          const imageUrls = found.items
+            .filter(item => item.canvasUrl)
+            .map(item => item.canvasUrl!);
+          
+          if (imageUrls.length > 0) {
+            this.imageOptimizer.preloadImages(imageUrls).subscribe();
+          }
+        }
+        this.loadingGroups[group.name] = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loadingGroups[group.name] = false;
+      }
+    });
+    
+    this.subscriptions.push(subscription);
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+    if (this.canvas) {
+      this.canvas.dispose();
+    }
+  }
+
+  confirmarNomeLook() {
+    if (this.lookParaSalvar) {
+      const nomeLook = this.nomeLook || `Look #${Date.now()}`;
+      
+      this.productService.saveLook(nomeLook, this.lookParaSalvar.config, this.lookParaSalvar.imagem).subscribe({
+        next: (res: any) => {
+          this.notification.success('Sucesso', res.message || 'Look salvo com sucesso!');
+          this.cancelarNomeLook();
+          this.router.navigate(['/meus-looks']);
+        },
+        error: (err: any) => {
+          this.notification.error('Erro', err.error?.message || 'Não foi possível salvar o look.');
+        }
+      });
+    }
+  }
+
+  cancelarNomeLook() {
+    this.showNomeLookModal = false;
+    this.nomeLook = '';
+    this.lookParaSalvar = null;
+  }
 }

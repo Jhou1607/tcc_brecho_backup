@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Adiciona o middleware CORS global para todas as respostas, incluindo arquivos estáticos
         $middleware->append(\App\Http\Middleware\CorsAllMiddleware::class);
 
+        // Registrar middleware de admin
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        ]);
+
         // Se você não tinha 'api' group aqui, remova. Se tinha, mantenha como estava.
         $middleware->group('api', [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,

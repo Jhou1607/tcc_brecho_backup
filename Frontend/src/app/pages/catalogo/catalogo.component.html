@@ -1,13 +1,13 @@
 <app-header></app-header>
-<main class="catalogo-page-container">
-  <h1 class="catalogo-title">Nosso Catálogo</h1>
+<main class="catalogo-page-container fade-in">
+  <h1 class="catalogo-title slide-up">Nosso Catálogo</h1>
 
   <div *ngIf="isLoading" class="loading-indicator">Carregando produtos...</div>
   <div *ngIf="error" class="error-message">{{ error }}</div>
 
   <div class="product-grid-wrapper" *ngIf="produtos$ | async as response; else noProducts">
     <div class="product-grid" *ngIf="response.data.length > 0; else noProductsMessage">
-      <div class="product-item" *ngFor="let produto of response.data" (click)="viewProduct(produto)">
+      <div class="product-item scale-in" *ngFor="let produto of response.data" (click)="viewProduct(produto)">
         <div class="product-image-container">
           <img [src]="getImagemUrl(produto.images && produto.images.length > 0 ? produto.images[0].url : null)"
                [alt]="produto.nome_produto">

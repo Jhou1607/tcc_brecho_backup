@@ -1,0 +1,177 @@
+<div class="produtos-page">
+  <div class="page-header">
+    <h1>Gerenciamento de Produtos</h1>
+    <button nz-button nzType="primary" (click)="showCreateModal()">
+      <span nz-icon nzType="plus"></span>
+      Novo Produto
+    </button>
+  </div>
+
+  <nz-card>
+    <nz-table
+      #basicTable
+      [nzData]="produtos"
+      [nzLoading]="loading"
+      [nzTotal]="total"
+      [nzPageSize]="pageSize"
+      [nzPageIndex]="currentPage"
+      (nzPageIndexChange)="onPageChange($event)">
+      
+      <thead>
+        <tr>
+          <th>Imagem</th>
+          <th>Nome</th>
+          <th>Preço</th>
+          <th>Categoria</th>
+          <th>Marca</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      
+      <tbody>
+        <tr *ngFor="let produto of basicTable.data">
+          <td>
+            <img
+              [src]="produto.image_url || 'assets/produtos/placeholder-product.png'"
+              [alt]="produto.nome_produto"
+              width="50"
+              height="50"
+              style="object-fit: cover; border-radius: 4px;">
+          </td>
+          <td>{{ produto.nome_produto }}</td>
+          <td>R$ {{ produto.preco }}</td>
+          <td>{{ produto.categoria || '-' }}</td>
+          <td>{{ produto.marca || '-' }}</td>
+          <td>
+            <nz-space>
+              <button nz-button nzType="link" (click)="showEditModal(produto)">
+                <span nz-icon nzType="edit"></span>
+              </button>
+                                            <button nz-button nzType="link" nzDanger (click)="deleteProduto(produto.id)">
+                 <span nz-icon nzType="delete"></span>
+               </button>
+            </nz-space>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+
+  <!-- Modal de Produto -->
+  <nz-modal
+    [(nzVisible)]="isModalVisible"
+    [nzTitle]="isEditMode ? 'Editar Produto' : 'Novo Produto'"
+    (nzOnCancel)="handleCancel()"
+    (nzOnOk)="handleOk()">
+    
+    <ng-container *nzModalContent>
+      <form nz-form [formGroup]="produtoForm" nz-row [nzGutter]="16">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8" nzRequired>Nome do Produto</nz-form-label>
+            <nz-form-control [nzSpan]="16" nzErrorTip="Por favor, insira o nome do produto!">
+              <input formControlName="nome_produto" placeholder="Nome do produto" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8" nzRequired>Preço</nz-form-label>
+            <nz-form-control [nzSpan]="16" nzErrorTip="Por favor, insira um preço válido!">
+              <nz-input-number formControlName="preco" [nzMin]="0" [nzStep]="0.01" placeholder="0.00" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8">Marca</nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <input formControlName="marca" placeholder="Marca" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8">Modelo</nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <input formControlName="modelo" placeholder="Modelo" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8">Categoria</nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-select formControlName="categoria" placeholder="Selecione a categoria">
+                <nz-option nzValue="camiseta" nzLabel="Camiseta"></nz-option>
+                <nz-option nzValue="camisa" nzLabel="Camisa"></nz-option>
+                <nz-option nzValue="calca" nzLabel="Calça"></nz-option>
+                <nz-option nzValue="saia" nzLabel="Saia"></nz-option>
+                <nz-option nzValue="vestido" nzLabel="Vestido"></nz-option>
+                <nz-option nzValue="jaqueta" nzLabel="Jaqueta"></nz-option>
+                <nz-option nzValue="casaco" nzLabel="Casaco"></nz-option>
+                <nz-option nzValue="tenis" nzLabel="Tênis"></nz-option>
+                <nz-option nzValue="bolsa" nzLabel="Bolsa"></nz-option>
+                <nz-option nzValue="acessorio" nzLabel="Acessório"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8">Gênero</nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-select formControlName="genero" placeholder="Selecione o gênero">
+                <nz-option nzValue="masculino" nzLabel="Masculino"></nz-option>
+                <nz-option nzValue="feminino" nzLabel="Feminino"></nz-option>
+                <nz-option nzValue="unissex" nzLabel="Unissex"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8">Cor</nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <input formControlName="cor" placeholder="Cor" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8">Material</nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <input formControlName="material" placeholder="Material" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="4">Imagens</nz-form-label>
+            <nz-form-control [nzSpan]="20">
+              <nz-upload
+                [nzFileList]="fileList"
+                [nzBeforeUpload]="beforeUpload"
+                [nzRemove]="removeFile"
+                [nzMultiple]="true"
+                [nzAccept]="'image/*'">
+                <button nz-button>
+                  <span nz-icon nzType="upload"></span>
+                  Selecionar Imagens
+                </button>
+              </nz-upload>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </form>
+    </ng-container>
+  </nz-modal>
+</div> 

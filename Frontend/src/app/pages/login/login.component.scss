@@ -131,6 +131,24 @@
 
 .social-login-buttons {
   margin-top: styles.$brecho-spacing-large;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  #google-signin-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    
+    div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+  }
+  
   .btn-social {
     background-color: styles.$brecho-input-bg;
     color: styles.$brecho-secondary-text;

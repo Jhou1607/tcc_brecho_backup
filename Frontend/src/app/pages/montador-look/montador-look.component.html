@@ -1,6 +1,9 @@
 <app-header></app-header>
-<div class="editor-container">
-  <h2>Montar Look</h2>
+<div class="montador-look-container">
+  <div class="title-banner">
+    <h1>Montar Look</h1>
+  </div>
+  <div class="montador-box">
 
   <nz-modal [(nzVisible)]="showErroDownImg"
             nzTitle="Erro ao baixar imagem"
@@ -117,7 +120,7 @@
 
 
 
-  <div class="main-container">
+    <div class="main-layout">
 
 
     <div class="canvas-column">
@@ -129,9 +132,15 @@
       <div class="canvas-container">
         <canvas #canvas></canvas>
       </div>
-      <div class="button-container">
-        <button (click)="exportLookAsPng()">Baixar Look</button>
-        <button (click)="saveLook()">Salvar Look</button>
+      <div class="action-buttons">
+        <button class="baixar-look-btn" (click)="exportLookAsPng()">
+          <i class="fas fa-download"></i>
+          Baixar Look
+        </button>
+        <button class="salvar-look-btn" (click)="saveLook()">
+          <i class="fas fa-save"></i>
+          Salvar Look
+        </button>
       </div>
     </div>
     <div class="groups-column hidden-mobile">
@@ -157,6 +166,23 @@
       </nz-collapse>
       <ng-template #characterIcon><nz-icon  nzType="heart" nzTheme="fill" ></nz-icon></ng-template>
     </div>
+  </div>
+</div>
 
+<!-- Modal para nomear o look -->
+<div class="modal-overlay" *ngIf="showNomeLookModal" (click)="cancelarNomeLook()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Nomear Look</h3>
+    <input 
+      type="text" 
+      [(ngModel)]="nomeLook" 
+      placeholder="Digite o nome do look (opcional)"
+      class="nome-look-input"
+      (keyup.enter)="confirmarNomeLook()"
+    />
+    <div class="modal-buttons">
+      <button class="btn-cancelar" (click)="cancelarNomeLook()">Cancelar</button>
+      <button class="btn-confirmar" (click)="confirmarNomeLook()">Salvar</button>
+    </div>
   </div>
 </div>

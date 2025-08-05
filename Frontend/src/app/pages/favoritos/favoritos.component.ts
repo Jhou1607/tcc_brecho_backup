@@ -58,7 +58,7 @@ export class FavoritosComponent implements OnInit {
   }
 
   viewProduct(product: Product): void {
-    this.router.navigate(['/telaproduto', product.id]);
+    this.router.navigate(['/produto', product.id]);
   }
 
   // Ao desfavoritar um item na página de favoritos, ele deve sumir da lista

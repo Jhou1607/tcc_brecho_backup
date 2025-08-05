@@ -17,7 +17,7 @@
 
         <div class="form-options">
           <label class="checkbox-label">
-            <input type="checkbox" name="remember" /> Lembrar Senha
+            <input type="checkbox" name="remember" [(ngModel)]="rememberMe" /> Lembrar Senha
           </label>
           <a (click)="onForgotPassword()" class="form-link">Recuperar Senha</a>
         </div>

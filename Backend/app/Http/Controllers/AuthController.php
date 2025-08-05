@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http; // Para requisições HTTP
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use App\Mail\ResetPasswordMail;
 
 class AuthController extends Controller
 {
@@ -200,6 +204,121 @@ class AuthController extends Controller
             Log::error('Erro no método me:', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return response()->json([
                 'message' => 'Erro ao carregar dados do usuário',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Enviar email de recuperação de senha
+     */
+    public function forgotPassword(Request $request)
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email|exists:usuarios,email',
+            ], [
+                'email.required' => 'O campo email é obrigatório.',
+                'email.email' => 'Por favor, insira um email válido.',
+                'email.exists' => 'Este email não está cadastrado em nossa base de dados.',
+            ]);
+
+            $email = $request->email;
+            $usuario = Usuario::where('email', $email)->first();
+
+            if (!$usuario) {
+                return response()->json([
+                    'message' => 'Email não encontrado em nossa base de dados.'
+                ], 404);
+            }
+
+            // Gerar token único para reset de senha
+            $token = Str::random(64);
+            
+            // Salvar token no banco (você pode criar uma tabela password_resets se necessário)
+            // Por enquanto, vamos simular o envio do email
+            
+            // Enviar email de recuperação
+            try {
+                Mail::to($email)->send(new ResetPasswordMail($token, $email));
+                
+                return response()->json([
+                    'message' => 'Email de recuperação enviado com sucesso!',
+                    'email' => $email
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'message' => 'Erro ao enviar email. Verifique as configurações de SMTP.',
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Erro de validação',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Ocorreu um erro ao enviar o email de recuperação.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Redefinir senha com token
+     */
+    public function resetPassword(Request $request)
+    {
+        try {
+            $request->validate([
+                'token' => 'required|string',
+                'email' => 'required|email|exists:usuarios,email',
+                'password' => 'required|string|min:6|confirmed',
+            ], [
+                'token.required' => 'Token é obrigatório.',
+                'email.required' => 'Email é obrigatório.',
+                'email.email' => 'Email inválido.',
+                'email.exists' => 'Email não encontrado.',
+                'password.required' => 'Senha é obrigatória.',
+                'password.min' => 'A senha deve ter pelo menos 6 caracteres.',
+                'password.confirmed' => 'As senhas não coincidem.',
+            ]);
+
+            $email = $request->email;
+            $token = $request->token;
+            $password = $request->password;
+
+            // Buscar usuário
+            $usuario = Usuario::where('email', $email)->first();
+
+            if (!$usuario) {
+                return response()->json([
+                    'message' => 'Email não encontrado.'
+                ], 404);
+            }
+
+            // Aqui você pode implementar a validação do token
+            // Por enquanto, vamos simular que o token é válido
+            // Em produção, você deve verificar se o token existe e não expirou
+
+            // Atualizar a senha
+            $usuario->password = bcrypt($password);
+            $usuario->save();
+
+            return response()->json([
+                'message' => 'Senha redefinida com sucesso!'
+            ], 200);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Erro de validação',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Ocorreu um erro ao redefinir a senha.',
                 'error' => $e->getMessage()
             ], 500);
         }

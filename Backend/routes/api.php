@@ -11,6 +11,9 @@ use App\Http\Controllers\LookController;
 use App\Http\Controllers\MontadorController;
 use App\Http\Controllers\StorageController;
 use App\Http\Controllers\Admin\FilterController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProdutoAdminController;
+use App\Http\Controllers\Admin\UsuarioAdminController;
 
 Route::get('/', function () {
     return response()->json(['message' => 'API Brecho LoopLook is working!', 'version' => '1.0']);
@@ -21,6 +24,8 @@ Route::get('/storage/{path}', [StorageController::class, 'serve'])->where('path'
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/login/google', [AuthController::class, 'loginWithGoogle']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 // Rotas públicas de produtos
 Route::get('/produtos', [ProdutoController::class, 'index']);
@@ -63,6 +68,26 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/filtros/{type}/{id}', [FilterController::class, 'update']);
         Route::delete('/filtros/{type}/{id}', [FilterController::class, 'destroy']);
     });
+});
+
+// Rotas do Admin com middleware de admin
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+    
+    // Produtos Admin
+    Route::get('/produtos', [ProdutoAdminController::class, 'index']);
+    Route::post('/produtos', [ProdutoAdminController::class, 'store']);
+    Route::put('/produtos/{id}', [ProdutoAdminController::class, 'update']);
+    Route::delete('/produtos/{id}', [ProdutoAdminController::class, 'destroy']);
+    
+    // Usuários Admin
+    Route::get('/usuarios', [UsuarioAdminController::class, 'index']);
+    Route::delete('/usuarios/{id}', [UsuarioAdminController::class, 'destroy']);
+    Route::put('/usuarios/{id}/role', [UsuarioAdminController::class, 'updateRole']);
+    
+    // Filtros Admin
+    Route::get('/filtros', [FilterController::class, 'getAllFiltros']);
 });
 
 // Rota para servir imagens com CORS

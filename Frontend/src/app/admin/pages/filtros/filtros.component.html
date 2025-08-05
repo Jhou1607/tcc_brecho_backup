@@ -1,0 +1,72 @@
+<div class="filtros-page">
+  <div class="page-header">
+    <h1>Gerenciamento de Filtros</h1>
+    <button nz-button nzType="primary" (click)="showCreateModal()">
+      <span nz-icon nzType="plus"></span>
+      Novo Filtro
+    </button>
+  </div>
+
+  <nz-spin [nzSpinning]="loading">
+    <div class="filtros-grid">
+      <nz-card *ngFor="let filterType of filterTypes" [nzTitle]="filterType.label">
+        <div class="filter-header">
+          <h3>{{ filterType.label }}</h3>
+          <span class="filter-count">{{ getFiltrosByType(filterType.value).length }} itens</span>
+        </div>
+
+        <div class="filter-items">
+          <nz-tag *ngFor="let filter of getFiltrosByType(filterType.value)" 
+                  class="filter-tag">
+            {{ filter.value }}
+            <button nz-button nzType="text" nzSize="small" 
+                    (click)="deleteFiltro(filter.type, filter.id)"
+                    class="delete-btn">
+              <span nz-icon nzType="close"></span>
+            </button>
+          </nz-tag>
+          
+          <div *ngIf="getFiltrosByType(filterType.value).length === 0" class="empty-state">
+            <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="'Nenhum filtro cadastrado'">
+            </nz-empty>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+  </nz-spin>
+
+  <!-- Modal de Filtro -->
+  <nz-modal
+    [(nzVisible)]="isModalVisible"
+    [nzTitle]="isEditMode ? 'Editar Filtro' : 'Novo Filtro'"
+    (nzOnCancel)="handleCancel()"
+    (nzOnOk)="handleOk()">
+    
+    <ng-container *nzModalContent>
+      <form nz-form [formGroup]="filterForm" nz-row [nzGutter]="16">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8" nzRequired>Tipo de Filtro</nz-form-label>
+            <nz-form-control [nzSpan]="16" nzErrorTip="Por favor, selecione o tipo de filtro!">
+              <nz-select formControlName="type" placeholder="Selecione o tipo">
+                <nz-option *ngFor="let type of filterTypes" 
+                          [nzValue]="type.value" 
+                          [nzLabel]="type.label">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8" nzRequired>Valor</nz-form-label>
+            <nz-form-control [nzSpan]="16" nzErrorTip="Por favor, insira o valor do filtro!">
+              <input formControlName="value" placeholder="Valor do filtro" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </form>
+    </ng-container>
+  </nz-modal>
+</div> 

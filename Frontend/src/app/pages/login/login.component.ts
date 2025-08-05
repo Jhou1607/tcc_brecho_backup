@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { AuthService } from '../../auth.service';
 import { Router } from '@angular/router';
 
@@ -12,7 +14,7 @@ declare const google: any;
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, NzInputModule, NzButtonModule, NzIconModule],
+  imports: [CommonModule, FormsModule, RouterModule, NzInputModule, NzButtonModule, NzIconModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
@@ -20,14 +22,17 @@ export class LoginComponent implements OnInit {
   email = '';
   password = ''; // Alterado de 'senha' para 'password'
   isLoading = false; // Indicador de carregamento
+  rememberMe = false; // Checkbox "Lembrar Senha"
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private message: NzMessageService
   ) {}
 
   ngOnInit(): void {
     this.renderGoogleButton();
+    this.loadSavedCredentials();
   }
 
   renderGoogleButton() {
@@ -99,6 +104,8 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         console.log('Login bem-sucedido:', response);
         this.authService.storeToken(response.access_token);
+        this.saveCredentials(); // Salva as credenciais se "Lembrar Senha" estiver marcado
+        this.message.success('Login realizado com sucesso!');
         this.router.navigate(['/catalogo']); // Redireciona para a página de catálogo
       },
       error: (error) => {
@@ -118,8 +125,23 @@ export class LoginComponent implements OnInit {
   }
 
   onForgotPassword(): void {
-    console.log('Vamos te ajudar a recuperar sua senha!');
-    // Aqui você pode redirecionar ou abrir um modal
+    this.router.navigate(['/recuperar-senha']);
+  }
+
+  loadSavedCredentials(): void {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    if (savedEmail) {
+      this.email = savedEmail;
+      this.rememberMe = true;
+    }
+  }
+
+  saveCredentials(): void {
+    if (this.rememberMe) {
+      localStorage.setItem('rememberedEmail', this.email);
+    } else {
+      localStorage.removeItem('rememberedEmail');
+    }
   }
 
   loginWithGoogle(): void {

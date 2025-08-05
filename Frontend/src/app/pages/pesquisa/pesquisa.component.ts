@@ -173,11 +173,35 @@ export class PesquisaComponent implements OnInit {
 
   toggleFavorite(productId: number, event: Event): void {
     event.stopPropagation();
-    // Lógica de favoritar pode ser implementada aqui
+    
+    // Encontra o produto na lista de produtos
+    const product = this.products.find(p => p.id === productId) || 
+                   this.latestProducts.find(p => p.id === productId);
+    
+    if (product) {
+      this.produtoService.toggleFavorite(productId).subscribe({
+        next: () => {
+          // Atualiza o estado do favorito
+          product.is_favorited = !product.is_favorited;
+          
+          // Adiciona animação visual
+          const button = event.target as HTMLElement;
+          if (product.is_favorited) {
+            button.classList.add('favorited');
+            button.style.animation = 'pulse 0.3s ease-out';
+          } else {
+            button.classList.remove('favorited');
+          }
+        },
+        error: (err) => {
+          console.error('Erro ao favoritar produto:', err);
+        }
+      });
+    }
   }
 
   goToProductDetail(productId: number): void {
-    this.router.navigate(['/telaproduto', productId]);
+    this.router.navigate(['/produto', productId]);
   }
 
   changePage(page: number): void {

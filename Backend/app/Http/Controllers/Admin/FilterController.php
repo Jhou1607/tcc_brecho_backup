@@ -30,6 +30,36 @@ class FilterController extends Controller
     }
 
     /**
+     * Retorna todos os filtros agrupados por tipo
+     */
+    public function getAllFiltros(): JsonResponse
+    {
+        try {
+            $filtros = FilterOption::all()->groupBy('type')->map(function ($options, $type) {
+                return [
+                    'type' => $type,
+                    'options' => $options->map(function ($option) {
+                        return [
+                            'id' => $option->id,
+                            'type' => $option->type,
+                            'value' => $option->value,
+                            'created_at' => $option->created_at,
+                            'updated_at' => $option->updated_at
+                        ];
+                    })
+                ];
+            })->values();
+
+            return response()->json($filtros);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao buscar filtros: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Cria uma nova opção de filtro
      */
     public function store(Request $request, string $type): JsonResponse
