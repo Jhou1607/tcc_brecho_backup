@@ -1,4 +1,3 @@
-@use '../../../styles' as styles;
 @use 'sass:math';
 @use 'sass:color';
 
@@ -7,7 +6,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: styles.$brecho-page-bg;
+  background-color: #fbf9f4;
 }
 
 // Estilos gerais
@@ -223,15 +222,13 @@
 
       .favorite-btn {
         position: absolute !important;
-        bottom: 83% !important;
-        left: 67% !important;
-        top: auto !important;
-        right: auto !important;
+        top: 12px !important;
+        right: 12px !important;
         background-color: rgba(255, 255, 255, 0.9) !important;
         border: none !important;
         border-radius: 50% !important;
-        width: 40px !important;
-        height: 40px !important;
+        width: 36px !important;
+        height: 36px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -240,12 +237,12 @@
         font-size: 1.2rem !important;
         transition: color 0.2s ease, transform 0.2s ease !important;
         z-index: 10 !important;
-        opacity: 0;
-        transition: opacity 0.3s ease, color 0.2s ease, transform 0.2s ease !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 
         &:hover {
           transform: scale(1.1) !important;
           color: #ff4d4f !important;
+          background-color: #8B4513 !important;
         }
 
         &.favorited {

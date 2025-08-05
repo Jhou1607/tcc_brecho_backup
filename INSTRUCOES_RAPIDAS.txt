@@ -1,0 +1,106 @@
+🚀 INSTRUÇÕES RÁPIDAS - BRECHO LOOPLOOK 🚀
+
+===========================================
+📋 PRÉ-REQUISITOS
+===========================================
+✅ Node.js 18+ (https://nodejs.org/)
+✅ PHP 8.2+ (https://php.net/)
+✅ Composer (https://getcomposer.org/)
+✅ PostgreSQL 12+ (https://www.postgresql.org/)
+✅ Git (https://git-scm.com/)
+
+===========================================
+⚡ INSTALAÇÃO RÁPIDA
+===========================================
+
+1️⃣ BACKEND (Laravel)
+----------------------
+cd Backend
+composer install
+cp .env.example .env
+php artisan key:generate
+
+# Configurar banco no .env:
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=tcc_brecho
+DB_USERNAME=postgres
+DB_PASSWORD=sua_senha
+
+# Executar migrations e seeders:
+php artisan migrate
+php artisan db:seed
+php artisan storage:link
+
+# Iniciar servidor:
+php artisan serve
+
+2️⃣ FRONTEND (Angular)
+-----------------------
+cd Frontend
+npm install
+
+# Iniciar servidor:
+ng serve
+
+===========================================
+👥 USUÁRIOS PADRÃO
+===========================================
+🔐 ADMIN:
+   Email: admin@brecho.com
+   Senha: admin123
+
+👤 USUÁRIO:
+   Email: user@brecho.com
+   Senha: user123
+
+===========================================
+🌐 URLs
+===========================================
+Frontend: http://localhost:4200
+Backend:  http://localhost:8000
+Admin:    http://localhost:4200/admin
+
+===========================================
+📧 EMAIL (OPCIONAL)
+===========================================
+Para recuperação de senha, configure no .env:
+MAIL_USERNAME=seu_email@gmail.com
+MAIL_PASSWORD=sua_senha_de_app
+
+===========================================
+🐛 PROBLEMAS COMUNS
+===========================================
+
+❌ Erro de conexão com banco:
+   - Verificar se PostgreSQL está rodando
+   - Criar banco: createdb tcc_brecho
+
+❌ Erro de dependências:
+   - Frontend: npm cache clean --force && npm install
+   - Backend: composer clear-cache && composer install
+
+❌ Erro de permissões (Linux/Mac):
+   - chmod -R 755 storage bootstrap/cache
+
+===========================================
+🎯 FUNCIONALIDADES PRINCIPAIS
+===========================================
+✅ Catálogo de produtos
+✅ Sistema de favoritos
+✅ Montador de looks
+✅ Sugerir looks (IA)
+✅ Painel administrativo
+✅ Sistema de login
+✅ Recuperação de senha
+✅ Upload de imagens
+✅ Busca avançada
+
+===========================================
+📚 DOCUMENTAÇÃO COMPLETA
+===========================================
+Veja o arquivo README.md para instruções detalhadas.
+
+---
+Desenvolvido por Equipe 5 TCC - UNESP, CTI

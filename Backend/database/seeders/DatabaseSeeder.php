@@ -7,18 +7,48 @@ use Database\Seeders\UsuarioSeeder;
 use Database\Seeders\ProdutoSeeder;
 use Database\Seeders\ImagemSeeder;
 use Database\Seeders\FilterOptionsSeeder;
+use App\Models\Usuario;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Criar usuários padrão
+        $this->createDefaultUsers();
+        
         $this->call([
-            UsuarioSeeder::class,
-            FilterOptionsSeeder::class, // Adicionar antes dos produtos
+            FilterOptionsSeeder::class,
             ProdutoSeeder::class,
             ImagemSeeder::class,
-            ProdutoUsuarioSeeder::class,
-            ArmarioSeeder::class,
         ]);
+    }
+
+    private function createDefaultUsers(): void
+    {
+        // Usuário Admin
+        Usuario::updateOrCreate(
+            ['email' => 'admin@brecho.com'],
+            [
+                'nome' => 'Administrador',
+                'email' => 'admin@brecho.com',
+                'password' => bcrypt('admin123'),
+                'role' => 'admin',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
+
+        // Usuário Comum
+        Usuario::updateOrCreate(
+            ['email' => 'user@brecho.com'],
+            [
+                'nome' => 'Usuário Teste',
+                'email' => 'user@brecho.com',
+                'password' => bcrypt('user123'),
+                'role' => 'user',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]
+        );
     }
 }
