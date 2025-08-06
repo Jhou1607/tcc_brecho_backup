@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->createDefaultUsers();
         
         $this->call([
+            UsuarioSeeder::class,
             FilterOptionsSeeder::class,
             ProdutoSeeder::class,
             ImagemSeeder::class,
