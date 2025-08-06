@@ -24,30 +24,29 @@ class DatabaseSeeder extends Seeder
     }
 
     private function createDefaultUsers(): void
-    {
-        // Usuário Admin
-        Usuario::updateOrCreate(
-            ['email' => 'admin@brecho.com'],
-            [
-                'nome' => 'Administrador',
-                'email' => 'admin@brecho.com',
-                'password' => bcrypt('admin123'),
-                'role' => 'admin',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]
-        );
+{
+    Usuario::updateOrCreate(
+        ['email' => 'admin@brecho.com'],
+        [
+            'nome_usuario' => 'Administrador', 
+            'email' => 'admin@brecho.com',
+            'password' => bcrypt('admin123'),
+            'role' => 'admin',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]
+    );
 
-        // Usuário Comum
-        Usuario::updateOrCreate(
-            ['email' => 'user@brecho.com'],
+    // Usuário Comum
+    Usuario::updateOrCreate(
+        ['email' => 'user@brecho.com'],
             [
-                'nome' => 'Usuário Teste',
-                'email' => 'user@brecho.com',
-                'password' => bcrypt('user123'),
-                'role' => 'user',
-                'created_at' => now(),
-                'updated_at' => now(),
+            'nome_usuario' => 'Usuário Teste', 
+            'email' => 'user@brecho.com',
+            'password' => bcrypt('user123'),
+            'role' => 'user',
+            'created_at' => now(),
+            'updated_at' => now(),
             ]
         );
     }
