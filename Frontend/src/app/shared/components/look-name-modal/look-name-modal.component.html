@@ -1,0 +1,9 @@
+<p>Dê um nome ao seu look (opcional):</p>
+<nz-input-group>
+  <input type="text" nz-input placeholder="Nome do Look (Ex: Look de Verão)" [(ngModel)]="lookName" />
+</nz-input-group>
+
+<div class="ant-modal-footer" style="text-align: right; margin-top: 20px;">
+  <button nz-button nzType="default" (click)="handleCancel()">Cancelar</button>
+  <button nz-button nzType="primary" (click)="handleOk()">Salvar</button>
+</div>

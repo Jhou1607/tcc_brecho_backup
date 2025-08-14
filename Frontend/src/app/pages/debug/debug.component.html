@@ -1,0 +1,40 @@
+<div class="debug-page">
+  <h1>🔍 Debug - Status da Autenticação</h1>
+  
+  <div class="debug-section">
+    <h2>Status Geral</h2>
+    <p><strong>Autenticado:</strong> {{ isAuthenticated ? '✅ Sim' : '❌ Não' }}</p>
+    <p><strong>Token:</strong> {{ token ? '✅ Presente' : '❌ Ausente' }}</p>
+  </div>
+
+  <div class="debug-section" *ngIf="user">
+    <h2>Dados do Usuário</h2>
+    <p><strong>ID:</strong> {{ user.id }}</p>
+    <p><strong>Nome:</strong> {{ user.nome_usuario }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Role:</strong> {{ user.role || 'Não definido' }}</p>
+    <p><strong>Admin:</strong> {{ user.role === 'admin' ? '✅ Sim' : '❌ Não' }}</p>
+  </div>
+
+  <div class="debug-section" *ngIf="!user">
+    <h2>❌ Usuário não carregado</h2>
+    <p>O usuário não foi carregado. Isso pode indicar:</p>
+    <ul>
+      <li>Token inválido ou expirado</li>
+      <li>Problema na API</li>
+      <li>Usuário não autenticado</li>
+    </ul>
+  </div>
+
+  <div class="debug-actions">
+    <button (click)="checkAuthStatus()">🔄 Verificar Status</button>
+    <button (click)="refreshUser()">🔄 Recarregar Usuário</button>
+  </div>
+
+  <div class="debug-section">
+    <h2>Testes de Acesso</h2>
+    <a href="/admin" class="test-link">🔗 Testar /admin</a>
+    <a href="/admin/dashboard" class="test-link">🔗 Testar /admin/dashboard</a>
+    <a href="/catalogo" class="test-link">🔗 Testar /catalogo</a>
+  </div>
+</div> 

@@ -1,0 +1,409 @@
+// ========================================
+// IMAGE UPLOAD PROCESSOR COMPONENT STYLES
+// ========================================
+
+.upload-step {
+  position: relative;
+  min-height: 300px;
+}
+
+.processing-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.processing-content {
+  text-align: center;
+  
+  ::ng-deep .ant-spin {
+    .ant-spin-dot {
+      font-size: 32px;
+    }
+    
+    .ant-spin-text {
+      font-size: 16px;
+      color: #9bad9a;
+      margin-top: 16px;
+    }
+  }
+}
+
+.upload-content {
+  .uploaded-image-preview {
+    text-align: center;
+    padding: 24px;
+    background: #fbf9f4;
+    border: 2px solid #9bad9a;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    
+    .preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: #52c41a;
+      font-weight: 600;
+      font-size: 16px;
+      
+      nz-icon {
+        margin-right: 8px;
+        font-size: 20px;
+      }
+    }
+    
+    .preview-image {
+      margin-bottom: 16px;
+      
+      img {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+    }
+    
+    .preview-info {
+      text-align: left;
+      background: white;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #d0c9c0;
+      
+      p {
+        margin: 4px 0;
+        color: #385246;
+        font-size: 14px;
+        
+        strong {
+          color: #8c624d;
+        }
+      }
+    }
+  }
+  
+  .upload-area {
+    .ant-upload-drag {
+      border: 2px dashed #d0c9c0;
+      border-radius: 12px;
+      background: #fbf9f4;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        border-color: #9bad9a;
+        background: #dde5db;
+      }
+      
+      .ant-upload-drag-container {
+        padding: 40px 20px;
+        
+        .ant-upload-drag-icon {
+          font-size: 48px;
+          color: #9bad9a;
+          margin-bottom: 16px;
+        }
+        
+        .ant-upload-text {
+          font-size: 18px;
+          font-weight: 600;
+          color: #385246;
+          margin-bottom: 8px;
+        }
+        
+        .ant-upload-hint {
+          color: #8c624d;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+.url-input-section {
+  margin-top: 24px;
+  
+  .divider {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: #d0c9c0;
+    }
+    
+    span {
+      background: white;
+      padding: 0 16px;
+      color: #8c624d;
+      font-size: 14px;
+      position: relative;
+      z-index: 1;
+    }
+  }
+  
+  .ant-input-group {
+    .ant-input {
+      border-radius: 8px 0 0 8px;
+      border: 2px solid #d0c9c0;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        border-color: #9bad9a;
+        box-shadow: 0 0 0 2px rgba(155, 173, 154, 0.2);
+      }
+    }
+    
+    .ant-input-group-addon {
+      border-radius: 0 8px 8px 0;
+      border: 2px solid #d0c9c0;
+      border-left: none;
+      background: #fbf9f4;
+      
+      button {
+        border: none;
+        background: transparent;
+        color: #8c624d;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          color: #9bad9a;
+        }
+        
+        &:disabled {
+          color: #d0c9c0;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+.cropping-step {
+  .cropper-wrapper {
+    .cropper-instructions {
+      text-align: center;
+      color: #9bad9a;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: #dde5db;
+      border-radius: 8px;
+      border: 1px solid #9bad9a;
+    }
+    
+    ::ng-deep .ngx-image-cropper {
+      border: 2px solid #d0c9c0;
+      border-radius: 8px;
+      overflow: hidden;
+      
+      .cropper-container {
+        background: #fbf9f4;
+      }
+    }
+  }
+}
+
+.background-removal-step {
+  text-align: center;
+  padding: 20px;
+  
+  .image-preview {
+    margin-bottom: 20px;
+    
+    img {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .processing-status {
+    margin: 20px 0;
+    
+    p {
+      margin-top: 10px;
+      color: #8c624d;
+      font-weight: 500;
+    }
+  }
+  
+  .step-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    
+    .action-button {
+      min-width: 140px;
+      
+      &.skip-button {
+        border-color: #d0c9c0;
+        color: #8c624d;
+        
+        &:hover {
+          border-color: #8c624d;
+          background-color: rgba(139, 98, 77, 0.1);
+        }
+      }
+    }
+  }
+}
+
+.step-actions {
+  margin-top: 24px;
+  text-align: right;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+  
+  .ant-btn {
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    
+    &.ant-btn-primary {
+      background: linear-gradient(135deg, #9bad9a 0%, #8c624d 100%);
+      border: none;
+      box-shadow: 0 4px 12px rgba(155, 173, 154, 0.4);
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(155, 173, 154, 0.5);
+      }
+      
+      &:active {
+        transform: translateY(0);
+      }
+    }
+    
+    &.ant-btn-default {
+      border: 2px solid #d0c9c0;
+      color: #8c624d;
+      
+      &:hover {
+        border-color: #9bad9a;
+        color: #9bad9a;
+      }
+    }
+  }
+}
+
+// Modal customization
+::ng-deep .ant-modal {
+  .ant-modal-header {
+    background: linear-gradient(135deg, #9bad9a 0%, #8c624d 100%);
+    border-radius: 8px 8px 0 0;
+    
+    .ant-modal-title {
+      color: white;
+      font-weight: 600;
+    }
+    
+    .ant-modal-close {
+      color: white;
+      
+      &:hover {
+        color: rgba(255, 255, 255, 0.8);
+      }
+    }
+  }
+  
+  .ant-modal-body {
+    padding: 24px;
+  }
+}
+
+// Steps customization
+::ng-deep .ant-steps {
+  .ant-steps-item {
+    .ant-steps-item-icon {
+      background: #f0f0f0;
+      border-color: #d0c9c0;
+      
+      .ant-steps-icon {
+        color: #8c624d;
+      }
+    }
+    
+    &.ant-steps-item-process {
+      .ant-steps-item-icon {
+        background: #9bad9a;
+        border-color: #9bad9a;
+        
+        .ant-steps-icon {
+          color: white;
+        }
+      }
+    }
+    
+    &.ant-steps-item-finish {
+      .ant-steps-item-icon {
+        background: #8c624d;
+        border-color: #8c624d;
+        
+        .ant-steps-icon {
+          color: white;
+        }
+      }
+    }
+  }
+  
+  .ant-steps-item-title {
+    font-weight: 600;
+    color: #385246;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  ::ng-deep .ant-modal {
+    width: 95% !important;
+    margin: 10px;
+    
+    .ant-modal-body {
+      padding: 16px;
+    }
+  }
+  
+  .upload-content {
+    .ant-upload-drag {
+      .ant-upload-drag-container {
+        padding: 24px 16px;
+        
+        .ant-upload-drag-icon {
+          font-size: 36px;
+        }
+        
+        .ant-upload-text {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+  
+  .cropping-step {
+    .cropper-wrapper {
+      .cropper-instructions {
+        font-size: 14px;
+        padding: 12px;
+      }
+    }
+  }
+}

@@ -1,0 +1,383 @@
+<div class="produtos-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>Gerenciar Produtos</h1>
+    <button 
+      nz-button 
+      nzType="primary" 
+      nzSize="large"
+      (click)="showModal()"
+      class="add-button">
+      <nz-icon nzType="plus"></nz-icon>
+      Novo Produto
+    </button>
+  </div>
+
+  <!-- Products Table -->
+  <nz-card class="table-card">
+    <nz-table 
+      #basicTable 
+      [nzData]="produtos"
+      [nzLoading]="loading"
+      [nzTotal]="total"
+      [nzPageSize]="pageSize"
+      [nzPageIndex]="currentPage"
+      (nzPageIndexChange)="onPageChange($event)"
+      [nzShowPagination]="true">
+      
+      <thead>
+        <tr>
+          <th>Imagem</th>
+          <th>Nome</th>
+          <th>Preço</th>
+          <th>Categoria</th>
+          <th>Gênero</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      
+      <tbody>
+        <tr *ngFor="let produto of basicTable.data">
+          <td>
+            <img 
+              *ngIf="produto.image_url" 
+              [src]="produto.image_url" 
+              [alt]="produto.nome_produto"
+              class="product-image" />
+            <div *ngIf="!produto.image_url" class="no-image">
+              <nz-icon nzType="picture" nzTheme="outline"></nz-icon>
+            </div>
+          </td>
+          <td>{{ produto.nome_produto }}</td>
+          <td>R$ {{ produto.preco | number:'1.2-2' }}</td>
+          <td>{{ produto.categoria }}</td>
+          <td>{{ produto.genero }}</td>
+          <td>
+            <nz-space>
+              <button 
+                nz-button 
+                nzType="primary" 
+                nzSize="small"
+                (click)="showEditModal(produto)">
+                <nz-icon nzType="edit"></nz-icon>
+              </button>
+              <button 
+                nz-button 
+                nzType="default" 
+                nzDanger
+                nzSize="small"
+                (click)="deleteProduto(produto.id)">
+                <nz-icon nzType="delete"></nz-icon>
+              </button>
+            </nz-space>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+
+  <!-- Create/Edit Modal -->
+  <nz-modal
+    [(nzVisible)]="isModalVisible"
+    [nzTitle]="isEditMode ? 'Editar Produto' : 'Novo Produto'"
+    [nzFooter]="null"
+    [nzClosable]="true"
+    [nzMaskClosable]="true"
+    (nzOnCancel)="handleCancel()"
+    [nzWidth]="'1000px'"
+    [nzStyle]="{ top: '20px' }">
+    
+    <ng-container *nzModalContent>
+      <form nz-form [formGroup]="produtoForm" (ngSubmit)="handleSubmit()" class="product-form">
+        
+        <!-- Two Column Layout -->
+        <div class="form-columns">
+          <!-- Left Column -->
+          <div class="form-column">
+            
+            <!-- Nome do Produto -->
+            <div class="form-field">
+              <label class="field-label">
+                Nome do Produto <span class="required">*</span>
+              </label>
+              <input 
+                nz-input 
+                formControlName="nome_produto" 
+                placeholder="Nome do produto"
+                class="field-input" />
+            </div>
+
+            <!-- Marca -->
+            <div class="form-field">
+              <label class="field-label">
+                Marca
+              </label>
+              <input 
+                nz-input 
+                formControlName="marca" 
+                placeholder="Marca do produto"
+                class="field-input" />
+            </div>
+
+            <!-- Categoria -->
+            <div class="form-field">
+              <label class="field-label">
+                Categoria <span class="required">*</span>
+              </label>
+              <app-hierarchical-category-selector
+                [selectedCategory]="selectedCategory"
+                (categorySelected)="onCategorySelected($event)">
+              </app-hierarchical-category-selector>
+            </div>
+
+            <!-- Cor -->
+            <div class="form-field">
+              <label class="field-label">
+                Cor
+              </label>
+              <input 
+                nz-input 
+                formControlName="cor" 
+                placeholder="Cor do produto"
+                class="field-input" />
+            </div>
+
+          </div>
+
+          <!-- Right Column -->
+          <div class="form-column">
+            
+            <!-- Preço -->
+            <div class="form-field">
+              <label class="field-label">
+                Preço <span class="required">*</span>
+              </label>
+              <nz-input-number 
+                formControlName="preco" 
+                [nzMin]="0"
+                [nzStep]="0.01"
+                [nzPrecision]="2"
+                placeholder="0.00">
+              </nz-input-number>
+            </div>
+
+            <!-- Modelo -->
+            <div class="form-field">
+              <label class="field-label">
+                Modelo
+              </label>
+              <input 
+                nz-input 
+                formControlName="modelo" 
+                placeholder="Modelo do produto"
+                class="field-input" />
+            </div>
+
+            <!-- Gênero -->
+            <div class="form-field">
+              <label class="field-label">
+                Gênero
+              </label>
+              <nz-select 
+                formControlName="genero" 
+                placeholder="Selecione o gênero">
+                <nz-option 
+                  *ngFor="let genero of opcoesGenero" 
+                  [nzValue]="genero" 
+                  [nzLabel]="genero | titlecase">
+                </nz-option>
+              </nz-select>
+            </div>
+
+            <!-- Material -->
+            <div class="form-field">
+              <label class="field-label">
+                Material
+              </label>
+              <nz-select 
+                formControlName="material" 
+                placeholder="Selecione o material">
+                <nz-option 
+                  *ngFor="let material of opcoesMateriais" 
+                  [nzValue]="material" 
+                  [nzLabel]="material | titlecase">
+                </nz-option>
+              </nz-select>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Additional Fields Row -->
+        <div class="form-columns">
+          <!-- Left Column -->
+          <div class="form-column">
+            
+            <!-- Estado -->
+            <div class="form-field">
+              <label class="field-label">
+                Estado
+              </label>
+              <nz-select 
+                formControlName="estado_conservacao" 
+                placeholder="Selecione o estado">
+                <nz-option 
+                  *ngFor="let estado of opcoesEstado" 
+                  [nzValue]="estado" 
+                  [nzLabel]="estado | titlecase">
+                </nz-option>
+              </nz-select>
+            </div>
+
+            <!-- Numeração -->
+            <div class="form-field">
+              <label class="field-label">
+                Numeração
+              </label>
+              <input 
+                nz-input 
+                formControlName="numeracao" 
+                placeholder="Tamanho ou numeração" />
+            </div>
+
+          </div>
+
+          <!-- Right Column -->
+          <div class="form-column">
+            
+            <!-- Estação -->
+            <div class="form-field">
+              <label class="field-label">
+                Estação
+              </label>
+              <nz-select 
+                formControlName="estacao" 
+                placeholder="Selecione a estação">
+                <nz-option 
+                  *ngFor="let estacao of opcoesEstacoes" 
+                  [nzValue]="estacao" 
+                  [nzLabel]="estacao | titlecase">
+                </nz-option>
+              </nz-select>
+            </div>
+
+            <!-- Ocasiões -->
+            <div class="form-field">
+              <label class="field-label">
+                Ocasiões
+              </label>
+              <nz-select 
+                formControlName="ocasioes" 
+                mode="multiple"
+                placeholder="Selecione as ocasiões">
+                <nz-option 
+                  *ngFor="let ocasiao of opcoesOcasioes" 
+                  [nzValue]="ocasiao" 
+                  [nzLabel]="ocasiao | titlecase">
+                </nz-option>
+              </nz-select>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Estilos Row -->
+        <div class="form-field">
+          <label class="field-label">
+            Estilos
+          </label>
+          <nz-select 
+            formControlName="estilos" 
+            mode="multiple"
+            placeholder="Selecione os estilos">
+            <nz-option 
+              *ngFor="let estilo of opcoesEstilos" 
+              [nzValue]="estilo" 
+              [nzLabel]="estilo | titlecase">
+            </nz-option>
+          </nz-select>
+        </div>
+
+        <!-- Image Upload Section -->
+        <div class="image-upload-section">
+          <label class="section-label">
+            Imagens
+          </label>
+          
+          <div class="upload-area">
+            <button 
+              type="button"
+              nz-button 
+              nzType="dashed"
+              nzSize="large"
+              (click)="openImageProcessor()"
+              class="upload-button">
+              <nz-icon nzType="plus"></nz-icon>
+              Adicionar Imagem
+            </button>
+          </div>
+
+          <!-- Image Previews -->
+          <div class="image-previews" *ngIf="imagePreviews.length > 0">
+            <div 
+              *ngFor="let preview of imagePreviews; let i = index" 
+              class="image-preview-item">
+              <img [src]="preview" [alt]="'Preview ' + (i + 1)" />
+              <button 
+                type="button"
+                nz-button 
+                nzType="text" 
+                nzDanger
+                nzSize="small"
+                (click)="removeImage(i)"
+                class="remove-image-btn">
+                <nz-icon nzType="close"></nz-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="upload-info">
+            <p>Adicione imagens do produto. Máx 2MB cada.</p>
+            <p>
+              <nz-icon nzType="star" nzTheme="fill"></nz-icon>
+              Remoção automática de fundo e recorte disponível
+            </p>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button 
+            type="button"
+            nz-button 
+            nzSize="large"
+            (click)="handleCancel()">
+            Cancelar
+          </button>
+          <button 
+            type="submit"
+            nz-button 
+            nzType="primary" 
+            nzSize="large"
+            [nzLoading]="isSubmitting"
+            [disabled]="produtoForm.invalid || isSubmitting"
+            class="submit-button">
+            {{ isSubmitting ? 'Salvando...' : (isEditMode ? 'Atualizar' : 'Criar') }}
+          </button>
+        </div>
+
+      </form>
+    </ng-container>
+  </nz-modal>
+
+  <!-- Image Processor Component -->
+  <app-image-upload-processor
+    #imageProcessor
+    title="Adicionar Imagem do Produto"
+    [showUrlInput]="true"
+    [maxFileSize]="2"
+    (imageProcessed)="onImageProcessed($event)"
+    (processCancelled)="onImageProcessCancelled()">
+  </app-image-upload-processor>
+
+</div> 

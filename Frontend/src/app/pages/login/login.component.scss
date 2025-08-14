@@ -1,0 +1,174 @@
+@use '../../../styles' as styles;
+@use 'sass:math';
+@use 'sass:color';
+
+.login-page-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - #{styles.$header-height} - #{styles.$footer-height}); // Corrigido
+  padding: styles.$brecho-spacing-large;
+  background-color: styles.$brecho-page-bg;
+  box-sizing: border-box;
+}
+
+.form-title {
+  font-family: styles.$brecho-font-headings;
+  font-size: 2rem;
+  color: styles.$brecho-primary-text;
+  margin-bottom: styles.$brecho-spacing-small;
+  text-align: center;
+  font-weight: 600;
+}
+
+.form-subtitle {
+  font-size: 1rem;
+  color: styles.$brecho-secondary-text;
+  margin-bottom: styles.$brecho-spacing-large;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.form-field {
+  margin-bottom: styles.$brecho-spacing-medium;
+
+  label {
+    display: block;
+    font-size: 0.875rem;
+    color: styles.$brecho-secondary-text;
+    margin-bottom: math.div(styles.$brecho-spacing-small, 2);
+    font-weight: 500;
+  }
+
+  input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid styles.$brecho-input-border;
+    border-radius: 0.5rem;
+    background-color: styles.$brecho-input-bg;
+    font-size: 1rem;
+    color: styles.$brecho-primary-text;
+
+    &::placeholder {
+      color: color.adjust(styles.$brecho-secondary-text, $lightness: 25%);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: styles.$brecho-accent-color;
+      box-shadow: 0 0 0 2px rgba(styles.$brecho-accent-color, 0.2);
+    }
+  }
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: styles.$brecho-spacing-large;
+  font-size: 0.875rem;
+
+  .checkbox-label {
+    color: styles.$brecho-secondary-text;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    input[type="checkbox"] {
+      margin-right: math.div(styles.$brecho-spacing-small, 2);
+      accent-color: styles.$brecho-primary-text;
+    }
+  }
+
+  .form-link {
+    color: styles.$brecho-link-color;
+    font-weight: 500;
+    &:hover {
+      text-decoration: underline;
+      color: styles.$brecho-primary-text;
+    }
+  }
+}
+
+.btn {
+  font-family: styles.$brecho-font-primary !important;
+  padding: 0.85rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  text-align: center;
+  border: none;
+
+  &.btn-primary {
+    background-color: styles.$brecho-accent-color;
+    color: styles.$brecho-button-text-color;
+    &:hover:not(:disabled) {
+      background-color: color.adjust(styles.$brecho-accent-color, $lightness: -10%);
+    }
+    &:disabled {
+      background-color: color.adjust(styles.$brecho-accent-color, $lightness: 15%);
+      cursor: not-allowed;
+    }
+  }
+
+  &.btn-full-width {
+    width: 100%;
+    display: block;
+  }
+}
+
+.form-footer-link {
+  text-align: center;
+  margin-top: styles.$brecho-spacing-medium;
+  font-size: 0.9rem;
+  color: styles.$brecho-secondary-text;
+  a {
+    color: styles.$brecho-link-color;
+    font-weight: bold;
+  }
+}
+
+.social-login-buttons {
+  margin-top: styles.$brecho-spacing-large;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  #google-signin-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    
+    div {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+  }
+  
+  .btn-social {
+    background-color: styles.$brecho-input-bg;
+    color: styles.$brecho-secondary-text;
+    border: 1px solid styles.$brecho-input-border;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: styles.$brecho-spacing-medium;
+    margin-bottom: styles.$brecho-spacing-medium;
+    width: 100%;
+    font-weight: 500;
+    font-family: styles.$brecho-font-primary !important;
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
+    &:hover {
+      background-color: color.adjust(styles.$brecho-input-bg, $lightness: -3%);
+      border-color: color.adjust(styles.$brecho-input-border, $lightness: -10%);
+    }
+  }
+}

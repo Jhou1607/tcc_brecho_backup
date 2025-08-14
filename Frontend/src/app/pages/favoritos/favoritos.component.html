@@ -1,0 +1,47 @@
+<app-header></app-header>
+<main class="favoritos-page-container">
+  <h1 class="favoritos-title">Meus Favoritos</h1>
+
+  <div *ngIf="isLoading" class="loading-indicator">Carregando seus favoritos...</div>
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+
+  <div class="product-grid-wrapper" *ngIf="favoritos$ | async as response; else noProducts">
+    <div class="product-grid" *ngIf="response.data.length > 0; else noProductsMessage">
+      <div class="product-item" *ngFor="let produto of response.data" (click)="viewProduct(produto)">
+        <div class="product-image-container">
+          <img [src]="getImagemUrl(produto.images && produto.images.length > 0 ? produto.images[0].url : null)"
+               [alt]="produto.nome_produto">
+          <button type="button" class="favorite-btn favorited" (click)="toggleFavorite(produto, $event)" aria-label="Remover dos favoritos">
+            <i class="fas fa-heart"></i>
+          </button>
+        </div>
+        <div class="product-info">
+          <div class="product-name">{{ produto.nome_produto }}</div>
+          <div class="product-price">{{ produto.preco | currency:'BRL':'symbol':'1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noProductsMessage>
+      <div class="no-results" *ngIf="!isLoading && !error">
+        Você ainda não favoritou nenhum item.
+      </div>
+    </ng-template>
+
+    <div class="pagination-controls" *ngIf="response.last_page > 1">
+      <button class="pagination-button" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+        Anterior
+      </button>
+      <span class="pagination-info">Página {{ currentPage }} de {{ lastPage }}</span>
+      <button class="pagination-button" [disabled]="currentPage === lastPage" (click)="changePage(currentPage + 1)">
+        Próxima
+      </button>
+    </div>
+  </div>
+
+  <ng-template #noProducts>
+    <div *ngIf="!isLoading && !error" class="no-results">
+      Você ainda não favoritou nenhum item.
+    </div>
+  </ng-template>
+</main>
+<app-footer></app-footer>

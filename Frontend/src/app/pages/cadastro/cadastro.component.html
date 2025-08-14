@@ -1,0 +1,56 @@
+<div class="cadastro-page-wrapper">
+  <div class="form-graphic-layout">
+    <div class="form-panel">
+      <h2 class="form-title">Vamos criar uma conta</h2>
+      <p class="form-subtitle">Preencha os campos do formulário:</p>
+
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-field">
+          <label for="cadastro-nome-usuario">Nome completo</label>
+          <input id="cadastro-nome-usuario" type="text" placeholder="Ex: Ana Silva" [(ngModel)]="nome_usuario" name="nome_usuario" required />
+        </div>
+
+        <div class="form-field">
+          <label for="cadastro-email">Email</label>
+          <input id="cadastro-email" type="email" placeholder="usuario@email.com" [(ngModel)]="email" name="email" required />
+        </div>
+
+        <div class="form-field">
+          <label for="cadastro-password">Senha</label>
+          <input id="cadastro-password" type="password" placeholder="Crie uma senha segura" [(ngModel)]="password" name="password" required />
+        </div>
+        <div class="form-field">
+          <label for="cadastro-password-confirmation">Confirmar Senha</label>
+          <input id="cadastro-password-confirmation" type="password" placeholder="Confirme sua senha" [(ngModel)]="password_confirmation" name="password_confirmation" required />
+        </div>
+        <div class="form-field">
+          <label for="data_nascimento">Data de Nascimento</label>
+          <input id="data_nascimento" type="date" [(ngModel)]="data_nascimento" name="data_nascimento" required />
+        </div>
+        <div class="form-field">
+          <label>Sexo</label>
+          <div class="sexo-options">
+            <label class="radio-label">
+              <input type="radio" value="masculino" [(ngModel)]="sexo" name="sexo" required> Masculino
+            </label>
+            <label class="radio-label">
+              <input type="radio" value="feminino" [(ngModel)]="sexo" name="sexo" required> Feminino
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full-width" [disabled]="isLoading">
+          {{ isLoading ? 'Criando conta...' : 'Criar conta' }}
+        </button>
+
+        <div class="form-footer-link">
+          Já possui uma conta? <a routerLink="/login">Fazer login</a>
+        </div>
+      </form>
+      <div class="social-login-buttons">
+        <div id="google-signup-btn" style="margin-bottom: 16px;"></div>
+      </div>
+    </div>
+    <div class="graphic-panel"></div>
+  </div>
+</div>

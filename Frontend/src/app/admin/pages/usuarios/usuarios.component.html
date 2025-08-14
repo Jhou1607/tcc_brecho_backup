@@ -1,0 +1,60 @@
+<div class="usuarios-page">
+  <div class="page-header">
+    <h1>Gerenciamento de Usuários</h1>
+  </div>
+
+  <nz-card>
+    <nz-table
+      #basicTable
+      [nzData]="usuarios"
+      [nzLoading]="loading"
+      [nzTotal]="total"
+      [nzPageSize]="pageSize"
+      [nzPageIndex]="currentPage"
+      (nzPageIndexChange)="onPageChange($event)">
+      
+      <thead>
+        <tr>
+          <th>Avatar</th>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Função</th>
+          <th>Data de Cadastro</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      
+      <tbody>
+        <tr *ngFor="let usuario of basicTable.data">
+          <td>
+            <nz-avatar 
+              [nzSrc]="usuario.foto_url || ''" 
+              nzIcon="user"
+              [nzSize]="40">
+            </nz-avatar>
+          </td>
+          <td>{{ usuario.nome_usuario }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>
+            <nz-tag [nzColor]="getRoleColor(usuario.role || 'user')">
+              {{ (usuario.role || 'user') === 'admin' ? 'Administrador' : 'Usuário' }}
+            </nz-tag>
+          </td>
+          <td>{{ usuario.created_at | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <nz-space>
+                                            <button nz-button nzType="link" (click)="toggleRole(usuario)">
+                 <span nz-icon [nzType]="usuario.role === 'admin' ? 'user-delete' : 'user-add'"></span>
+                 {{ usuario.role === 'admin' ? 'Rebaixar' : 'Promover' }}
+               </button>
+              
+                                            <button nz-button nzType="link" nzDanger (click)="deleteUsuario(usuario.id)">
+                 <span nz-icon nzType="delete"></span>
+               </button>
+            </nz-space>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+</div> 

@@ -1,0 +1,116 @@
+.admin-layout {
+  height: 100vh;
+
+  .logo {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid #8c624d;
+    background: #385246; // Cor escura sólida como na imagem
+  }
+
+  nz-header {
+    background: #fbf9f4; // Fundo bege claro como na imagem
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 4px rgba(155, 173, 154, 0.15);
+    border-bottom: 2px solid #d0c9c0;
+
+    .header-content {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .header-left {
+        display: flex;
+        align-items: center;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        .ant-dropdown-link {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          cursor: pointer;
+          padding: 8px 12px;
+          border-radius: 6px;
+          transition: background-color 0.3s;
+          color: #385246;
+
+          &:hover {
+            background-color: #dde5db;
+          }
+        }
+      }
+    }
+  }
+
+  nz-content {
+    margin: 24px;
+    background: #fbf9f4; // Fundo bege claro como na imagem
+    padding: 24px;
+    min-height: 280px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(155, 173, 154, 0.15);
+    border: 1px solid #d0c9c0;
+
+    .content-wrapper {
+      height: 100%;
+    }
+  }
+
+  // Sidebar customization - usando as cores exatas da imagem
+  ::ng-deep nz-sider {
+    .ant-layout-sider-children {
+      background: #385246; // Cor escura sólida como na faixa horizontal da imagem
+    }
+
+    .ant-menu {
+      background: transparent;
+      border-right: none;
+
+      .ant-menu-item {
+        color: #fbf9f4; // Texto claro como "Montar Look" na imagem
+        border-right: none;
+        margin: 4px 8px;
+        border-radius: 6px;
+
+        &:hover {
+          background-color: rgba(139, 98, 77, 0.2); // Hover com cor marrom da imagem
+        }
+
+        &.ant-menu-item-selected {
+          background-color: #8c624d; // Cor marrom da imagem para item selecionado
+          color: #fbf9f4;
+        }
+
+        .anticon {
+          color: #fbf9f4;
+        }
+      }
+    }
+  }
+
+  // Button customization
+  ::ng-deep .ant-btn {
+    &.ant-btn-text {
+      color: #385246;
+      
+      &:hover {
+        color: #8c624d; // Cor marrom da imagem
+        background-color: #dde5db;
+      }
+    }
+  }
+} 

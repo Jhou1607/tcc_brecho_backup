@@ -1,0 +1,394 @@
+@use '../../../styles' as styles;
+@use 'sass:math';
+@use 'sass:color';
+
+// --- Estilos do Mockup ---
+
+.perfil-page-main-wrapper {
+  background-color: styles.$brecho-page-bg; // Fundo da página bem claro
+  min-height: calc(100vh - #{styles.$header-height} - #{styles.$footer-height});
+  padding: styles.$brecho-spacing-medium styles.$brecho-spacing-small; // Ajustado para mobile-first
+  display: flex;
+  flex-direction: column; // Para alinhar notificações e conteúdo
+  align-items: center; // Centraliza o card principal
+  box-sizing: border-box;
+  position: relative; // Para o posicionamento das notificações
+}
+
+// Container fixo para notificações
+.fixed-notifications-container {
+  position: fixed;
+  top: calc(#{styles.$header-height} + #{styles.$brecho-spacing-medium}); // Abaixo do header
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto; // Largura se ajusta ao conteúdo
+  min-width: 280px; // Largura mínima
+  max-width: calc(100% - #{styles.$brecho-spacing-medium * 2}); // Responsivo
+  z-index: 1050; // Acima de outros elementos
+  display: flex;
+  flex-direction: column;
+  align-items: center; // Centraliza as notificações se elas não ocuparem a largura máxima
+  gap: styles.$brecho-spacing-small;
+}
+
+// Estilo base da notificação
+.notification {
+  padding: styles.$brecho-spacing-small styles.$brecho-spacing-medium;
+  border-radius: 0.375rem; // Um pouco menor para um visual mais leve
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  width: fit-content; // Ajusta-se ao conteúdo, até o max-width
+  max-width: 100%;
+  animation: fadeInDownNotification 0.3s ease-out forwards;
+  font-weight: 500;
+
+  &.alert-success {
+    background-color: color.scale(styles.$brecho-accent-color, $lightness: 55%, $saturation: -15%);
+    color: darken(styles.$brecho-accent-color, 30%);
+    border: 1px solid color.scale(styles.$brecho-accent-color, $lightness: 35%);
+  }
+
+  &.alert-danger {
+    // Usando uma cor base de "erro" mais suave e ajustando a partir dela
+    $error-base-color: #d32f2f; // Um vermelho material design
+    background-color: color.scale($error-base-color, $lightness: 60%, $saturation: -30%);
+    color: darken($error-base-color, 20%);
+    border: 1px solid color.scale($error-base-color, $lightness: 40%);
+  }
+
+  span {
+    margin-right: styles.$brecho-spacing-medium;
+    font-size: 0.875rem; // Ligeiramente menor
+    flex-grow: 1;
+  }
+
+  .close-notification {
+    background: none;
+    border: none;
+    color: inherit; // Herda a cor do texto da notificação
+    font-size: 1.6rem; // Ligeiramente maior para facilidade de clique
+    font-weight: bold;
+    line-height: 1;
+    opacity: 0.7;
+    cursor: pointer;
+    padding: 0 styles.$brecho-spacing-small * 0.5; // Ajuste fino
+    margin-left: styles.$brecho-spacing-small;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes fadeInDownNotification {
+  from {
+    opacity: 0;
+    transform: translateY(-20px); // Apenas Y se o X já está no pai
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+// Indicadores de carregamento e erro (quando não há usuário)
+.loading-indicator-wrapper, .error-indicator-wrapper {
+  width: 100%;
+  text-align: center;
+  padding: styles.$brecho-spacing-large;
+  margin: styles.$brecho-spacing-xlarge auto;
+  max-width: 500px; // Consistente com o profile-card
+  border-radius: 0.5rem;
+  p {
+    margin-bottom: styles.$brecho-spacing-medium;
+    font-size: 1.1rem;
+  }
+  .btn + .btn { // Espaçamento entre botões
+    margin-left: styles.$brecho-spacing-small;
+  }
+}
+
+.loading-indicator-wrapper {
+  color: styles.$brecho-primary-text; // Cor de texto primário
+}
+
+.error-indicator-wrapper {
+  $error-base-color: #d32f2f;
+  background-color: color.scale($error-base-color, $lightness: 60%, $saturation: -30%);
+  color: darken($error-base-color, 20%);
+  border: 1px solid color.scale($error-base-color, $lightness: 40%);
+  p {
+    color: darken($error-base-color, 20%);
+  }
+}
+
+// Conteúdo principal do perfil
+.perfil-content-box {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-card {
+  background-color: transparent;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+  margin-top: styles.$brecho-spacing-medium;
+
+  @media (min-width: 768px) {
+    padding: styles.$brecho-spacing-large;
+    margin-top: styles.$brecho-spacing-large;
+  }
+}
+
+.profile-avatar-section {
+  margin-bottom: styles.$brecho-spacing-small;
+  .profile-avatar-img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: none;
+    background-color: styles.$brecho-placeholder-bg;
+    margin-bottom: styles.$brecho-spacing-medium;
+    display: inline-block;
+  }
+  .btn-alterar-foto {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: styles.$brecho-secondary-text;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 4px 8px;
+    margin-top: - styles.$brecho-spacing-small;
+    border-radius: 4px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 150px;
+
+    &:hover {
+      text-decoration: underline;
+      color: styles.$brecho-primary-text;
+    }
+  }
+}
+
+.profile-username {
+  font-family: styles.$brecho-font-headings;
+  font-size: 1.7rem;
+  color: styles.$brecho-secondary-text;
+  font-weight: 600;
+  margin-bottom: styles.$brecho-spacing-medium;
+}
+
+.profile-stats-section {
+  display: flex;
+  justify-content: center;
+  gap: styles.$brecho-spacing-large;
+  align-items: center;
+  margin-bottom: styles.$brecho-spacing-large;
+  padding-bottom: 0;
+  border-bottom: none;
+
+  .stat-item {
+    text-align: center;
+    .stat-value {
+      display: block;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: styles.$brecho-secondary-text;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      color: styles.$brecho-secondary-text;
+      text-transform: none;
+      font-weight: 400;
+    }
+  }
+}
+
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: styles.$brecho-spacing-small;
+  margin-bottom: styles.$brecho-spacing-large;
+  text-align: left;
+
+  .info-display-field {
+    background-color: styles.$brecho-content-bg;
+    border: 1px solid styles.$brecho-input-border;
+    border-radius: 0.5rem;
+    padding: styles.$brecho-spacing-small styles.$brecho-spacing-medium * 0.8;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      display: none;
+    }
+    span {
+      font-size: 0.95rem;
+      color: styles.$brecho-primary-text;
+      font-weight: 500;
+      padding: math.div(styles.$brecho-spacing-small, 2) 0;
+    }
+    &.bio-field span {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    &.empty span {
+      font-style: italic;
+      color: color.adjust(styles.$brecho-secondary-text, $lightness: 10%, $alpha: -0.2);
+    }
+  }
+}
+
+.btn {
+  padding: 0.6rem 1.5rem;
+  font-size: 0.9rem;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+  text-align: center;
+  border: 1px solid transparent;
+  display: inline-block;
+  line-height: 1.5;
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &.btn-primary, &.btn-edit-profile {
+    background-color: styles.$brecho-accent-color;
+    color: styles.$brecho-button-text-color;
+    border-color: styles.$brecho-accent-color;
+    min-width: 200px;
+    &:hover:not(:disabled) {
+      background-color: color.adjust(styles.$brecho-accent-color, $lightness: -8%);
+      border-color: color.adjust(styles.$brecho-accent-color, $lightness: -8%);
+    }
+    &:disabled {
+      background-color: color.scale(styles.$brecho-accent-color, $lightness: 30%, $saturation: -50%);
+      border-color: color.scale(styles.$brecho-accent-color, $lightness: 30%, $saturation: -50%);
+      cursor: not-allowed;
+      opacity: 0.65;
+    }
+  }
+  &.btn-edit-profile {
+    margin-top: styles.$brecho-spacing-small;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  &.btn-secondary {
+    background-color: styles.$brecho-content-bg;
+    color: styles.$brecho-primary-text;
+    border-color: styles.$brecho-input-border;
+    &:hover:not(:disabled) {
+      background-color: styles.$brecho-page-bg;
+      border-color: color.adjust(styles.$brecho-input-border, $lightness: -10%);
+    }
+    &:disabled {
+      background-color: styles.$brecho-page-bg;
+      border-color: styles.$brecho-input-border;
+      color: color.adjust(styles.$brecho-primary-text, $alpha: -0.5);
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  }
+
+  &.btn-logout {
+    display: block;
+    margin: styles.$brecho-spacing-large auto 0;
+    background-color: transparent;
+    color: styles.$brecho-secondary-text;
+    border: 1px solid styles.$brecho-input-border;
+    max-width: 200px;
+    font-weight: 500;
+    &:hover {
+      background-color: styles.$brecho-page-bg;
+      border-color: styles.$brecho-secondary-text;
+      color: styles.$brecho-secondary-text;
+    }
+  }
+}
+
+.profile-edit-form {
+  text-align: left;
+  margin-top: styles.$brecho-spacing-medium;
+  border-top: 1px solid styles.$brecho-input-border;
+  padding-top: styles.$brecho-spacing-medium;
+
+  .form-section-title {
+    font-size: 1.4rem;
+    margin-bottom: styles.$brecho-spacing-large;
+    font-family: styles.$brecho-font-headings;
+    color: styles.$brecho-primary-text;
+    text-align: center;
+    font-weight: 600;
+  }
+  .form-field {
+    margin-bottom: styles.$brecho-spacing-medium;
+    label {
+      font-size: 0.8rem;
+      margin-bottom: math.div(styles.$brecho-spacing-small, 2);
+      color: styles.$brecho-secondary-text;
+      font-weight: 500;
+      display: block;
+    }
+    input[type="text"], input[type="email"], input[type="date"], select, textarea {
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+      border-radius: 0.5rem;
+      width: 100%;
+      border: 1px solid styles.$brecho-input-border;
+      background-color: styles.$brecho-input-bg;
+      color: styles.$brecho-primary-text;
+      font-family: styles.$brecho-font-primary;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      &:focus {
+        outline: none;
+        border-color: styles.$brecho-accent-color;
+        box-shadow: 0 0 0 2px rgba(styles.$brecho-accent-color, 0.2);
+      }
+    }
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+    select {
+      appearance: none;
+      // CORRIGIDO AQUI:
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23#{str-slice(inspect(styles.$brecho-secondary-text), 2)}' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 0.9em;
+      padding-right: 2.5rem;
+    }
+  }
+  .form-actions {
+    margin-top: styles.$brecho-spacing-large;
+    display: flex;
+    flex-direction: column;
+    gap: styles.$brecho-spacing-small;
+
+    @media (min-width: 576px) {
+      flex-direction: row;
+      justify-content: flex-end;
+      gap: styles.$brecho-spacing-medium;
+      .btn {
+        flex-grow: 0;
+        min-width: 150px;
+      }
+    }
+  }
+}

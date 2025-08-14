@@ -1,0 +1,89 @@
+<div class="dashboard">
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <p>Visão geral do sistema</p>
+  </div>
+
+  <nz-spin [nzSpinning]="loading">
+    <div class="stats-grid" *ngIf="stats">
+      <nz-card>
+        <nz-statistic
+          nzTitle="Total de Usuários"
+          [nzValue]="stats.totalUsers"
+          nzPrefix="👥">
+        </nz-statistic>
+      </nz-card>
+
+      <nz-card>
+        <nz-statistic
+          nzTitle="Total de Produtos"
+          [nzValue]="stats.totalProducts"
+          nzPrefix="👕">
+        </nz-statistic>
+      </nz-card>
+
+      <nz-card>
+        <nz-statistic
+          nzTitle="Total de Filtros"
+          [nzValue]="stats.totalFilters"
+          nzPrefix="🔍">
+        </nz-statistic>
+      </nz-card>
+    </div>
+
+    <div class="recent-data" *ngIf="stats">
+      <div class="recent-section">
+        <h3>Usuários Recentes</h3>
+        <nz-list
+          [nzDataSource]="stats.recentUsers"
+          [nzRenderItem]="userItem"
+          [nzItemLayout]="'horizontal'">
+          <ng-template #userItem let-user>
+            <nz-list-item>
+              <nz-list-item-meta>
+                <nz-list-item-meta-avatar>
+                  <nz-avatar nzIcon="user"></nz-avatar>
+                </nz-list-item-meta-avatar>
+                <nz-list-item-meta-title>
+                  {{ user.nome_usuario }}
+                </nz-list-item-meta-title>
+                <nz-list-item-meta-description>
+                  {{ user.email }}
+                </nz-list-item-meta-description>
+              </nz-list-item-meta>
+            </nz-list-item>
+          </ng-template>
+        </nz-list>
+      </div>
+
+      <div class="recent-section">
+        <h3>Produtos Recentes</h3>
+        <nz-list
+          [nzDataSource]="stats.recentProducts"
+          [nzRenderItem]="productItem"
+          [nzItemLayout]="'horizontal'">
+          <ng-template #productItem let-product>
+            <nz-list-item>
+              <nz-list-item-meta>
+                <nz-list-item-meta-avatar>
+                  <img
+                    [src]="product.image_url || 'assets/produtos/placeholder-product.png'"
+                    [alt]="product.nome_produto"
+                    width="40"
+                    height="40"
+                    style="object-fit: cover; border-radius: 4px;">
+                </nz-list-item-meta-avatar>
+                <nz-list-item-meta-title>
+                  {{ product.nome_produto }}
+                </nz-list-item-meta-title>
+                <nz-list-item-meta-description>
+                  R$ {{ product.preco }}
+                </nz-list-item-meta-description>
+              </nz-list-item-meta>
+            </nz-list-item>
+          </ng-template>
+        </nz-list>
+      </div>
+    </div>
+  </nz-spin>
+</div> 

@@ -1,0 +1,47 @@
+<div class="recuperar-senha-page-wrapper">
+  <div class="form-graphic-layout">
+    <div class="form-panel">
+      <div class="back-button" (click)="voltarParaLogin()">
+        <i class="fas fa-arrow-left"></i>
+        Voltar ao Login
+      </div>
+
+      <div *ngIf="!emailEnviado">
+        <h2 class="form-title">Recuperar Senha</h2>
+        <p class="form-subtitle">Digite seu email para receber um link de redefinição de senha</p>
+
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-field">
+            <label for="recuperar-email">E-mail</label>
+            <input 
+              id="recuperar-email" 
+              type="email" 
+              placeholder="usuario@email.com" 
+              [(ngModel)]="email" 
+              name="email" 
+              required 
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full-width" [disabled]="isLoading">
+            <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
+            {{ isLoading ? 'Enviando...' : 'Enviar Email de Recuperação' }}
+          </button>
+        </form>
+      </div>
+
+      <div *ngIf="emailEnviado" class="success-message">
+        <div class="success-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h3>Email Enviado!</h3>
+        <p>Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.</p>
+        <p class="email-info">Email enviado para: <strong>{{ email }}</strong></p>
+        <button class="btn btn-secondary" (click)="voltarParaLogin()">
+          Voltar ao Login
+        </button>
+      </div>
+    </div>
+    <div class="graphic-panel"></div>
+  </div>
+</div>

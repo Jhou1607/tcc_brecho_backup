@@ -1,0 +1,197 @@
+@use '../../../styles' as styles;
+// Se você criar um _product-grid.scss, descomente a linha abaixo e mova os estilos de produto para lá.
+// @use '../../../styles/product-grid' as productGrid;
+@use 'sass:math';
+@use 'sass:color';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto; // Garante que o componente da página tente ocupar o espaço
+  width: 100%;
+}
+
+.catalogo-page-container {
+  max-width: 1200px; // Um pouco mais largo para acomodar 4 colunas se desejar
+  width: 100%;
+  margin: 0 auto;
+  padding: styles.$brecho-spacing-large styles.$brecho-spacing-medium;
+  flex: 1; // Permite que este container cresça
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.catalogo-title {
+  text-align: center;
+  font-size: 2.5rem; // Aumentado ligeiramente
+  margin-bottom: styles.$brecho-spacing-xlarge; // Mais espaço abaixo do título
+  color: styles.$brecho-primary-text; // Usar primary text para títulos principais
+  font-family: styles.$brecho-font-headings;
+  font-weight: 700; // Mais peso
+  letter-spacing: 0.5px;
+}
+
+// Estilos de product-grid (poderiam estar em _product-grid.scss)
+.product-grid-wrapper {
+  flex-grow: 1; // Faz o wrapper do grid crescer, ajudando a empurrar o footer
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); // Responsivo
+  gap: styles.$brecho-spacing-large; // Espaçamento entre os itens
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.product-item {
+  background-color: var(--brecho-product-item-bg);
+  border: 1px solid var(--brecho-product-border-color);
+  border-radius: var(--brecho-border-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: fadeInUp 0.5s ease-out;
+  animation-fill-mode: backwards; // Garante que o estado inicial da animação seja aplicado
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(styles.$brecho-secondary-text, 0.15);
+  }
+
+  .product-image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 125%; // Aspect ratio (e.g., 4:5). Ajuste conforme suas imagens. (altura / largura * 100%)
+    background-color: var(--brecho-placeholder-bg); // Cor de fundo para imagens
+    overflow: hidden;
+
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; // Garante que a imagem cubra o container sem distorcer
+      transition: transform 0.3s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+  }
+
+  .favorite-btn {
+    position: absolute;
+    top: styles.$brecho-spacing-medium;
+    right: styles.$brecho-spacing-medium;
+    background-color: rgba(styles.$brecho-content-bg, 0.8);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--brecho-heart-icon-color);
+    font-size: 1.2rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+    z-index: 10;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &.favorited {
+      color: var(--brecho-heart-favorited-color);
+      animation: pulse 0.3s ease-out;
+    }
+
+    i {
+      display: block;
+    }
+  }
+
+  .product-info {
+    padding: styles.$brecho-spacing-medium;
+    text-align: left; // Alinhar texto à esquerda
+    background-color: var(--brecho-content-bg); // Fundo para a info do produto
+    border-top: 1px solid var(--brecho-product-border-color);
+
+
+    .product-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: styles.$brecho-primary-text;
+      margin-bottom: styles.$brecho-spacing-xsmall;
+      // Limitar texto a 2 linhas e adicionar ellipsis
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-height: calc(1rem * 1.6 * 2); // Para 2 linhas, ajuste o line-height se mudar
+    }
+
+    .product-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: styles.$brecho-logo-color; // Usar cor de destaque para preço
+    }
+  }
+}
+
+// Animação escalonada para itens do grid
+@for $i from 1 through 20 { // Assumindo no máximo 20 itens visíveis inicialmente
+  .product-item:nth-child(#{$i}) {
+    animation-delay: #{math.div($i, 20)}s; // Animação mais rápida para os primeiros
+  }
+}
+
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: styles.$brecho-spacing-xlarge; // Mais espaço acima da paginação
+  padding-bottom: styles.$brecho-spacing-medium; // Espaço abaixo
+  gap: styles.$brecho-spacing-medium;
+
+  .pagination-button {
+    background-color: styles.$brecho-accent-color;
+    color: styles.$brecho-button-text-color;
+    border: none;
+    border-radius: 25px; // Mais arredondado
+    padding: styles.$brecho-spacing-small styles.$brecho-spacing-large; // Mais padding horizontal
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600; // Mais peso
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+    &:hover:not(:disabled) {
+      background-color: color.scale(styles.$brecho-accent-color, $lightness: -15%);
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0px);
+    }
+
+    &:disabled {
+      background-color: color.adjust(styles.$brecho-accent-color, $lightness: 15%, $saturation: -20%);
+      cursor: not-allowed;
+      opacity: 0.6;
+      box-shadow: none;
+    }
+  }
+
+  .pagination-info {
+    font-size: 1rem;
+    color: styles.$brecho-secondary-text;
+    font-weight: 500;
+  }
+}

@@ -1,0 +1,159 @@
+<header class="search-header">
+  <div class="header-title">LoopLook</div>
+  <div class="close-icon" (click)="closeSearchPage()">
+    <fa-icon [icon]="faTimesSolid"></fa-icon>
+  </div>
+</header>
+
+<main class="search-main-content fade-in">
+  <div class="search-input-container">
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Pesquisar por produto"
+      [(ngModel)]="searchTerm"
+      (keyup.enter)="search(searchTerm)" />
+    <div class="search-actions">
+      <button
+        class="clear-search-button"
+        *ngIf="searchTerm"
+        (click)="clearSearch()"
+        title="Limpar pesquisa"
+      >
+        <fa-icon [icon]="faTimesSolid"></fa-icon>
+      </button>
+      <button
+        class="search-button"
+        (click)="search(searchTerm)"
+        title="Pesquisar"
+      >
+        <fa-icon [icon]="faSearchSolid"></fa-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="trending-searches">
+    <span class="trending-title">PESQUISAS EM ALTA</span>
+    <span
+      *ngFor="let term of trendingSearches"
+      class="trending-term"
+      (click)="clickTrendingSearch(term)"
+    >
+      {{ term }}
+    </span>
+  </div>
+
+  <!-- Seção de Últimos Lançamentos (estilo Louis Vuitton) -->
+  <div class="latest-products-section" *ngIf="!hasSearched && latestProducts.length > 0">
+    <h2 class="section-title">Últimos Lançamentos</h2>
+    <div class="latest-products-grid">
+      <div 
+        class="product-card scale-in" 
+        *ngFor="let product of latestProducts" 
+        (click)="goToProductDetail(product.id)"
+      >
+        <div class="product-image-container">
+          <img 
+            [ngSrc]="product.images && product.images.length > 0 ? getImagemUrl(product.images[0].url) : 'assets/produtos/placeholder-product.png'"
+            [alt]="product.nome_produto" 
+            loading="lazy" 
+            width="225" 
+            height="225"
+          >
+          <button type="button" class="favorite-btn" [class.favorited]="product.is_favorited" (click)="$event.stopPropagation(); toggleFavorite(product.id, $event)">
+            <i [ngClass]="product.is_favorited ? 'fas fa-heart' : 'far fa-heart'"></i>
+          </button>
+        </div>
+        <div class="product-info">
+          <div class="product-name">{{ product.nome_produto }}</div>
+          <div class="product-price">{{ product.preco | currency:'BRL':'symbol':'1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resultados da Busca -->
+  <div class="search-results-section" *ngIf="hasSearched">
+    <div class="search-header-results">
+      <span class="results-count">
+        {{ totalResults }} resultados para '{{ searchTerm }}'
+      </span>
+      <button class="filter-btn" (click)="toggleFilterPanel()">
+        <i class="fas fa-filter"></i> Filtrar
+      </button>
+    </div>
+
+    <!-- Painel de Filtros Lateral -->
+    <div class="filter-panel" [@slideInOut]="isFilterPanelOpen ? 'in' : 'out'" *ngIf="isFilterPanelOpen">
+      <div class="filter-panel-header">
+        <span>Filtrar por</span>
+        <button class="close-btn" (click)="toggleFilterPanel()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="filter-panel-body">
+        <ng-container *ngFor="let filtro of filterCategories">
+          <div class="filter-section">
+            <div class="filter-section-header" (click)="toggleAccordion(filtro.key)">
+              <span>{{ filtro.label }}</span>
+              <i [ngClass]="accordionOpen[filtro.key] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
+            </div>
+            <div class="filter-section-options" *ngIf="accordionOpen[filtro.key]">
+              <ng-container *ngFor="let option of filtro.options">
+                <label class="filter-option">
+                  <input
+                    type="checkbox"
+                    [checked]="selectedFilters[filtro.key].includes(option)"
+                    (change)="onFilterChange(filtro.key, option, getCheckboxChecked($event))"
+                  />
+                  <span>{{ option | titlecase }}</span>
+                </label>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="filter-panel-footer">
+        <button class="clear-btn" (click)="clearFilters()">Limpar filtros</button>
+        <button class="show-btn" (click)="applyFilters()">Mostrar produtos</button>
+      </div>
+    </div>
+
+    <div class="search-results-grid">
+      <div *ngIf="isLoading" class="loading-indicator">Buscando...</div>
+      <div *ngIf="error" class="error-message">{{ error }}</div>
+
+      <div class="product-grid" *ngIf="products.length">
+        <div class="product-item scale-in" *ngFor="let product of products" (click)="goToProductDetail(product.id)">
+          <div class="product-image-container">
+            <img [ngSrc]="product.images && product.images.length > 0 ? getImagemUrl(product.images[0].url) : 'assets/produtos/placeholder-product.png'"
+                 [alt]="product.nome_produto" loading="lazy" width="225" height="225">
+          </div>
+          <button type="button" class="favorite-btn" [class.favorited]="product.is_favorited" (click)="$event.stopPropagation(); toggleFavorite(product.id, $event)">
+            <i [ngClass]="product.is_favorited ? 'fas fa-heart' : 'far fa-heart'"></i>
+          </button>
+          <div class="product-info">
+            <div class="product-name">{{ product.nome_produto }}</div>
+            <div class="product-price">{{ product.preco | currency:'BRL':'symbol':'1.2-2' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading && !error && !products.length && hasSearched" class="no-results">
+        Nenhum produto encontrado para "{{ searchTerm }}".
+      </div>
+
+      <div class="pagination" *ngIf="lastPage > 1">
+        <button class="pagination-button" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+          Anterior
+        </button>
+        <span class="pagination-info">Página {{ currentPage }} de {{ lastPage }}</span>
+        <button class="pagination-button" [disabled]="currentPage === lastPage" (click)="changePage(currentPage + 1)">
+          Próxima
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<app-footer></app-footer>

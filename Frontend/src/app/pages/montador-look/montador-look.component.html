@@ -1,0 +1,188 @@
+<app-header></app-header>
+<div class="montador-look-container">
+  <div class="title-banner">
+    <h1>Montar Look</h1>
+  </div>
+  <div class="montador-box">
+
+  <nz-modal [(nzVisible)]="showErroDownImg"
+            nzTitle="Erro ao baixar imagem"
+            [nzFooter]="null"
+            [nzWidth]="'600px'"
+            [nzClosable]= "true"
+            [nzMaskClosable]="true"
+            (nzOnCancel) = "closeInfoDownImg()"
+  >
+    <ng-container *nzModalContent>
+      <p>
+        Não foi possível baixar a imagem do link fornecido, provavelmente por restrições do site que a hospeda.
+      </p>
+      <p>
+        Tente o 1º método, de carregar uma imagem local, e no campo "Nome" da janela de seleção de arquivo cole o link da imagem e clique em "Abrir"
+      </p>
+      <img src="assets/images/open_img.png" style="width: 100%;">
+    </ng-container>
+
+  </nz-modal>
+
+
+  <nz-modal [(nzVisible)]="showAddImg"
+            [nzTitle]="'Adicionar ' + currentGroup?.name"
+            [nzFooter]="null"
+            [nzClosable]= "true"
+            [nzMaskClosable]="true"
+            (nzOnCancel) = "cancelAddImg()"
+  >
+    <ng-container *nzModalContent>
+
+      <nz-steps [nzCurrent]="currentStep">
+        <nz-step nzTitle="Carregar imagem"></nz-step>
+        <nz-step nzTitle="Ajustar imagem"></nz-step>
+      </nz-steps>
+
+      <div class="steps-content" *ngIf="currentStep == 0">
+        <div  *ngIf="loadingImg" class="dv-processing-img">
+          <div class="proccess-image" style="margin: auto">
+            <nz-spin nzTip="aguarde...">
+            </nz-spin>
+          </div>
+        </div>
+        <div style="text-align: center">
+
+          <nz-upload
+            nzType="drag"
+            [nzMultiple]="false"
+            [(nzFileList)]="fileList"
+            [nzLimit]="1"
+            [nzSize]="2048"
+            [nzCustomRequest]="handleUploadRequest"
+            [nzAccept]="'image/png, image/jpeg'"
+            [nzFileListRender]="emptyFileListRenderTemplate"
+            nzAction="#"
+            [nzBeforeUpload]="beforeUploadImgLocal"
+            (nzChange)="imgLocalLoaded($event)"
+          >
+            <ng-template #emptyFileListRenderTemplate></ng-template>
+            <p class="ant-upload-drag-icon">
+              <nz-icon nzType="inbox" />
+            </p>
+            <p class="ant-upload-text">Clique aqui ou arraste uma imagem para carregá-la </p>
+          </nz-upload>
+          <br>
+          <p>ou</p>
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" [nzPrefix]="prefixLink">
+            <input type="text" nz-input placeholder="Carregue a imagem de uma Url" [(ngModel)]="imgFromUrl" />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <button nz-button  nzSearch (click)="loadImgFromUrl()" [disabled]="!isValidUrl(imgFromUrl)" >
+              <nz-icon nzType="cloud-download" /></button>
+          </ng-template>
+          <ng-template #prefixLink><nz-icon nzType="link" /></ng-template>
+
+        </div>
+
+      </div>
+
+      <div class="steps-content" *ngIf="lastCroppedBlob && currentStep == 1">
+        <div class="cropper-wrapper">
+          <div style="color: #243164;  width: 100%; text-align: center;">recorte a imagem removendo espaços desnecessários</div>
+          <image-cropper
+            #imageCropperRef
+            [imageChangedEvent]="imageChangedEvent"
+            [imageURL]="previewUrl"
+            [onlyScaleDown]="true"
+            [maintainAspectRatio]="false"
+            output="blob"
+            format="png"
+            (imageCropped)="imageCropped($event)"
+            (imageLoaded)="imageLoaded($event)"
+            (cropperReady)="cropperReady()"
+            (loadImageFailed)="loadImageFailed()"
+          ></image-cropper>
+        </div>
+      </div>
+
+      <div class="steps-action">
+
+        @if (currentStep == 1) {
+          <button nz-button nzType="default" (click)="preStep()">
+            <span>Voltar</span>
+          </button>
+          <button nz-button nzType="default" (click)="saveAddImg()">
+            <span>Finalizar</span>
+          </button>
+        }
+
+      </div>
+
+    </ng-container>
+  </nz-modal>
+
+
+
+    <div class="main-layout">
+
+
+    <div class="canvas-column">
+      <div class="btn-wrapper show-mobile" nz-flex [nzGap]="'middle'" nzWrap="wrap" nzJustify="space-evenly" style="margin-bottom: 10px; gap: 3px">
+        <button *ngFor="let group of clothingGroups"  style="width: 50px; height: 50px; padding: 0" nz-button >
+          <img [src]="group.icon" style="width: 40px" />
+        </button>
+      </div>
+      <div class="canvas-container">
+        <canvas #canvas></canvas>
+      </div>
+      <div class="action-buttons">
+        <button class="baixar-look-btn" (click)="exportLookAsPng()">
+          <i class="fas fa-download"></i>
+          Baixar Look
+        </button>
+        <button class="salvar-look-btn" (click)="saveLook()">
+          <i class="fas fa-save"></i>
+          Salvar Look
+        </button>
+      </div>
+    </div>
+    <div class="groups-column hidden-mobile">
+      <nz-collapse [nzAccordion]="true">
+        <nz-collapse-panel *ngFor="let group of clothingGroups" [nzHeader]="group.name">
+          <div class="items">
+            <div class="add-item" title="Carregar item" (click)="addItem(group)"><nz-icon nzType="plus"></nz-icon> </div>
+            <div class="proccess-image" *ngIf="loadingImg" >
+              <nz-spin nzTip="aguarde...">
+              </nz-spin>
+            </div>
+            <div *ngFor="let item of group.items" class="item">
+              <div class="image-container">
+                <img [src]="item.canvasUrl" [alt]="item.name" [title]="item.name" class="item-image" (click)="selectClothingItem(group, item)" />
+                <button *ngIf="item.origem === 'catalog'" class="heart-btn" (click)="onToggleFavorite(item, group)" title="Remover dos favoritos">
+                  <fa-icon [icon]="faSolidHeart" style="color: #e74c3c;"></fa-icon>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </nz-collapse-panel>
+      </nz-collapse>
+      <ng-template #characterIcon><nz-icon  nzType="heart" nzTheme="fill" ></nz-icon></ng-template>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para nomear o look -->
+<div class="modal-overlay" *ngIf="showNomeLookModal" (click)="cancelarNomeLook()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Nomear Look</h3>
+    <input 
+      type="text" 
+      [(ngModel)]="nomeLook" 
+      placeholder="Digite o nome do look (opcional)"
+      class="nome-look-input"
+      (keyup.enter)="confirmarNomeLook()"
+    />
+    <div class="modal-buttons">
+      <button class="btn-cancelar" (click)="cancelarNomeLook()">Cancelar</button>
+      <button class="btn-confirmar" (click)="confirmarNomeLook()">Salvar</button>
+    </div>
+  </div>
+</div>

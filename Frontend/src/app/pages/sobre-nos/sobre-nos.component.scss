@@ -1,0 +1,100 @@
+@use '../../../styles' as styles;
+@use 'sass:math';
+@use 'sass:color';
+
+.sobre-nos-page-wrapper {
+  background-color: styles.$brecho-dark-page-bg;
+  flex: 1;
+}
+
+.title-bar-wrapper {
+  background-color: styles.$brecho-title-bar-bg;
+  padding: styles.$brecho-spacing-medium 0;
+  text-align: center;
+  margin-bottom: styles.$brecho-spacing-large;
+
+  .page-main-title {
+    font-family: styles.$brecho-font-headings;
+    color: styles.$brecho-title-bar-text;
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.sobre-nos-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 styles.$brecho-spacing-medium styles.$brecho-spacing-large;
+  color: styles.$brecho-secondary-text;
+}
+
+.image-main-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: styles.$brecho-spacing-large;
+}
+
+.image-placeholder {
+  background-color: styles.$brecho-placeholder-bg;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: color.adjust(styles.$brecho-placeholder-bg, $lightness: -30%);
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+
+  &.image-brecho {
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
+  }
+
+  &.image-equipe {
+    width: 100%;
+    max-width: 250px;
+    height: 280px;
+    flex-shrink: 0;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+  }
+}
+
+.text-block {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: styles.$brecho-spacing-large;
+  color: #f0f0f0; // Texto claro sobre fundo escuro
+
+  p:first-child {
+    font-weight: 600;
+    color: #f0f0f0; // Texto claro sobre fundo escuro
+    font-size: 1.1rem;
+    margin-bottom: styles.$brecho-spacing-small;
+  }
+}
+
+.equipe-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: styles.$brecho-spacing-medium;
+  margin-bottom: styles.$brecho-spacing-large;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: styles.$brecho-spacing-large;
+  }
+
+  .equipe-text {
+    flex: 1;
+    margin-bottom: 0;
+  }
+}

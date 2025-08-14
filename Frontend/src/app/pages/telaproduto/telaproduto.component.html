@@ -1,0 +1,135 @@
+<app-header></app-header>
+<div class="telaproduto-page-main-wrapper">
+  <div *ngIf="isLoading" class="loading-indicator-wrapper">Carregando...</div>
+  <div *ngIf="error && !isLoading && !product" class="error-indicator-wrapper">{{ error }}</div>
+
+  <ng-container *ngIf="product; else notFound">
+    <div *ngIf="!isLoading && !error" class="product-detail-content-box">
+      <div class="product-detail-card">
+        <div class="product-image-column">
+          <div class="thumbnail-list-wrapper">
+            <div class="thumbnail-list" *ngIf="product.images && product.images.length > 1">
+              <img *ngFor="let imageObj of product.images; let i = index"
+                   [src]="getImagemUrl(imageObj.url)"
+                   [alt]="product.nome_produto + ' - Vista ' + (i + 1)"
+                   class="thumbnail-item"
+                   [class.selected]="getImagemUrl(imageObj.url) === getImagemUrl(selectedImage)"
+                   (click)="selectImage(imageObj.url)">
+            </div>
+          </div>
+          <div class="main-product-image-wrapper">
+            <div class="main-product-image-container" (click)="openImageModal(getImagemUrl(selectedImage))">
+              <img [src]="getImagemUrl(selectedImage)"
+                   [alt]="product.nome_produto || 'Imagem do Produto'">
+            </div>
+          </div>
+        </div>
+
+        <div class="product-info-column">
+          <h1 class="product-title">{{ product.nome_produto }}</h1>
+
+          <div class="product-price-display" *ngIf="pageMode === 'catalogo' && product.preco">
+            {{ product.preco | currency:'BRL':'symbol':'1.2-2' }}
+          </div>
+
+          <div class="product-attributes-container">
+            <div class="product-attributes">
+              <div class="attribute-item" *ngIf="product.marca">
+                <span class="attribute-label">Marca</span>
+                <span class="attribute-value">{{ product.marca }}</span>
+              </div>
+              <div class="attribute-item" *ngIf="product.modelo && pageMode === 'catalogo'">
+                <span class="attribute-label">Modelo</span>
+                <span class="attribute-value">{{ product.modelo }}</span>
+              </div>
+              <div class="attribute-item" *ngIf="product.estacao">
+                <span class="attribute-label">Estação</span>
+                <span class="attribute-value">{{ product.estacao }}</span>
+              </div>
+              <div class="attribute-item" *ngIf="product.categoria">
+                <span class="attribute-label">Categoria</span>
+                <span class="attribute-value">{{ product.categoria }}</span>
+              </div>
+              <div class="attribute-item" *ngIf="product.genero">
+                <span class="attribute-label">Gênero</span>
+                <span class="attribute-value">{{ product.genero | titlecase }}</span>
+              </div>
+              <div class="attribute-item" *ngIf="product.cor">
+                <span class="attribute-label">Cor</span>
+                <span class="attribute-value">{{ product.cor }}</span>
+              </div>
+              <div class="attribute-item" *ngIf="product.numeracao && pageMode === 'catalogo'">
+                <span class="attribute-label">Numeração/Tamanho</span>
+                <span class="attribute-value">{{ product.numeracao }}</span>
+              </div>
+              <div class="attribute-item" *ngIf="product.estado_conservacao && pageMode === 'catalogo'">
+                <span class="attribute-label">Estado de Conservação</span>
+                <span class="attribute-value">{{ product.estado_conservacao }}</span>
+              </div>
+              <div class="attribute-item" *ngIf="product.material">
+                <span class="attribute-label">Material</span>
+                <span class="attribute-value">{{ product.material }}</span>
+              </div>
+              <div class="attribute-item" *ngIf="product.ocasioes && product.ocasioes.length">
+                <span class="attribute-label">Ocasião de Uso</span>
+                <span class="attribute-value">{{ product.ocasioes.join(', ') }}</span>
+              </div>
+              <div class="attribute-item" *ngIf="product.estilos && product.estilos.length">
+                <span class="attribute-label">Estilo</span>
+                <span class="attribute-value">{{ product.estilos.join(', ') }}</span>
+              </div>
+            </div>
+          </div>
+
+          <button *ngIf="pageMode === 'catalogo'" class="btn btn-primary btn-action favorited-btn" (click)="toggleProductFavorite()" [class.favorited]="product.is_favorited">
+            <i [ngClass]="product.is_favorited ? 'fas fa-heart' : 'far fa-heart'"></i>
+            {{ product.is_favorited ? 'Remover dos Favoritos' : 'Adicionar à Favoritos' }}
+          </button>
+
+          <div *ngIf="pageMode === 'armario'" class="actions-container">
+            <button class="btn btn-secondary btn-action" (click)="deleteProduto()">
+              <fa-icon [icon]="faTrash"></fa-icon>
+              Remover Peça
+            </button>
+            <button class="btn btn-primary btn-action">
+              <fa-icon [icon]="faEdit"></fa-icon>
+              Editar Peça
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #notFound>
+    <div *ngIf="!isLoading && !product && !error" class="not-found-message">
+      Produto não encontrado.
+    </div>
+  </ng-template>
+</div>
+
+<div class="image-modal-overlay" *ngIf="isModalOpen" (click)="closeImageModal()">
+  <div class="image-modal-content" (click)="$event.stopPropagation()" #modalContent>
+    <button class="modal-close-btn" (click)="closeImageModal()" aria-label="Fechar modal">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="modal-image-wrapper" (wheel)="onWheelZoom($event)" #modalImageWrapper>
+      <img [src]="modalImageUrl"
+           alt="Imagem ampliada do produto"
+           class="modal-image-zoomable"
+           #modalImageZoomable
+           [style.transform]="'translate(' + panX + 'px, ' + panY + 'px) scale(' + currentZoomLevel + ')'"
+           [style.transformOrigin]="transformOrigin"
+           (mousedown)="startPan($event)"
+           (mousemove)="panImage($event)"
+           (mouseup)="endPan()"
+           (mouseleave)="endPan()">
+    </div>
+    <div class="modal-zoom-controls">
+      <button (click)="zoomIn($event)"><i class="fas fa-search-plus"></i></button>
+      <button (click)="resetZoom()"><i class="fas fa-search"></i></button>
+      <button (click)="zoomOut($event)"><i class="fas fa-search-minus"></i></button>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

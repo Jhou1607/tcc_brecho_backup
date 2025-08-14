@@ -1,0 +1,420 @@
+// ========================================
+// PRODUTOS COMPONENT STYLES
+// ========================================
+
+.produtos-container {
+  padding: 24px;
+  background: #fbf9f4;
+  min-height: 100vh;
+}
+
+// Page Header
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  
+  h1 {
+    color: #385246;
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  .add-button {
+    background: linear-gradient(135deg, #9bad9a 0%, #8c624d 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(155, 173, 154, 0.4);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(155, 173, 154, 0.5);
+    }
+  }
+}
+
+// Table Card
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d0c9c0;
+  
+  ::ng-deep .ant-card-body {
+    padding: 24px;
+  }
+}
+
+// Product Image in Table
+.product-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #d0c9c0;
+}
+
+.no-image {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-radius: 8px;
+  border: 2px dashed #d0c9c0;
+  color: #8c624d;
+}
+
+// Modal Styles
+::ng-deep .ant-modal {
+  .ant-modal-header {
+    background: linear-gradient(135deg, #9bad9a 0%, #8c624d 100%);
+    border-radius: 12px 12px 0 0;
+    
+    .ant-modal-title {
+      color: white;
+      font-weight: 600;
+      font-size: 18px;
+    }
+    
+    .ant-modal-close {
+      color: white;
+      
+      &:hover {
+        color: rgba(255, 255, 255, 0.8);
+      }
+    }
+  }
+  
+  .ant-modal-body {
+    padding: 24px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+}
+
+// Form Styles
+.product-form {
+  .form-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+    
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+  
+  .form-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    
+    .field-label {
+      color: #385246;
+      font-weight: 600;
+      font-size: 14px;
+      margin: 0;
+      
+      .required {
+        color: #ff4d4f;
+        margin-left: 4px;
+      }
+    }
+    
+    // Input padrão
+    input[nz-input] {
+      border: 2px solid #d0c9c0 !important;
+      border-radius: 8px !important;
+      padding: 10px 14px !important;
+      font-size: 14px !important;
+      transition: all 0.3s ease !important;
+      background: #fbf9f4 !important;
+      height: 40px !important;
+      
+      &:focus {
+        border-color: #9bad9a !important;
+        box-shadow: 0 0 0 2px rgba(155, 173, 154, 0.2) !important;
+        background: white !important;
+      }
+      
+      &:hover {
+        border-color: #9bad9a !important;
+      }
+      
+      &::placeholder {
+        color: #8c624d !important;
+        opacity: 0.6 !important;
+      }
+    }
+  }
+}
+
+// Ng-Zorro Select customization - mais específico
+::ng-deep .product-form {
+  .ant-select {
+    .ant-select-selector {
+      border: 2px solid #d0c9c0 !important;
+      border-radius: 8px !important;
+      padding: 8px 12px !important;
+      background: #fbf9f4 !important;
+      transition: all 0.3s ease !important;
+      height: 40px !important;
+      
+      &:hover {
+        border-color: #9bad9a !important;
+      }
+    }
+    
+    &.ant-select-focused .ant-select-selector {
+      border-color: #9bad9a !important;
+      box-shadow: 0 0 0 2px rgba(155, 173, 154, 0.2) !important;
+      background: white !important;
+    }
+  }
+  
+  // Ng-Zorro Input Number customization - mais específico
+  .ant-input-number {
+    width: 100% !important;
+    
+    .ant-input-number-input {
+      border: 2px solid #d0c9c0 !important;
+      border-radius: 8px !important;
+      padding: 8px 12px !important;
+      background: #fbf9f4 !important;
+      transition: all 0.3s ease !important;
+      height: 40px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      
+      &:focus {
+        border-color: #9bad9a !important;
+        box-shadow: 0 0 0 2px rgba(155, 173, 154, 0.2) !important;
+        background: white !important;
+      }
+      
+      &:hover {
+        border-color: #9bad9a !important;
+      }
+    }
+    
+    // Remove os controles de + e - para evitar conflitos
+    .ant-input-number-handler-wrap {
+      display: none !important;
+    }
+  }
+}
+
+// Image Upload Section
+.image-upload-section {
+  margin-bottom: 24px;
+  
+  .section-label {
+    color: #385246;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 12px;
+    display: block;
+  }
+  
+  .upload-area {
+    margin-bottom: 16px;
+    
+    .upload-button {
+      width: 100%;
+      height: 60px;
+      border: 2px dashed #d0c9c0;
+      border-radius: 12px;
+      background: #fbf9f4;
+      color: #8c624d;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        border-color: #9bad9a;
+        background: #dde5db;
+        color: #385246;
+      }
+      
+      nz-icon {
+        font-size: 20px;
+        margin-right: 8px;
+      }
+    }
+  }
+  
+  .image-previews {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+    
+    .image-preview-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #d0c9c0;
+      
+      img {
+        width: 100%;
+        height: 100px;
+        object-fit: cover;
+      }
+      
+      .remove-image-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: rgba(255, 77, 79, 0.9);
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 10px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background: #ff4d4f;
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+  
+  .upload-info {
+    p {
+      color: #8c624d;
+      font-size: 13px;
+      margin: 3px 0;
+      
+      nz-icon {
+        color: #faad14;
+        margin-right: 6px;
+      }
+    }
+  }
+}
+
+// Form Actions
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid #d0c9c0;
+  
+  button {
+    min-width: 100px;
+    height: 40px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    
+    &.submit-button {
+      background: linear-gradient(135deg, #9bad9a 0%, #8c624d 100%);
+      border: none;
+      box-shadow: 0 4px 12px rgba(155, 173, 154, 0.4);
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(155, 173, 154, 0.5);
+      }
+      
+      &:disabled {
+        background: #d0c9c0;
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+// Table Customization
+::ng-deep .ant-table {
+  .ant-table-thead > tr > th {
+    background: #fbf9f4;
+    color: #385246;
+    font-weight: 600;
+    border-bottom: 2px solid #d0c9c0;
+  }
+  
+  .ant-table-tbody > tr > td {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .ant-table-tbody > tr:hover > td {
+    background: #dde5db;
+  }
+}
+
+// Pagination Customization
+::ng-deep .ant-pagination {
+  .ant-pagination-item {
+    border: 2px solid #d0c9c0;
+    border-radius: 6px;
+    
+    &:hover {
+      border-color: #9bad9a;
+    }
+    
+    &.ant-pagination-item-active {
+      background: #9bad9a;
+      border-color: #9bad9a;
+      
+      a {
+        color: white;
+      }
+    }
+  }
+  
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    border: 2px solid #d0c9c0;
+    border-radius: 6px;
+    
+    &:hover {
+      border-color: #9bad9a;
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .produtos-container {
+    padding: 16px;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    
+    h1 {
+      font-size: 24px;
+      text-align: center;
+    }
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+} 

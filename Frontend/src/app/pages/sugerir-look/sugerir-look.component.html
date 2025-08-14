@@ -1,0 +1,113 @@
+<app-header></app-header>
+<main class="sugerir-look-container">
+  <div class="title-banner">
+    <h1>Sugestão de Look</h1>
+  </div>
+  <div class="sugestao-box">
+    <button class="escolher-peca-btn" (click)="abrirPopupSelecaoPeca()">
+      <i class="fas fa-tshirt"></i>
+      <span>Escolher peça base</span>
+    </button>
+    <div class="filtro-origem-btns">
+      <button [class.active]="filtroOrigem === 'tudo'" (click)="setFiltroOrigem('tudo')">Tudo</button>
+      <button [class.active]="filtroOrigem === 'usuario'" (click)="setFiltroOrigem('usuario')">Só Armário</button>
+      <button [class.active]="filtroOrigem === 'loja'" (click)="setFiltroOrigem('loja')">Só Loja</button>
+    </div>
+
+    <app-selecionar-peca-modal
+      [aberto]="modalAberto"
+      (fechar)="fecharPopupSelecaoPeca()"
+      (selecionar)="onSelecionarPeca($event)"
+      (pecasUsuarioLoaded)="setPecasUsuario($event)"
+      (pecasLojaLoaded)="setPecasLoja($event)">
+    </app-selecionar-peca-modal>
+    
+    <!-- Layout principal com canvas e previews -->
+    <div class="main-layout" *ngIf="pecaBaseSelecionada">
+      <!-- Coluna do canvas -->
+      <div class="canvas-column">
+        <div class="canvas-container">
+          <canvas #canvasSugerirLook></canvas>
+        </div>
+        
+        <!-- Botões de ação -->
+        <div class="action-buttons">
+          <button class="trocar-sugestao-btn" (click)="trocarSugestao()">
+            <i class="fas fa-sync-alt"></i>
+            Trocar Sugestão
+          </button>
+          
+          <button class="salvar-look-btn" (click)="salvarLook()" [disabled]="!pecaBaseSelecionada || sugestaoAtual.length === 0">
+            <i class="fas fa-save"></i>
+            Salvar Look
+          </button>
+          
+          <button class="baixar-look-btn" (click)="baixarLook()" [disabled]="!pecaBaseSelecionada || sugestaoAtual.length === 0">
+            <i class="fas fa-download"></i>
+            Baixar Look
+          </button>
+        </div>
+      </div>
+
+      <!-- Coluna dos previews -->
+      <div class="previews-column">
+        <div class="previews-title">Sugestões Complementares</div>
+        
+        <!-- Peça base -->
+        <div class="base-piece-card">
+          <div class="peca-label">Peça Base</div>
+          <img [src]="pecaBaseSelecionada.image_url" [alt]="pecaBaseSelecionada.nome" class="peca-miniatura" />
+          <div class="peca-info">
+            <div class="peca-nome">{{ pecaBaseSelecionada.nome }}</div>
+            <div class="peca-tipo">{{ pecaBaseSelecionada.categoria | titlecase }}</div>
+            <div class="peca-origem">{{ pecaBaseSelecionada.origem === 'usuario' ? 'Armário' : 'Loja' }}</div>
+          </div>
+        </div>
+
+        <!-- Sugestões complementares -->
+        <div class="sugestoes-container" *ngIf="!mensagemErroSugestao; else erroSugestao">
+          <div *ngFor="let peca of sugestaoAtual; let i = index" class="sugestao-card">
+            <div class="peca-label">{{ getTipoLabel(i) }}</div>
+            <img [src]="peca.image_url" [alt]="peca.nome" class="peca-miniatura" />
+            <div class="peca-info">
+              <div class="peca-nome">{{ peca.nome }}</div>
+              <div class="peca-tipo">{{ peca.categoria | titlecase }}</div>
+              <div class="peca-origem">{{ peca.origem === 'usuario' ? 'Armário' : 'Loja' }}</div>
+            </div>
+            <button class="trocar-individual-btn" (click)="trocarSugestaoIndividual(i)" title="Trocar esta sugestão">
+              <i class="fas fa-sync-alt"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Mensagem de erro -->
+        <ng-template #erroSugestao>
+          <div class="erro-sugestao">{{ mensagemErroSugestao }}</div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Placeholder centralizado quando não há peça selecionada -->
+    <div class="sugestao-placeholder" *ngIf="!pecaBaseSelecionada">
+      <span>Escolha uma peça para ver sugestões de look!</span>
+    </div>
+  </div>
+</main>
+
+<!-- Modal para nomear o look -->
+<div class="modal-overlay" *ngIf="showNomeLookModal" (click)="cancelarNomeLook()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Nomear Look</h3>
+    <input 
+      type="text" 
+      [(ngModel)]="nomeLook" 
+      placeholder="Digite o nome do look (opcional)"
+      class="nome-look-input"
+      (keyup.enter)="confirmarNomeLook()"
+    />
+    <div class="modal-buttons">
+      <button class="btn-cancelar" (click)="cancelarNomeLook()">Cancelar</button>
+      <button class="btn-confirmar" (click)="confirmarNomeLook()">Salvar</button>
+    </div>
+  </div>
+</div> 

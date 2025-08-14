@@ -1,0 +1,206 @@
+<app-header></app-header>
+<div class="cadastro-produto-page-wrapper">
+  <nz-card class="form-card-container">
+    <h1 class="form-title">Cadastre sua peça aqui</h1>
+    <p class="form-subtitle">Preencha os campos do formulário:</p>
+
+    <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()" class="product-form">
+      
+      <!-- Two Column Layout -->
+      <div class="form-columns">
+        <!-- Left Column -->
+        <div class="form-column">
+          
+          <!-- Nome da peça -->
+          <div class="form-field">
+            <label class="field-label">
+              Nome da peça <span class="required">*</span>
+            </label>
+            <input 
+              nz-input 
+              formControlName="nome_produto" 
+              placeholder="Nome da peça"
+              class="field-input" />
+          </div>
+
+          <!-- Marca do produto -->
+          <div class="form-field">
+            <label class="field-label">
+              Marca do produto
+            </label>
+            <input 
+              nz-input 
+              formControlName="marca" 
+              placeholder="Marca do produto"
+              class="field-input" />
+          </div>
+
+          <!-- Categoria -->
+          <div class="form-field">
+            <label class="field-label">
+              Categoria <span class="required">*</span>
+            </label>
+            <app-hierarchical-category-selector
+              [selectedCategory]="selectedCategory"
+              (categorySelected)="onCategorySelected($event)">
+            </app-hierarchical-category-selector>
+          </div>
+
+          <!-- Coloração -->
+          <div class="form-field">
+            <label class="field-label">
+              Coloração
+            </label>
+            <input 
+              nz-input 
+              formControlName="cor" 
+              placeholder="Cor do produto"
+              class="field-input" />
+          </div>
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="form-column">
+          
+          <!-- Estação anual -->
+          <div class="form-field">
+            <label class="field-label">
+              Estação anual <span class="required">*</span>
+            </label>
+            <nz-select 
+              formControlName="estacao" 
+              placeholder="Selecione a estação">
+              <nz-option 
+                *ngFor="let est of opcoesEstacoes" 
+                [nzValue]="est" 
+                [nzLabel]="est | titlecase">
+              </nz-option>
+            </nz-select>
+          </div>
+
+          <!-- Ocasião de uso -->
+          <div class="form-field">
+            <label class="field-label">
+              Ocasião de uso <span class="required">*</span>
+            </label>
+            <nz-select 
+              formControlName="ocasioes" 
+              mode="multiple"
+              placeholder="Selecione as ocasiões">
+              <nz-option 
+                *ngFor="let o of opcoesOcasioes" 
+                [nzValue]="o" 
+                [nzLabel]="o | titlecase">
+              </nz-option>
+            </nz-select>
+          </div>
+
+          <!-- Estilo -->
+          <div class="form-field">
+            <label class="field-label">
+              Estilo <span class="required">*</span>
+            </label>
+            <nz-select 
+              formControlName="estilos" 
+              mode="multiple"
+              placeholder="Selecione os estilos">
+              <nz-option 
+                *ngFor="let e of opcoesEstilos" 
+                [nzValue]="e" 
+                [nzLabel]="e | titlecase">
+              </nz-option>
+            </nz-select>
+          </div>
+
+          <!-- Material -->
+          <div class="form-field">
+            <label class="field-label">
+              Material <span class="required">*</span>
+            </label>
+            <nz-select 
+              formControlName="material" 
+              placeholder="Selecione o material">
+              <nz-option 
+                *ngFor="let m of opcoesMateriais" 
+                [nzValue]="m" 
+                [nzLabel]="m | titlecase">
+              </nz-option>
+            </nz-select>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Upload de imagem -->
+      <div class="image-upload-section">
+        <label class="section-label">
+          Adicione a foto do produto aqui <span class="required">*</span>
+        </label>
+        
+        <div class="upload-area">
+          <!-- Preview da imagem -->
+          <div *ngIf="imagePreview" class="image-preview">
+            <img [src]="imagePreview" [alt]="'Preview da imagem'" />
+            <button 
+              type="button" 
+              class="remove-image-btn" 
+              (click)="removeImage()"
+              nz-button 
+              nzType="text" 
+              nzDanger>
+              <nz-icon nzType="delete"></nz-icon>
+            </button>
+          </div>
+          
+          <!-- Botão para abrir o processador de imagem -->
+          <button 
+            *ngIf="!imagePreview" 
+            type="button" 
+            class="upload-button" 
+            (click)="openImageProcessor()"
+            nz-button 
+            nzType="dashed">
+            <nz-icon nzType="upload"></nz-icon>
+            Selecionar e Processar Foto
+          </button>
+        </div>
+        
+        <div class="upload-info">
+          <p>Selecione a imagem principal do produto. Máx 2MB.</p>
+          <p>
+            <nz-icon nzType="star" nzTheme="fill"></nz-icon>
+            Remoção automática de fundo e recorte disponível
+          </p>
+        </div>
+      </div>
+
+      <!-- Botão de cadastro -->
+      <div class="form-actions">
+        <button 
+          nz-button 
+          nzType="primary" 
+          nzSize="large"
+          [nzLoading]="isSubmitting"
+          [disabled]="validateForm.invalid || isSubmitting"
+          class="submit-button">
+          {{ isSubmitting ? 'Cadastrando...' : 'Cadastrar' }}
+        </button>
+      </div>
+
+    </form>
+  </nz-card>
+</div>
+
+<!-- Componente de processamento de imagem -->
+<app-image-upload-processor
+  #imageProcessor
+  title="Processar Imagem do Produto"
+  [showUrlInput]="true"
+  [maxFileSize]="2"
+  [acceptedTypes]="['image/png', 'image/jpeg']"
+  (imageProcessed)="onImageProcessed($event)"
+  (processCancelled)="onImageProcessCancelled()">
+</app-image-upload-processor>
+
+<app-footer></app-footer>

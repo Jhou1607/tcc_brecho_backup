@@ -1,0 +1,39 @@
+.usuarios-page {
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+      color: #385246; // Cor escura da imagem
+    }
+  }
+
+  nz-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(155, 173, 154, 0.15);
+    border: 1px solid #d0c9c0;
+  }
+
+  nz-table {
+    th {
+      font-weight: 600;
+      background-color: #f7f2ec;
+      color: #385246; // Cor escura da imagem
+      border-bottom: 2px solid #d0c9c0;
+    }
+
+    td {
+      vertical-align: middle;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    tbody tr:hover td {
+      background-color: #dde5db;
+    }
+  }
+} 

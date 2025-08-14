@@ -1,0 +1,47 @@
+<nz-layout class="admin-layout">
+  <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
+    <div class="logo">
+      <h2>Admin Panel</h2>
+    </div>
+    <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+      <li nz-menu-item nzMatchRouter routerLink="/admin/dashboard">
+        <span nz-icon nzType="dashboard"></span>
+        <span>Dashboard</span>
+      </li>
+      <li nz-menu-item nzMatchRouter routerLink="/admin/produtos">
+        <span nz-icon nzType="shopping"></span>
+        <span>Produtos</span>
+      </li>
+      <li nz-menu-item nzMatchRouter routerLink="/admin/filtros">
+        <span nz-icon nzType="filter"></span>
+        <span>Filtros</span>
+      </li>
+      <li nz-menu-item nzMatchRouter routerLink="/admin/usuarios">
+        <span nz-icon nzType="user"></span>
+        <span>Usuários</span>
+      </li>
+    </ul>
+  </nz-sider>
+  <nz-layout>
+    <nz-header>
+      <div class="header-content">
+        <div class="header-left">
+          <button nz-button nzType="text" (click)="isCollapsed = !isCollapsed">
+            <span nz-icon nzType="menu"></span>
+          </button>
+        </div>
+        <div class="header-right">
+          <button nz-button nzType="text" (click)="logout()">
+            <nz-avatar nzIcon="user"></nz-avatar>
+            <span>{{ currentUser?.nome_usuario }}</span>
+          </button>
+        </div>
+      </div>
+    </nz-header>
+    <nz-content>
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+  </nz-layout>
+</nz-layout> 

@@ -1,0 +1,110 @@
+<app-header></app-header>
+<div class="perfil-page-main-wrapper">
+  <div class="fixed-notifications-container">
+    <div *ngIf="error" class="notification alert alert-danger">
+      <span>{{ error }}</span>
+      <button class="close-notification" (click)="error = null">&times;</button>
+    </div>
+    <div *ngIf="successMessage" class="notification alert alert-success">
+      <span>{{ successMessage }}</span>
+      <button class="close-notification" (click)="successMessage = null">&times;</button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading && !user" class="loading-indicator-wrapper">
+    <p>Carregando perfil...</p>
+  </div>
+  <div *ngIf="!isLoading && !user && authService.getToken()" class="error-indicator-wrapper alert alert-danger">
+    <p>Não foi possível carregar os dados do usuário. Tente novamente.</p>
+    <button class="btn btn-secondary" (click)="retryFetchUser()">Tentar Novamente</button>
+    <button class="btn btn-secondary" (click)="logout()">Voltar ao Login</button>
+  </div>
+
+
+  <div *ngIf="user && !isLoading" class="perfil-content-box">
+    <div class="profile-card">
+      <div class="profile-avatar-section">
+        <img [src]="user.foto_url || 'assets/default-user-avatar.svg'"
+             alt="Foto de Perfil"
+             class="profile-avatar-img"
+             (error)="handleImageError()" />
+        <button class="btn btn-secondary btn-alterar-foto" (click)="triggerFileInput()">
+          {{ isEditing ? 'Escolher Nova Foto' : 'Alterar Foto' }}
+        </button>
+      </div>
+
+      <div *ngIf="!isEditing">
+        <h2 class="profile-username">{{ user.nome_usuario }}</h2>
+        <div class="profile-stats-section">
+          <div class="stat-item">
+            <span class="stat-value">XX</span>
+            <span class="stat-label">Looks favoritados</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">XX</span>
+            <span class="stat-label">Peças salvas</span>
+          </div>
+        </div>
+        <div class="profile-info-grid">
+          <div class="info-display-field">
+            <label>Nome Completo</label>
+            <span>{{ user.nome_usuario }}</span>
+          </div>
+          <div class="info-display-field">
+            <label>Email</label>
+            <span>{{ user.email }}</span>
+          </div>
+          <div class="info-display-field" *ngIf="user.data_nascimento">
+            <label>Data de Nascimento</label>
+            <span>{{ user.data_nascimento | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="info-display-field" *ngIf="user.sexo">
+            <label>Sexo</label>
+            <span>{{ user.sexo === 'masculino' ? 'Masculino' : (user.sexo === 'feminino' ? 'Feminino' : user.sexo) }}</span>
+          </div>
+          <div class="info-display-field bio-field" [class.empty]="!user.bio">
+            <label>Bio</label>
+            <span>{{ user.bio || 'Nenhuma bio adicionada ainda.' }}</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-edit-profile" (click)="startEdit()">Editar Perfil</button>
+      </div>
+
+      <form *ngIf="isEditing" (ngSubmit)="saveProfile()" class="profile-edit-form">
+        <h2 class="form-section-title">Editar Perfil</h2>
+        <div class="form-field">
+          <label for="nome_usuario_edit">Nome Completo</label>
+          <input type="text" id="nome_usuario_edit" [(ngModel)]="editableUser.nome_usuario" name="nome_usuario_edit">
+        </div>
+        <div class="form-field">
+          <label for="email_edit">Email</label>
+          <input type="email" id="email_edit" [(ngModel)]="editableUser.email" name="email_edit">
+        </div>
+        <div class="form-field">
+          <label for="data_nascimento_edit">Data de Nascimento</label>
+          <input type="date" id="data_nascimento_edit" [(ngModel)]="editableUser.data_nascimento" name="data_nascimento_edit">
+        </div>
+        <div class="form-field">
+          <label for="sexo_edit">Sexo</label>
+          <select id="sexo_edit" [(ngModel)]="editableUser.sexo" name="sexo_edit">
+            <option value="" >Selecione...</option>
+            <option value="masculino">Masculino</option>
+            <option value="feminino">Feminino</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="bio_edit">Bio</label>
+          <textarea id="bio_edit" [(ngModel)]="editableUser.bio" name="bio_edit" rows="3"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+            {{ isSaving ? 'Salvando...' : 'Salvar Alterações' }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()" [disabled]="isSaving">Cancelar</button>
+        </div>
+      </form>
+      <button *ngIf="!isEditing" class="btn btn-logout" (click)="logout()">Sair</button>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>

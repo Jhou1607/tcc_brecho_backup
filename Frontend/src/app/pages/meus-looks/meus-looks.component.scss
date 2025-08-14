@@ -1,0 +1,128 @@
+@use '../../../styles' as styles;
+@use 'sass:color';
+
+// Importe o SCSS do catálogo para as classes de grid
+@import '../catalogo/catalogo.component.scss';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  width: 100%;
+}
+
+.meus-looks-page-container {
+  // Estende as propriedades base do container do catálogo/armário
+  @extend .catalogo-page-container;
+}
+
+.meus-looks-header {
+  text-align: center;
+  margin-bottom: styles.$brecho-spacing-xlarge;
+}
+
+.meus-looks-title {
+  // Estende o estilo do título do catálogo/armário
+  @extend .catalogo-title;
+  margin-bottom: styles.$brecho-spacing-medium;
+}
+
+.create-new-look-btn {
+  background-color: styles.$brecho-accent-color;
+  color: styles.$brecho-button-text-color;
+  border: none;
+  border-radius: 20px;
+  padding: styles.$brecho-spacing-small styles.$brecho-spacing-medium;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  display: inline-block;
+
+  &:hover {
+    background-color: color.scale(styles.$brecho-accent-color, $lightness: -10%);
+    transform: translateY(-1px);
+  }
+}
+
+// Reutilizar as classes de grid para os looks
+.look-grid-wrapper {
+  @extend .product-grid-wrapper; // Garante o alinhamento central e margens
+}
+
+.look-grid {
+  @extend .product-grid; // Define o layout de grid
+}
+
+.look-item {
+  @extend .product-item; // Herda estilos de item individual (shadow, border-radius, etc.)
+
+  .look-image-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 220px;
+    background-color: #f0f0f0; // Cor de fundo para looks sem imagem
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; // Usa 'contain' para não cortar o look completo
+      border-radius: styles.$brecho-border-radius-medium;
+    }
+
+    .delete-btn, .edit-btn {
+      width: 36px;
+      height: 36px;
+      font-size: 1.3rem;
+      border-radius: 50%;
+      border: none;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 10px;
+      z-index: 2;
+      transition: background 0.2s, color 0.2s;
+      opacity: 0.92;
+    }
+    .delete-btn {
+      right: 10px;
+    }
+    .edit-btn {
+      right: 52px;
+    }
+    .delete-btn:hover {
+      background: #ffeaea;
+      color: #e74c3c;
+    }
+    .edit-btn:hover {
+      background: #eaf6ff;
+      color: #3498db;
+    }
+  }
+
+  .look-info {
+    @extend .product-info; // Herda estilos de informação (padding)
+  }
+
+  .look-name {
+    @extend .product-name; // Herda estilos de nome do produto
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+// Estilos para a mensagem de nenhum look
+.no-results {
+  @extend .no-results; // Herda estilo de mensagem de "sem resultados"
+  font-size: 1.1rem;
+}
+
+.loading-indicator, .error-message {
+  @extend .loading-indicator, .error-message; // Herda estilos de loading/erro
+}
