@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\FilterController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProdutoAdminController;
 use App\Http\Controllers\Admin\UsuarioAdminController;
+use App\Http\Controllers\LookIAController;
 
 Route::get('/', function () {
     return response()->json(['message' => 'API Brecho LoopLook is working!', 'version' => '1.0']);
@@ -68,6 +69,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/filtros/{type}/{id}', [FilterController::class, 'update']);
         Route::delete('/filtros/{type}/{id}', [FilterController::class, 'destroy']);
     });
+
+    Route::post('/look-ia', [LookIAController::class, 'gerarLook']);
+    Route::post('/look-comment', [LookIAController::class, 'geraComentario']);
+
 });
 
 // Rotas do Admin com middleware de admin

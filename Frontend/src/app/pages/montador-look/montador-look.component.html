@@ -141,6 +141,10 @@
           <i class="fas fa-save"></i>
           Salvar Look
         </button>
+        <button class="ai-look-btn" (click)="openAiLookModal()" [disabled]="loadingAiLook">
+          <fa-icon [icon]="faMagic"></fa-icon>
+          Look com IA (Beta)
+        </button>
       </div>
     </div>
     <div class="groups-column hidden-mobile">
@@ -186,3 +190,122 @@
     </div>
   </div>
 </div>
+
+<!-- Modal para exibir o Look com IA -->
+<nz-modal [(nzVisible)]="showAiLookModal"
+          nzTitle="Look com IA (Beta)"
+          [nzFooter]="null"
+          [nzClosable]="true"
+          [nzMaskClosable]="true"
+          (nzOnCancel)="closeAiLookModal()"
+          [nzWidth]="'auto'"
+          [nzCentered]="true"
+          [nzBodyStyle]="{ height: 'calc(100vh - 80px)', overflow: 'auto', padding: '0' }">
+  <ng-container *nzModalContent>
+    <!-- Barra superior com controles -->
+    <div class="ai-look-controls">
+      <div class="control-group">
+        <div class="gender-selector">
+          <div class="gender-icon woman-icon" 
+               [class.selected]="aiLookGender === 'woman'"
+               (click)="selectGender('woman')"
+               title="Mulher">
+          </div>
+          <div class="gender-icon man-icon" 
+               [class.selected]="aiLookGender === 'man'"
+               (click)="selectGender('man')"
+               title="Homem">
+          </div>
+        </div>
+      </div>
+      
+      <div class="control-group">
+        <span class="label">Pele</span>
+        <div class="color-palette">
+          <div class="color-swatch" 
+               [class.selected]="aiLookSkinColor === 'WHITE'"
+               (click)="selectSkinColor('WHITE')"
+               style="background-color: #f1e5dd"></div>
+          <div class="color-swatch" 
+               [class.selected]="aiLookSkinColor === 'ASIAN'"
+               (click)="selectSkinColor('ASIAN')"
+               style="background-color: #d7cba5"></div>
+          <div class="color-swatch" 
+               [class.selected]="aiLookSkinColor === 'LATIN'"
+               (click)="selectSkinColor('LATIN')"
+               style="background-color: #8d6552"></div>
+          <div class="color-swatch" 
+               [class.selected]="aiLookSkinColor === 'BLACK'"
+               (click)="selectSkinColor('BLACK')"
+               style="background-color: #492c22"></div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <span class="label">Medidas</span>
+        <div class="input-group">
+          <input type="number" 
+                 [(ngModel)]="aiLookWeight" 
+                 (ngModelChange)="selectWeight($event)"
+                 placeholder="Kg"
+                 min="40" max="350">
+          <input type="number" 
+                 [(ngModel)]="aiLookHeight" 
+                 (ngModelChange)="selectHeight($event)"
+                 placeholder="Cm"
+                 min="60" max="250">
+        </div>
+      </div>
+
+      <div class="control-actions">
+        <button nz-button nzType="primary" (click)="generateFromBar()" [disabled]="loadingAiLook || !aiLookGender || !aiLookSkinColor || !aiLookHeight || !aiLookWeight">
+          <nz-icon nzType="sync" [class.spinning]="loadingAiLook"></nz-icon>
+          Gerar
+        </button>
+        <button nz-button nzType="default" (click)="requestAiComment()" [disabled]="!aiLookImage || loadingComment" title="Comentário da IA">
+          <nz-icon nzType="message" [class.spinning]="loadingComment"></nz-icon>
+        </button>
+        <button nz-button nzType="default" (click)="shareHelp()" [disabled]="!aiLookImage" title="Compartilhar">
+          <nz-icon nzType="share-alt"></nz-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Conteúdo da modal -->
+    <div class="ai-look-container" *ngIf="aiLookImage || loadingAiLook">
+      <!-- Placeholder fixo enquanto gera, some quando a imagem chega -->
+      <div class="ai-look-placeholder" *ngIf="!aiLookImage && loadingAiLook">
+        <nz-spin></nz-spin>
+      </div>
+
+      <!-- Imagem com overlay de carregamento -->
+      <div class="ai-look-image-wrapper" *ngIf="aiLookImage" [class.loading]="loadingAiLook">
+        <img [src]="aiLookImage" alt="Look com IA" class="ai-look-image" />
+      </div>
+    </div>
+
+    <!-- Texto inicial quando não há imagem -->
+    <div class="ai-look-initial" *ngIf="!aiLookImage && !loadingAiLook">
+      <p>Selecione os parâmetros para gerar o look</p>
+    </div>
+  </ng-container>
+</nz-modal>
+
+<!-- Modal para exibir o comentário da IA -->
+<nz-modal [(nzVisible)]="showCommentModal"
+          nzTitle="Comentário da IA sobre o Look"
+          [nzFooter]="null"
+          [nzClosable]="true"
+          [nzMaskClosable]="true"
+          (nzOnCancel)="closeCommentModal()"
+          [nzWidth]="'800px'"
+          [nzCentered]="true"
+          [nzBodyStyle]="{ maxHeight: 'calc(100vh - 120px)', overflow: 'auto', padding: '0' }">
+  <ng-container *nzModalContent>
+    <div class="ai-comment-container">
+      <div class="ai-comment-content">
+        <p [innerHTML]="aiComment"></p>
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>

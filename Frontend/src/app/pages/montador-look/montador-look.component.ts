@@ -29,12 +29,13 @@ import {HeaderComponent} from "../../shared/components/header/header.component";
 import {ProdutoService} from '../../services/product.service';
 import {ClothingGroup, ClothingItem, LookConfig, Look} from '../../interfaces/interfaces';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faHeart as faSolidHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as faSolidHeart, faMagic } from '@fortawesome/free-solid-svg-icons';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LookNameModalComponent } from '../../shared/components/look-name-modal/look-name-modal.component';
 import { CadastroProdutoModalComponent } from './cadastro-produto-modal.component';
 import { CategoriaAcessoriosCabeca, CategoriaTops, CategoriaCalcasSaias, CategoriaCalcados, CategoriaAcessorios } from '../../interfaces/categorias';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-montador-look',
@@ -63,7 +64,8 @@ import { CategoriaAcessoriosCabeca, CategoriaTops, CategoriaCalcasSaias, Categor
   styleUrls: ['./montador-look.component.scss'],
 })
 export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
-  faSolidHeart = faSolidHeart;
+  faSolidHeart = faSolidHeart;
+  faMagic = faMagic;
   @ViewChild('canvas', { static: false }) canvasElement!: ElementRef<HTMLCanvasElement>;
   private lookIdFromRoute: number | null = null;
   private canvas!: fabric.Canvas;
@@ -89,6 +91,23 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
   showNomeLookModal = false;
   nomeLook = '';
   lookParaSalvar: any = null;
+
+  // Variáveis para Look com IA
+  protected showAiLookModal = false;
+  protected aiLookImage: string | null = null;
+  protected loadingAiLook = false;
+  protected refreshingAiLook = false;
+  protected retryCount = 0;
+  private readonly MAX_RETRIES = 2; // 3 tentativas (0, 1, 2)
+  protected aiLookGender: 'woman' | 'man' | null = 'woman';
+  protected aiLookSkinColor: string | null = 'WHITE'; 
+  protected aiLookHeight: number | null = 175; // Altura em cm
+  protected aiLookWeight: number | null = 65; // Peso em kg
+  protected loadingComment = false;
+  protected showCommentModal = false;
+  protected aiComment: string | null = null;
+  protected commentRetryCount = 0;
+  private aiCommentForCurrentImage: string | null = null; // Comentário específico para a imagem atual
 
   getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
     new Promise((resolve, reject) => {
@@ -143,7 +162,8 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
     private cdr: ChangeDetectorRef, 
     private modalService: NzModalService, 
     private sanitizer: DomSanitizer,
-    private imageOptimizer: ImageOptimizerService
+    private imageOptimizer: ImageOptimizerService,
+    private http: HttpClient
   ) {
     const deleteIcon =
       "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg version='1.1' id='Ebene_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='595.275px' height='595.275px' viewBox='200 215 230 470' xml:space='preserve'%3E%3Ccircle style='fill:%23F44336;' cx='299.76' cy='439.067' r='218.516'/%3E%3Cg%3E%3Crect x='267.162' y='307.978' transform='matrix(0.7071 -0.7071 0.7071 0.7071 -222.6202 340.6915)' style='fill:white;' width='65.545' height='262.18'/%3E%3Crect x='266.988' y='308.153' transform='matrix(0.7071 0.7071 -0.7071 0.7071 398.3889 -83.3116)' style='fill:white;' width='65.544' height='262.179'/%3E%3C/g%3E%3C/svg%3E";
@@ -731,45 +751,48 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  ngOnInit(): void {
-    this.productService.getItensParaMontador().subscribe({
-      next: res => {
-        // Ordem fixa dos grupos
-        const fixedOrder = [
-          'Acessórios de Cabeça',
-          'Tops',
-          'Calças e Saias',
-          'Calçados',
-          'Acessórios',
-        ];
-        // Monta os grupos na ordem fixa, preenchendo com array vazio se não vier do backend
-        this.clothingGroups = fixedOrder.map((name, idx) => {
-          const found = res.find((g: any) => g.name === name);
-          return found || {
-            id: idx,
-            name,
-            icon: this.getDefaultIconForGroup(name),
-            items: [],
-            placeholder: null,
-            ordem: idx
-          };
-        });
-        this.cdr.detectChanges();
+    ngOnInit(): void {
+    this.productService.getItensParaMontador().subscribe({
+      next: res => {
+        // Ordem fixa dos grupos
+        const fixedOrder = [
+          'Acessórios de Cabeça',
+          'Tops',
+          'Calças e Saias',
+          'Calçados',
+          'Acessórios',
+        ];
+        // Monta os grupos na ordem fixa, preenchendo com array vazio se não vier do backend
+        this.clothingGroups = fixedOrder.map((name, idx) => {
+          const found = res.find((g: any) => g.name === name);
+          return found || {
+            id: idx,
+            name,
+            icon: this.getDefaultIconForGroup(name),
+            items: [],
+            placeholder: null,
+            ordem: idx
+          };
+        });
+        this.cdr.detectChanges();
 
-        const routeLookId = this.activatedRoute.snapshot.params['lookId'];
-        const queryLookId = this.activatedRoute.snapshot.queryParams['lookId'];
-        this.lookIdFromRoute = routeLookId
-          ? Number(routeLookId)
-          : (queryLookId ? Number(queryLookId) : null);
+        const routeLookId = this.activatedRoute.snapshot.params['lookId'];
+        const queryLookId = this.activatedRoute.snapshot.queryParams['lookId'];
+        this.lookIdFromRoute = routeLookId
+          ? Number(routeLookId)
+          : (queryLookId ? Number(queryLookId) : null);
 
-        if (this.lookIdFromRoute) {
-          this.loadLookById(this.lookIdFromRoute);
-        } else {
-          this.initializePlaceholders();
-        }
-      }
-    });
-  }
+        if (this.lookIdFromRoute) {
+          this.loadLookById(this.lookIdFromRoute);
+        } else {
+          this.initializePlaceholders();
+        }
+      }
+    });
+    
+    // Carregar configurações salvas do AI Look
+    this.loadAiLookSettings();
+  }
 
   private getDefaultIconForGroup(name: string): string {
     switch (name) {
@@ -910,5 +933,289 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
     this.showNomeLookModal = false;
     this.nomeLook = '';
     this.lookParaSalvar = null;
+  }
+
+  // ===== MÉTODOS DO LOOK COM IA =====
+
+  private generateLookImage(): string {
+    return this.canvas.toDataURL({
+      format: 'png',
+      quality: 1,
+      multiplier: 1,
+    });
+  }
+
+  private hasClothingItems(): boolean {
+    const objects = this.canvas.getObjects();
+    return objects.some(obj => obj instanceof fabric.FabricImage && obj.get('itemId'));
+  }
+
+  async generateAiLook() {
+    if (!this.hasClothingItems()) {
+      this.modalService.warning({
+        nzTitle: 'Atenção',
+        nzContent: 'É necessário adicionar pelo menos uma peça/acessório ao look antes de gerar o look com IA.',
+        nzOkText: 'OK'
+      });
+      return;
+    }
+
+    if (!this.aiLookGender || !this.aiLookSkinColor || !this.aiLookHeight || !this.aiLookWeight) {
+      this.modalService.warning({
+        nzTitle: 'Atenção',
+        nzContent: 'Selecione o gênero, a cor da pele, a altura e o peso antes de gerar o look.',
+        nzOkText: 'OK'
+      });
+      return;
+    }
+
+    this.loadingAiLook = true;
+    this.retryCount = 0;
+    this.cdr.detectChanges();
+
+    await this.generateAiLookInternal();
+  }
+
+  openAiLookModal() {
+    this.showAiLookModal = true;
+    this.aiLookImage = null;
+    this.loadingAiLook = false;
+    this.cdr.detectChanges();
+  }
+
+  private async generateAiLookInternal() {
+    try {
+      const imageDataUrl = this.generateLookImage();
+      const response = await fetch(imageDataUrl);
+      const blob = await response.blob();
+
+      const formData = new FormData();
+      formData.append('image', blob, 'look.png');
+      if (this.aiLookGender) {
+        formData.append('gender', this.aiLookGender);
+      }
+      if (this.aiLookSkinColor) {
+        formData.append('skinColor', this.aiLookSkinColor);
+      }
+      if (this.aiLookWeight) {
+        formData.append('weight', this.aiLookWeight.toString());
+      }
+      if (this.aiLookHeight) {
+        formData.append('height', this.aiLookHeight.toString());
+      }
+
+      // Ajustando a URL para usar o backend do projeto Frontend
+      this.http.post('http://localhost:8000/api/look-ia', formData, { responseType: 'blob' })
+        .subscribe({
+          next: (response: Blob) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              this.aiLookImage = reader.result as string;
+              this.aiCommentForCurrentImage = null; // Limpa o comentário da imagem anterior
+              this.showAiLookModal = true;
+              this.loadingAiLook = false;
+              this.refreshingAiLook = false;
+              this.retryCount = 0;
+              this.cdr.detectChanges();
+            };
+            reader.readAsDataURL(response);
+          },
+          error: async (_error) => {
+            if (this.retryCount < this.MAX_RETRIES) {
+              this.retryCount++;
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              await this.generateAiLookInternal();
+            } else {
+              this.modalService.error({
+                nzTitle: 'Erro',
+                nzContent: 'Ocorreu um problema na geração da imagem após 3 tentativas. Tente novamente.',
+                nzOkText: 'OK'
+              });
+              this.loadingAiLook = false;
+              this.refreshingAiLook = false;
+              this.retryCount = 0;
+              this.cdr.detectChanges();
+            }
+          }
+        });
+    } catch (_error) {
+      if (this.retryCount < this.MAX_RETRIES) {
+        this.retryCount++;
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await this.generateAiLookInternal();
+      } else {
+        this.modalService.error({
+          nzTitle: 'Erro',
+          nzContent: 'Ocorreu um problema na geração da imagem após 3 tentativas. Tente novamente.',
+          nzOkText: 'OK'
+        });
+        this.loadingAiLook = false;
+        this.refreshingAiLook = false;
+        this.retryCount = 0;
+        this.cdr.detectChanges();
+      }
+    }
+  }
+
+  closeAiLookModal() {
+    this.showAiLookModal = false;
+    this.aiLookImage = null;
+  }
+
+  async refreshAiLook() {
+    if (!this.hasClothingItems()) {
+      this.modalService.warning({
+        nzTitle: 'Atenção',
+        nzContent: 'É necessário adicionar pelo menos uma peça/acessório ao look antes de gerar o look com IA.',
+        nzOkText: 'OK'
+      });
+      return;
+    }
+
+    this.refreshingAiLook = true;
+    this.retryCount = 0;
+    this.cdr.detectChanges();
+
+    await this.generateAiLookInternal();
+  }
+
+  selectGender(gender: 'woman' | 'man') {
+    this.aiLookGender = gender;
+    localStorage.setItem('aiLookGender', gender);
+    this.cdr.detectChanges();
+  }
+
+  selectSkinColor(skinColor: string) {
+    this.aiLookSkinColor = skinColor;
+    localStorage.setItem('aiLookSkinColor', skinColor);
+    this.cdr.detectChanges();
+  }
+
+  selectWeight(weight: number) {
+    this.aiLookWeight = weight;
+    localStorage.setItem('aiLookWeight', weight.toString());
+    this.cdr.detectChanges();
+  }
+
+  selectHeight(height: number) {
+    this.aiLookHeight = height;
+    localStorage.setItem('aiLookHeight', height.toString());
+    this.cdr.detectChanges();
+  }
+
+  generateFromBar() {
+    void this.generateAiLook();
+  }
+
+  shareHelp() {
+    this.modalService.info({
+      nzTitle: 'Como compartilhar',
+      nzContent: 'Clique com o botão direito sobre a imagem e selecione "Copiar imagem". Depois cole diretamente no campo de conversa do aplicativo desejado (WhatsApp, Facebook, Instagram, e-mail, etc.).',
+      nzOkText: 'Entendi'
+    });
+  }
+
+  async requestAiComment() {
+    if (!this.aiLookImage) {
+      this.modalService.warning({
+        nzTitle: 'Atenção',
+        nzContent: 'É necessário ter uma imagem gerada pela IA antes de solicitar um comentário.',
+        nzOkText: 'OK'
+      });
+      return;
+    }
+
+    // Se já existe um comentário para a imagem atual, apenas mostra a modal
+    if (this.aiCommentForCurrentImage) {
+      this.aiComment = this.aiCommentForCurrentImage;
+      this.showCommentModal = true;
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.loadingComment = true;
+    this.commentRetryCount = 0;
+    this.cdr.detectChanges();
+
+    await this.requestAiCommentInternal();
+  }
+
+  private async requestAiCommentInternal() {
+    try {
+      // Verificar se a imagem existe
+      if (!this.aiLookImage) {
+        throw new Error('Imagem não disponível');
+      }
+
+      // Converter a imagem de volta para blob
+      const response = await fetch(this.aiLookImage);
+      const blob = await response.blob();
+
+      const formData = new FormData();
+      formData.append('image', blob, 'ai-look.png');
+
+      // Ajustando a URL para usar o backend do projeto Frontend
+      this.http.post('http://localhost:8000/api/look-comment', formData, { responseType: 'text' })
+        .subscribe({
+          next: (response: string) => {
+            this.aiComment = response;
+            this.aiCommentForCurrentImage = response; // Salva o comentário para a imagem atual
+            this.showCommentModal = true;
+            this.loadingComment = false;
+            this.commentRetryCount = 0;
+            this.cdr.detectChanges();
+          },
+          error: async (_error) => {
+            if (this.commentRetryCount < this.MAX_RETRIES) {
+              this.commentRetryCount++;
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              await this.requestAiCommentInternal();
+            } else {
+              this.modalService.error({
+                nzTitle: 'Erro',
+                nzContent: 'Ocorreu um problema ao solicitar o comentário da IA após 3 tentativas. Tente novamente.',
+                nzOkText: 'OK'
+              });
+              this.loadingComment = false;
+              this.commentRetryCount = 0;
+              this.cdr.detectChanges();
+            }
+          }
+        });
+    } catch (error) {
+      if (this.commentRetryCount < this.MAX_RETRIES) {
+        this.commentRetryCount++;
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await this.requestAiCommentInternal();
+      } else {
+        console.error('Erro ao processar imagem:', error);
+        this.modalService.error({
+          nzTitle: 'Erro',
+          nzContent: 'Ocorreu um problema ao processar a imagem após 3 tentativas. Tente novamente.',
+          nzOkText: 'OK'
+        });
+        this.loadingComment = false;
+        this.commentRetryCount = 0;
+        this.cdr.detectChanges();
+      }
+    }
+  }
+
+  closeCommentModal() {
+    this.showCommentModal = false;
+    this.aiComment = null;
+  }
+
+  private loadAiLookSettings() {
+    // Carregar configurações salvas do localStorage
+    const savedGender = localStorage.getItem('aiLookGender');
+    const savedSkinColor = localStorage.getItem('aiLookSkinColor');
+    const savedHeight = localStorage.getItem('aiLookHeight');
+    const savedWeight = localStorage.getItem('aiLookWeight');
+
+    if (savedGender) this.aiLookGender = savedGender as 'woman' | 'man';
+    if (savedSkinColor) this.aiLookSkinColor = savedSkinColor;
+    if (savedHeight) this.aiLookHeight = Number(savedHeight);
+    if (savedWeight) this.aiLookWeight = Number(savedWeight);
   }
 }

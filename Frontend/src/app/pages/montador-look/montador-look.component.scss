@@ -451,3 +451,351 @@
 .canvas-column {
   animation: fadeInUp 0.6s ease-out 0.1s both;
 }
+
+// ===== ESTILOS DO LOOK COM IA =====
+
+.ai-look-btn {
+  @extend .baixar-look-btn;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  }
+  
+  i {
+    color: white;
+  }
+}
+
+/* Barra de controles superior */
+.ai-look-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  margin: 15px;
+  gap: 15px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #4b5563;
+  }
+
+  .color-palette {
+    display: flex;
+    gap: 2px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+  }
+
+  .color-swatch {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: 2px solid transparent;
+
+    &.selected {
+      border: 2px solid #3b82f6;
+      box-shadow: none;
+    }
+  }
+
+  .input-group {
+    display: flex;
+    gap: 0;
+    height: 25px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+
+    input {
+      height: 100%;
+      width: 60px;
+      padding: 0 4px;
+      border: none;
+      font-size: 12px;
+      text-align: center;
+      background-color: #f9fafb;
+      color: #4b5563;
+
+      &:focus {
+        outline: none;
+        background-color: #ffffff;
+      }
+
+      &::placeholder {
+        color: #9ca3af;
+      }
+    }
+  }
+
+  .gender-selector {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .gender-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: 2px solid transparent;
+    background-color: #f9fafb;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &.selected {
+      border-color: #3b82f6;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    // Mulher - cor pink
+    &.woman-icon {
+      background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB1ElEQVR4nGNgwAGOhYZy3o2NTXqWmdkKwnfi4hL3x8dzMJAC7sXF+b0vKbn6v739Pwz/a2v7/76o6Ord2Fgf4gxJSHD/XlPz7ldj448XWVkLboWHZ96KjMx6kZW18Fdj40+Q3L24ODe8hvxnYGB8W1h44ndz8+978fFp6PL34+Mzfre0/H5TWHgMpBanQTciIpx+NzX9e5Wbux6Xmld5eRt+t7T8vR4V5YjToAeJidmg8HicnNyAS83j5OQGkBqQWpwG3UtMTIMa1IXHoC6Qmnvx8ak4DbocEKD5o67u+7uiotO3cnPZ0eX3x8dzvCsuPvOjvv7btYAANQZ84FVOzur/bW3/n2VkLLkSGsoDE7/u58f7LDNzCUjuZV7eCgZC4EpsrNz7kpILIOd/KC29/jwzc9Hz7OxFIDZI7F1Jyblb0dEyBA0CGxYaKvEiM3Pup4qKl6CECMKfystfPM/JmX3J11ecgVRwwdWV+31JyU0QPuPjw8VACXhfUnIVhMnSfCEwUOxFVlbHy+zs1s8VFU9BGMQGiYHkiDbosre3/u+mJniG/Q/FIDGQHNEGnXFx4b8VHZ11KyYm80Np6T0QBrFBYiA5srxJURghgydpae0gTEghANTDFHyIsUgOAAAAAElFTkSuQmCC");
+
+      &.selected {
+        background-color: #fdf2f8;
+        border-color: #ec4899;
+      }
+    }
+
+    // Homem - cor azul
+    &.man-icon {
+      background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAACXBIWXMAAAsTAAALEwEAmpwYAAABR0lEQVR4nNXTzytEURQH8FF2UrKxMHnnTCT+AVn5E2RlJcVi/gJlZ2mBJjXnXIVsNRtLykbYKzvFQsTCYuZ9z5siP56uYXoxzcNsOHUX793X531P99xM5l8WaThHiv3kYrUyKU5bgwSXrBaToPL7dGKLHmG1K1Y7aA0RFDySCmXXK93BWjja5zCcieO2z4h/bgoNbtx1stoWKR7f48esdsEalZJIU2hsIW4ntSMWPJGgSEWMk0Oe1M5Y8cIu2kl+n1PM+/W1f42mawnCmeT7nqXbDo+R2PlHm02L1UosuG60Rw55/5NAMJQOCfZYcdJoL3CYeJubYjiSCpFihRT3/avVbIO0zh9AUCh3pUI5Fw54iMSOs67am0g6y4pnEttMReqpxCZrGB58myy4qV0FO/Sj8W2onkywzIpdVmyTRlN+NH6E/Il6BQ084ItuDhJIAAAAAElFTkSuQmCC");
+
+      &.selected {
+        background-color: #eff6ff;
+        border-color: #3b82f6;
+      }
+    }
+  }
+}
+
+/* Texto inicial centralizado */
+.ai-look-initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 80px - 120px); /* Altura total menos espaçamento menos barra de controles */
+  width: 100%;
+
+  p {
+    font-size: 18px;
+    color: #666;
+    text-align: center;
+    margin: 0;
+  }
+}
+
+.ai-look-container {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 80px - 120px); /* Altura total menos espaçamento menos barra de controles */
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.ai-look-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid #e9ecef;
+
+  &.loading {
+    filter: brightness(0.6);
+    opacity: 0.7;
+  }
+}
+
+.ai-look-image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 4px;
+}
+
+/* Ações sobrepostas (canto superior direito) */
+.overlay-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+/* Botão translúcido estilo glass */
+.glass-btn {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #111;
+  padding: 6px 8px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.glass-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Ícone girando durante refresh */
+.nz-icon.spinning, nz-icon.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Indicador de carregamento centralizado (sem texto) */
+.ai-look-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.ai-look-actions {
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+.refresh-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 140px;
+  justify-content: center;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  nz-icon {
+    transition: transform 0.3s ease;
+    
+    &.spinning {
+      animation: spin 1s linear infinite;
+    }
+  }
+}
+
+.ai-look-placeholder {
+  width: 350px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal de comentário da IA */
+.ai-comment-container {
+  padding: 20px;
+  min-height: 200px;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.ai-comment-content {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 150px;
+
+  p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+    text-align: justify;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    white-space: pre-wrap; // Preserva quebras de linha
+    
+    /* Estilização para parágrafos */
+    & + p {
+      margin-top: 16px;
+    }
+    
+    /* Destaque para frases importantes */
+    strong, b {
+      color: #1890ff;
+      font-weight: 600;
+    }
+    
+    /* Estilo para listas */
+    ul, ol {
+      margin: 12px 0;
+      padding-left: 24px;
+      
+      li {
+        margin-bottom: 8px;
+        line-height: 1.5;
+      }
+    }
+    
+    /* Estilo para citações ou destaques */
+    em, i {
+      color: #666;
+      font-style: italic;
+    }
+  }
+}
+
+.control-actions {
+  display: flex;
+  gap: 10px;
+}
