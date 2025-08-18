@@ -3,29 +3,121 @@
 @use 'sass:color';
 
 .app-footer {
-  text-align: center;
-  padding: 0 styles.$brecho-spacing-medium; // Padding horizontal, vertical controlado por flex
-  background-color: var(--brecho-footer-bg);
-  color: var(--brecho-footer-text-color);
-  font-size: 0.9rem; // Ligeiramente maior
-  border-top: 1px solid var(--brecho-product-border-color); // Usar cor de borda definida
-  // margin-top: auto; // Removido, pois app-root é flex e o footer é o último item
-  height: var(--footer-height); // Usando a variável CSS
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  flex-shrink: 0; // Impede que o footer encolha
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #ffffff;
+  padding: 40px 0 20px;
+  margin-top: auto;
+  border-top: 1px solid rgba(90, 124, 101, 0.3);
+}
 
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+.footer-section {
+  h3 {
+    color: #5a7c65;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  h4 {
+    color: #9bad9a;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    font-family: 'Inter', sans-serif;
+  }
+  
   p {
+    margin: 0 0 8px 0;
+    color: #b0b0b0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    strong {
+      color: #9bad9a;
+      font-weight: 600;
+    }
+  }
+  
+  a {
+    color: #5a7c65;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: #9bad9a;
+      text-decoration: underline;
+    }
+  }
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid rgba(90, 124, 101, 0.2);
+  
+  p {
+    color: #808080;
+    font-size: 0.9rem;
     margin: 0;
   }
+}
 
-  a {
-    color: var(--brecho-primary-text);
-    font-weight: 600; // Mais destaque
-    &:hover {
-      color: var(--brecho-logo-color);
+// Responsive Design
+@media (max-width: 768px) {
+  .app-footer {
+    padding: 30px 0 15px;
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 0 20px;
+  }
+  
+  .footer-section {
+    text-align: center;
+    
+    h3, h4 {
+      margin-bottom: 10px;
+    }
+  }
+  
+  .footer-bottom {
+    padding-top: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-content {
+    gap: 25px;
+  }
+  
+  .footer-section {
+    h3 {
+      font-size: 1.3rem;
+    }
+    
+    h4 {
+      font-size: 1.1rem;
+    }
+    
+    p {
+      font-size: 0.9rem;
     }
   }
 }

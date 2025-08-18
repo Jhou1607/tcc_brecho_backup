@@ -155,4 +155,32 @@ class UsuarioController extends Controller
             return response()->json(['message' => 'Nenhuma alteração para salvar.'], 200);
         }
     }
+
+    public function getEstatisticas(Request $request)
+    {
+        try {
+            $usuario = $request->user();
+            
+            // Contar looks favoritados (produtos favoritados)
+            $looksFavoritados = $usuario->favoritos()->count();
+            
+            // Contar peças salvas no armário
+            $pecasSalvas = $usuario->armarios()->count();
+            
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'looks_favoritados' => $looksFavoritados,
+                    'pecas_salvas' => $pecasSalvas
+                ]
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar estatísticas do usuário: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao buscar estatísticas do usuário.'
+            ], 500);
+        }
+    }
 }

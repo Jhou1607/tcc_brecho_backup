@@ -108,6 +108,9 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
   protected aiComment: string | null = null;
   protected commentRetryCount = 0;
   private aiCommentForCurrentImage: string | null = null; // Comentário específico para a imagem atual
+  
+  // Controle de responsividade para mobile
+  protected activeMobileGroup: ClothingGroup | null = null;
 
   getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
     new Promise((resolve, reject) => {
@@ -463,26 +466,27 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
     imageLink.click();
   }
 
-  addItemToGroup(groupId: number, item: { url: string, name: string }) {
-    const group = this.clothingGroups.find(g => g.id === groupId);
-    if (group) {
-      // Permitir até 2 itens para Acessórios de Cabeça e Acessórios
-      if (group.name === 'Acessórios de Cabeça' || group.name === 'Acessórios') {
-        if (group.items.length >= 2) {
-          this.notification.warning('Limite atingido', 'Só é possível adicionar até 2 itens neste grupo.');
-          return;
-        }
-        // Permite adicionar múltiplos
-        const newId = `custom_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-        group.items.unshift({ id: newId, thumbnailUrl: item.url, canvasUrl: item.url, name: item.name, favorited: false, origem: 'custom' });
-      } else {
-        // Para os outros grupos, só pode 1 item
-        group.items = [];
-        const newId = `custom_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-        group.items.unshift({ id: newId, thumbnailUrl: item.url, canvasUrl: item.url, name: item.name, favorited: false, origem: 'custom' });
-      }
-    }
-  }
+    addItemToGroup(groupId: number, item: { url: string, name: string }) {
+    const group = this.clothingGroups.find(g => g.id === groupId);
+    if (group) {
+      // Permitir até 2 itens para Acessórios de Cabeça e Acessórios
+      if (group.name === 'Acessórios de Cabeça' || group.name === 'Acessórios') {
+        if (group.items.length >= 2) {
+          // Substituir o item mais antigo (último da lista) pelo novo
+          group.items.pop(); // Remove o último item
+          this.notification.info('Substituição', 'Item substituído automaticamente (máximo 2 itens permitidos).');
+        }
+        // Adicionar o novo item no início
+        const newId = `custom_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        group.items.unshift({ id: newId, thumbnailUrl: item.url, canvasUrl: item.url, name: item.name, favorited: false, origem: 'custom' });
+      } else {
+        // Para os outros grupos, só pode 1 item
+        group.items = [];
+        const newId = `custom_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        group.items.unshift({ id: newId, thumbnailUrl: item.url, canvasUrl: item.url, name: item.name, favorited: false, origem: 'custom' });
+      }
+    }
+  }
 
   resizeImage(file: File, width: number, height: number): Observable<File> {
     return this.ngxPicaService.resizeImage(file, width, height, false);
@@ -525,24 +529,50 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
   loadImageFailed() { }
 
   addItem(group: ClothingGroup) {
-    if (this.loadingImg) {
-      this.notification.warning('Aguarde', 'Há uma imagem sendo processada.');
-      return;
-    }
-    const modalRef = this.modalService.create({
-      nzTitle: `Adicionar ${group.name}`,
-      nzContent: CadastroProdutoModalComponent,
-      nzFooter: null
-    });
-    // Escuta o evento produtoCriado do modal
-    modalRef.afterOpen.subscribe(() => {
-      if (modalRef.componentInstance?.produtoCriado) {
-        modalRef.componentInstance.produtoCriado.subscribe(() => {
-          this.refreshItens();
-        });
-      }
-    });
-  }
+    if (this.loadingImg) {
+      this.notification.warning('Aguarde', 'Há uma imagem sendo processada.');
+      return;
+    }
+    
+    this.currentGroup = group;
+    
+    const modalRef = this.modalService.create({
+      nzTitle: `Adicionar ${group.name}`,
+      nzContent: CadastroProdutoModalComponent,
+      nzFooter: null,
+      nzWidth: '1000px',
+      nzData: { 
+        categoriasFiltradas: this.getCategoriasForGroup(group.name),
+        grupo: group.name 
+      }
+    });
+    
+    // Escuta o evento produtoCriado do modal
+    modalRef.afterOpen.subscribe(() => {
+      if (modalRef.componentInstance?.produtoCriado) {
+        modalRef.componentInstance.produtoCriado.subscribe(() => {
+          this.refreshItens();
+        });
+      }
+    });
+  }
+
+  private getCategoriasForGroup(groupName: string): string[] {
+    switch (groupName) {
+      case 'Acessórios de Cabeça':
+        return ['chapéus', 'toucas', 'tiaras', 'bandanas', 'laços'];
+      case 'Tops':
+        return ['camisetas', 'blusas', 'camisas', 'tops', 'regatas'];
+      case 'Calças e Saias':
+        return ['calças', 'saias', 'shorts', 'leggings', 'bermudas'];
+      case 'Calçados':
+        return ['tênis', 'sapatos', 'sandálias', 'botas', 'chinelos'];
+      case 'Acessórios':
+        return ['bolsas', 'cintos', 'óculos', 'colares', 'pulseiras'];
+      default:
+        return [];
+    }
+  }
 
   refreshItens() {
     this.productService.getItensParaMontador().subscribe({
@@ -678,33 +708,32 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  handleUploadRequest = (item: NzUploadXHRArgs): Subscription => {
-    const file = item.file as unknown as File;
-    if (file) {
-      this.preProcessImg(file).subscribe({
-        next: (res) => {
-          this.selectedFile = res;
-          this.previewUrl = URL.createObjectURL(this.selectedFile);
-          this.imageChangedEvent = {
-            target: {
-              files: [this.selectedFile]
-            }
-          };
-          this.lastCroppedBlob = this.selectedFile;
-          this.nextStep();
-          return of(null).subscribe();
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
-    } else {
-      console.error('Nenhum arquivo selecionado.');
-    }
-    return of(null).subscribe();
-  };
+  handleUploadRequest = (item: any): Subscription => {
+    const file = item.file as unknown as File;
+    if (file) {
+      this.preProcessImg(file).subscribe({
+        next: (res) => {
+          this.selectedFile = res;
+          this.previewUrl = URL.createObjectURL(this.selectedFile);
+          this.imageChangedEvent = {
+            target: {
+              files: [this.selectedFile]
+            }
+          };
+          this.lastCroppedBlob = this.selectedFile;
+          this.nextStep();
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
+    } else {
+      console.error('Nenhum arquivo selecionado.');
+    }
+    return of(null).subscribe();
+  };
 
-  imgLocalLoaded({ file, fileList }: NzUploadChangeParam): void { }
+  imgLocalLoaded({ file, fileList }: any): void { }
   preStep(): void {
     this.currentStep -= 1;
     if (this.currentStep === 0) {
@@ -792,6 +821,9 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
     
     // Carregar configurações salvas do AI Look
     this.loadAiLookSettings();
+
+    // Adicionar listener para resize da janela
+    this.addResizeListener();
   }
 
   private getDefaultIconForGroup(name: string): string {
@@ -910,6 +942,8 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.canvas) {
       this.canvas.dispose();
     }
+    // Remover listener de resize
+    this.removeResizeListener();
   }
 
   confirmarNomeLook() {
@@ -1217,5 +1251,42 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
     if (savedSkinColor) this.aiLookSkinColor = savedSkinColor;
     if (savedHeight) this.aiLookHeight = Number(savedHeight);
     if (savedWeight) this.aiLookWeight = Number(savedWeight);
+  }
+
+  // Métodos para controle de resize da janela
+  private resizeListener: (() => void) | null = null;
+
+  private addResizeListener(): void {
+    this.resizeListener = () => {
+      // Se a tela for maior que 768px (widescreen), fecha o popup mobile
+      if (window.innerWidth > 768 && this.activeMobileGroup) {
+        this.activeMobileGroup = null;
+        this.cdr.detectChanges();
+      }
+    };
+    
+    window.addEventListener('resize', this.resizeListener);
+  }
+
+  private removeResizeListener(): void {
+    if (this.resizeListener) {
+      window.removeEventListener('resize', this.resizeListener);
+      this.resizeListener = null;
+    }
+  }
+
+  // Métodos para controle mobile
+  selectMobileGroup(group: ClothingGroup): void {
+    if (this.activeMobileGroup === group) {
+      // Se clicar no mesmo grupo, fecha
+      this.activeMobileGroup = null;
+    } else {
+      // Se clicar em outro grupo, troca
+      this.activeMobileGroup = group;
+    }
+  }
+
+  isMobileGroupActive(group: ClothingGroup): boolean {
+    return this.activeMobileGroup === group;
   }
 }

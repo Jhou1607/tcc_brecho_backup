@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, ViewChild, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NzUploadModule, NzUploadFile, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
+import { NzUploadModule, NzUploadFile } from 'ng-zorro-antd/upload';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule, NzInputGroupComponent } from 'ng-zorro-antd/input';
@@ -13,13 +13,25 @@ import { ImageCroppedEvent, ImageCropperComponent, LoadedImage } from 'ngx-image
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { removeBackground } from '@imgly/background-removal';
 import { NgxPicaModule, NgxPicaService } from '@digitalascetic/ngx-pica';
-import { from, Observable, Observer, of, Subscription, finalize } from 'rxjs';
+import { from, Observable, of, Subscription, finalize } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
+import { HierarchicalCategorySelectorComponent, CategoriaSelecionada } from '../hierarchical-category-selector/hierarchical-category-selector.component';
 
 export interface ProcessedImage {
   file: File;
   url: SafeUrl;
   croppedBlob?: Blob;
+}
+
+export interface ProductFormData {
+  nome_produto: string;
+  marca: string;
+  categoria: string;
+  cor: string;
+  estacao: string;
+  ocasioes: string[];
+  estilos: string[];
+  material: string;
 }
 
 @Component({
@@ -67,6 +79,7 @@ export class ImageUploadProcessorComponent implements OnDestroy {
   // Processing state
   isProcessing: boolean = false;
   processingMessage: string = '';
+  backgroundRemoved: boolean = false;
   
   // Cropping
   imageChangedEvent: any = null;
@@ -75,6 +88,10 @@ export class ImageUploadProcessorComponent implements OnDestroy {
   
   // Object URL management
   objectUrl: string | null = null;
+  finalImageUrl: SafeUrl | null = null;
+  
+  // Image dimensions
+  imageDimensions = { width: 0, height: 0 };
 
   constructor(
     private ngxPicaService: NgxPicaService,
@@ -104,15 +121,21 @@ export class ImageUploadProcessorComponent implements OnDestroy {
 
   private resetState(): void {
     this.currentStep = 0;
-    this.fileList = [];
     this.selectedFile = null;
     this.previewUrl = null;
     this.imageFromUrl = '';
-    this.lastCroppedBlob = null;
-    this.croppedImage = '';
+    this.currentFile = null;
+    this.isProcessing = false;
+    this.processingMessage = '';
+    this.backgroundRemoved = false;
     this.imageChangedEvent = null;
+    this.croppedImage = '';
+    this.lastCroppedBlob = null;
+    this.objectUrl = null;
+    this.finalImageUrl = null;
+    this.imageDimensions = { width: 0, height: 0 };
+    this.fileList = [];
     
-    // Clean up previous object URL
     if (this.objectUrl) {
       URL.revokeObjectURL(this.objectUrl);
       this.objectUrl = null;
@@ -120,7 +143,7 @@ export class ImageUploadProcessorComponent implements OnDestroy {
   }
 
   // File upload handling
-  beforeUpload = (file: NzUploadFile | File, _fileList: NzUploadFile[]): Observable<boolean> => {
+  beforeUpload = (file: NzUploadFile | File, _fileList: NzUploadFile[]): boolean | Observable<boolean> => {
     console.log('beforeUpload called with file:', file);
     console.log('File type:', file.type);
     console.log('File size:', file.size);
@@ -130,13 +153,13 @@ export class ImageUploadProcessorComponent implements OnDestroy {
     const isValidType = this.acceptedTypes.includes(file.type || '');
     if (!isValidType) {
       this.message.error(`Tipo de arquivo não suportado. Use: ${this.acceptedTypes.join(', ')}`);
-      return of(false);
+      return false;
     }
 
     const isValidSize = (file.size || 0) / 1024 / 1024 < this.maxFileSize;
     if (!isValidSize) {
       this.message.error(`Arquivo muito grande. Máximo: ${this.maxFileSize}MB`);
-      return of(false);
+      return false;
     }
 
     // Extract the actual File object
@@ -152,7 +175,7 @@ export class ImageUploadProcessorComponent implements OnDestroy {
       // If we can't get a proper File object, show an error
       console.error('Não foi possível obter o arquivo original');
       this.message.error('Erro ao processar arquivo. Tente novamente.');
-      return of(false);
+      return false;
     }
 
     console.log('Actual file object:', actualFile);
@@ -165,16 +188,80 @@ export class ImageUploadProcessorComponent implements OnDestroy {
     }
     
     this.processFile(actualFile);
-    return of(false);
+    return false;
   };
 
-  skipBackgroundRemoval(): void {
-    // Skip background removal and go directly to cropping
-    if (this.selectedFile) {
-      this.setupCropping(this.selectedFile);
+  handleUploadRequest = (item: any): Subscription => {
+    console.log('handleUploadRequest called with:', item);
+    console.log('Origin file obj:', item.file.originFileObj);
+    
+    if (item.file.originFileObj) {
+      this.processFile(item.file.originFileObj);
+    } else if (item.file instanceof File) {
+      this.processFile(item.file);
+    } else {
+      console.error('Não foi possível obter o arquivo para upload');
+      this.message.error('Erro ao processar arquivo. Tente novamente.');
     }
-    this.currentStep = 1;
-    this.cdr.detectChanges();
+    return of(null).subscribe();
+  };
+
+  handleRemove = (event: any): boolean => {
+    console.log('handleRemove called with:', event);
+    if (event.file) {
+      this.fileList = this.fileList.filter(f => f.uid !== event.file.uid);
+      this.selectedFile = null;
+      this.previewUrl = null;
+      this.resetState();
+    }
+    return true;
+  };
+
+  loadImageFromUrl(): void {
+    if (!this.imageFromUrl.trim()) {
+      this.message.warning('Por favor, insira uma URL válida');
+      return;
+    }
+
+    this.isProcessing = true;
+    this.processingMessage = 'Carregando imagem da URL...';
+
+    // Create a temporary image element to get dimensions
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    
+    img.onload = () => {
+      // Convert image to blob
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], 'image-from-url.jpg', { type: 'image/jpeg' });
+            this.processFile(file);
+            this.isProcessing = false;
+            this.processingMessage = '';
+            this.imageFromUrl = '';
+          } else {
+            this.message.error('Erro ao processar imagem da URL');
+            this.isProcessing = false;
+            this.processingMessage = '';
+          }
+        }, 'image/jpeg');
+      }
+    };
+    
+    img.onerror = () => {
+      this.message.error('Erro ao carregar imagem da URL');
+      this.isProcessing = false;
+      this.processingMessage = '';
+    };
+    
+    img.src = this.imageFromUrl;
   }
 
   private processFile(file: File): void {
@@ -195,10 +282,12 @@ export class ImageUploadProcessorComponent implements OnDestroy {
     }
 
     this.selectedFile = file;
-    this.currentStep = 0;
-    this.isModalVisible = true;
+    this.currentFile = file;
     this.isProcessing = false;
     this.processingMessage = '';
+    
+    // Get image dimensions
+    this.getImageDimensions(file);
     
     // Create preview URL with validation
     try {
@@ -218,6 +307,135 @@ export class ImageUploadProcessorComponent implements OnDestroy {
       console.error('Erro ao criar preview:', error);
       this.previewUrl = null;
     }
+  }
+
+  private getImageDimensions(file: File): void {
+    const img = new Image();
+    img.onload = () => {
+      this.imageDimensions = {
+        width: img.width,
+        height: img.height
+      };
+      this.cdr.detectChanges();
+    };
+    img.src = URL.createObjectURL(file);
+  }
+
+  nextStep(): void {
+    if (this.currentStep === 0 && this.selectedFile) {
+      this.currentStep = 1;
+      this.setupCropping(this.selectedFile);
+    } else if (this.currentStep === 1) {
+      this.currentStep = 2;
+      this.setupFinalImage();
+    }
+    this.cdr.detectChanges();
+  }
+
+  previousStep(): void {
+    if (this.currentStep > 0) {
+      this.currentStep--;
+      this.cdr.detectChanges();
+    }
+  }
+
+  removeBackground(): void {
+    if (!this.selectedFile) {
+      this.message.error('Nenhuma imagem selecionada');
+      return;
+    }
+
+    this.isProcessing = true;
+    this.processingMessage = 'Removendo fundo da imagem...';
+
+    // Add timeout to prevent infinite loading
+    const timeout$ = new Observable<never>((observer) => {
+      setTimeout(() => {
+        observer.error(new Error('Timeout: Processamento demorou muito'));
+      }, 30000); // 30 seconds timeout
+    });
+
+    const processing$ = from(removeBackground(this.selectedFile, {
+      model: 'isnet',
+      output: { format: 'image/png' },
+      device: "cpu" // Use CPU to avoid WebAssembly multi-threading issues
+    }));
+
+    // Race between processing and timeout
+    const processingWithTimeout$ = new Observable<Blob>((observer) => {
+      const processingSub = processing$.subscribe(observer);
+      const timeoutSub = timeout$.subscribe({
+        error: (error) => {
+          console.error('Timeout no processamento:', error);
+          this.processingMessage = 'Timeout no processamento. Usando imagem original.';
+          // Convert original file to blob for consistency
+          this.selectedFile!.arrayBuffer().then(buffer => {
+            const blob = new Blob([buffer], { type: this.selectedFile!.type });
+            observer.next(blob);
+            observer.complete();
+          });
+        }
+      });
+
+      return () => {
+        processingSub.unsubscribe();
+        timeoutSub.unsubscribe();
+      };
+    });
+
+    processingWithTimeout$.pipe(
+      finalize(() => {
+        this.isProcessing = false;
+        this.processingMessage = '';
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: (processedBlob) => {
+        try {
+          console.log('Background removal completed successfully');
+          this.backgroundRemoved = true;
+          
+          // Convert blob to file
+          const processedFile = new File([processedBlob], this.selectedFile?.name || 'processed-image.png', {
+            type: 'image/png'
+          });
+          
+          // Update the file and preview
+          this.selectedFile = processedFile;
+          this.currentFile = processedFile;
+          
+          // Clean up previous object URL
+          if (this.objectUrl) {
+            URL.revokeObjectURL(this.objectUrl);
+          }
+          
+          this.objectUrl = URL.createObjectURL(processedFile);
+          this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(this.objectUrl);
+          
+          // Set up cropping
+          this.setupCropping(processedFile);
+          
+          this.message.success('Fundo removido com sucesso!');
+          this.cdr.detectChanges();
+        } catch (error) {
+          console.error('Erro ao processar arquivo sem fundo:', error);
+          this.message.error('Erro ao processar imagem sem fundo. Usando original.');
+          this.backgroundRemoved = false;
+        }
+      },
+      error: (error) => {
+        console.error('Erro na remoção de fundo:', error);
+        this.message.error('Erro na remoção de fundo. Usando imagem original.');
+        this.backgroundRemoved = false;
+        this.setupCropping(this.selectedFile!);
+      }
+    });
+  }
+
+  skipProcessing(): void {
+    this.backgroundRemoved = false;
+    this.setupCropping(this.selectedFile!);
+    this.nextStep();
   }
 
   private setupCropping(file: File): void {
@@ -240,199 +458,12 @@ export class ImageUploadProcessorComponent implements OnDestroy {
     }
   }
 
-  // Background removal
-  private removeBackground(file: File): Observable<File> {
-    this.isProcessing = true;
-    this.processingMessage = 'Removendo fundo da imagem...';
-    
-    // Add timeout to prevent infinite loading
-    const timeout$ = new Observable<never>((observer) => {
-      setTimeout(() => {
-        observer.error(new Error('Timeout: Processamento demorou muito'));
-      }, 30000); // 30 seconds timeout
-    });
-    
-    const processing$ = from(removeBackground(file, {
-      device: 'cpu',
-      output: {
-        format: 'image/png',
-        quality: 0.8
-      }
-    })).pipe(
-      map((result) => {
-        if (result && result instanceof Blob) {
-          // Validate the blob before proceeding
-          if (result.size > 0) {
-            return new File([result], file.name, { type: 'image/png' });
-          } else {
-            throw new Error('Processed image has no content');
-          }
-        } else {
-          throw new Error('Invalid processing result');
-        }
-      }),
-      catchError((error) => {
-        console.error('Erro na remoção de fundo:', error);
-        this.processingMessage = 'Erro na remoção de fundo. Usando imagem original.';
-        
-        // Return the original file as fallback
-        return of(file);
-      }),
-      finalize(() => {
-        this.isProcessing = false;
-        this.processingMessage = '';
-      })
-    );
-    
-    // Race between processing and timeout
-    return new Observable<File>((observer) => {
-      const processingSub = processing$.subscribe(observer);
-      const timeoutSub = timeout$.subscribe({
-        error: (error) => {
-          console.error('Timeout no processamento:', error);
-          this.processingMessage = 'Timeout no processamento. Usando imagem original.';
-          observer.next(file); // Return original file
-          observer.complete();
-        }
-      });
-      
-      return () => {
-        processingSub.unsubscribe();
-        timeoutSub.unsubscribe();
-      };
-    });
-  }
-
-  // Image resizing
-  private resizeImage(file: File): Observable<File> {
-    this.isProcessing = true;
-    this.processingMessage = 'Redimensionando imagem...';
-    
-    return from(this.ngxPicaService.resizeImage(file, 800, 600, false)).pipe(
-      map((resizedBlob) => {
-        // Validate the resized blob
-        if (resizedBlob && resizedBlob instanceof Blob && resizedBlob.size > 0) {
-          return new File([resizedBlob], file.name, { type: file.type });
-        } else {
-          throw new Error('Invalid resized image');
-        }
-      }),
-      catchError((error) => {
-        console.error('Erro no redimensionamento:', error);
-        this.processingMessage = 'Erro no redimensionamento. Usando imagem original.';
-        
-        // Return the original file as fallback
-        return of(file);
-      }),
-      finalize(() => {
-        this.isProcessing = false;
-        this.processingMessage = '';
-      })
-    );
-  }
-
-  // URL image loading
-  loadImageFromUrl(): void {
-    if (!this.imageFromUrl) {
-      this.message.warning('Digite uma URL válida');
-      return;
+  private setupFinalImage(): void {
+    if (this.lastCroppedBlob) {
+      this.finalImageUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(this.lastCroppedBlob));
+    } else if (this.previewUrl) {
+      this.finalImageUrl = this.previewUrl;
     }
-
-    if (!this.isValidUrl(this.imageFromUrl)) {
-      this.message.warning('URL inválida');
-      return;
-    }
-
-    this.isProcessing = true;
-    this.processingMessage = 'Baixando imagem da URL...';
-    this.cdr.detectChanges();
-
-    this.downloadImageAsBlob(this.imageFromUrl).subscribe({
-      next: (blob) => {
-        const file = new File([blob], 'image-from-url.png', { type: 'image/png' });
-        this.processFile(file);
-      },
-      error: (error) => {
-        this.isProcessing = false;
-        this.message.error('Erro ao baixar imagem: ' + error.message);
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  private downloadImageAsBlob(imageUrl: string): Observable<Blob> {
-    return from(fetch(imageUrl)).pipe(
-      map(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response;
-      }),
-      switchMap(response => from(response.blob())),
-      catchError(error => {
-        throw new Error(`Não foi possível baixar a imagem: ${error.message}`);
-      })
-    );
-  }
-
-  private isValidUrl(url: string): boolean {
-    try {
-      new URL(url);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  // Step navigation
-  nextStep(): void {
-    if (this.currentStep === 0) {
-      // Step 0: Upload complete, move to background removal
-      this.currentStep = 0.5;
-      this.cdr.detectChanges();
-    } else if (this.currentStep === 0.5) {
-      // Step 0.5: Background removal
-      if (this.selectedFile) {
-        this.isProcessing = true;
-        this.processingMessage = 'Removendo fundo da imagem...';
-        this.cdr.detectChanges();
-        
-        this.removeBackground(this.selectedFile).subscribe({
-          next: (processedFile) => {
-            this.selectedFile = processedFile;
-            this.setupCropping(processedFile);
-            this.currentStep = 1;
-            this.isProcessing = false;
-            this.processingMessage = '';
-            this.cdr.detectChanges();
-          },
-          error: (error) => {
-            console.error('Erro no processamento:', error);
-            this.isProcessing = false;
-            this.processingMessage = 'Erro no processamento. Continuando com imagem original.';
-            this.setupCropping(this.selectedFile!);
-            this.currentStep = 1;
-            this.cdr.detectChanges();
-          }
-        });
-      }
-    } else if (this.currentStep === 1) {
-      // Step 1: Cropping
-      if (this.lastCroppedBlob) {
-        this.finalizeProcessing();
-      } else {
-        this.message.warning('Recorte a imagem antes de continuar');
-      }
-    }
-  }
-
-  previousStep(): void {
-    if (this.currentStep === 1) {
-      this.currentStep = 0.5;
-    } else if (this.currentStep === 0.5) {
-      this.currentStep = 0;
-    }
-    this.cdr.detectChanges();
   }
 
   // Image cropping
@@ -463,76 +494,38 @@ export class ImageUploadProcessorComponent implements OnDestroy {
   // Finalize processing
   finalizeProcessing(): void {
     console.log('Finalizing processing...');
-    console.log('Last cropped blob:', this.lastCroppedBlob);
     
-    if (!this.lastCroppedBlob) {
-      console.error('Nenhuma imagem processada disponível');
-      this.message.error('Nenhuma imagem processada disponível');
-      return;
-    }
-
-    // Validate the cropped blob before creating the final file
-    if (!(this.lastCroppedBlob instanceof Blob) || this.lastCroppedBlob.size === 0) {
-      console.error('Blob processado inválido');
-      this.message.error('Imagem processada inválida');
-      return;
-    }
-
     try {
-      const processedFile = new File([this.lastCroppedBlob], this.selectedFile?.name || 'processed-image.png', {
-        type: 'image/png'
-      });
-
-      // Final validation before emitting
-      if (processedFile instanceof File && processedFile.size > 0) {
-        const processedImage: ProcessedImage = {
-          file: processedFile,
-          url: this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(processedFile)) as SafeUrl,
-          croppedBlob: this.lastCroppedBlob
-        };
-
-        console.log('Emitting processed image:', processedImage);
-        this.imageProcessed.emit(processedImage);
-        this.closeModal();
+      // Get the final image (cropped or original)
+      let finalFile: File;
+      let finalUrl: SafeUrl;
+      
+      if (this.lastCroppedBlob && this.lastCroppedBlob.size > 0) {
+        finalFile = new File([this.lastCroppedBlob], this.selectedFile?.name || 'processed-image.png', {
+          type: 'image/png'
+        });
+        finalUrl = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(this.lastCroppedBlob));
+      } else if (this.selectedFile) {
+        finalFile = this.selectedFile;
+        finalUrl = this.previewUrl || '';
       } else {
-        throw new Error('Failed to create valid processed file');
+        throw new Error('Nenhuma imagem disponível');
       }
+
+      // Create the final processed image
+      const processedImage: ProcessedImage = {
+        file: finalFile,
+        url: finalUrl,
+        croppedBlob: this.lastCroppedBlob || undefined
+      };
+
+      console.log('Emitting processed image:', processedImage);
+      this.imageProcessed.emit(processedImage);
+      this.closeModal();
+      
     } catch (error) {
       console.error('Erro ao finalizar processamento:', error);
       this.message.error('Erro ao finalizar processamento');
-      // Emit the original file as fallback
-      if (this.selectedFile) {
-        const fallbackImage: ProcessedImage = {
-          file: this.selectedFile,
-          url: this.previewUrl || '',
-          croppedBlob: this.lastCroppedBlob
-        };
-        this.imageProcessed.emit(fallbackImage);
-        this.closeModal();
-      }
     }
   }
-
-  // Drag and drop handling
-  handleUploadRequest = (item: NzUploadXHRArgs): Subscription => {
-    const file = item.file;
-    let actualFile: File;
-    
-    if (file.originFileObj) {
-      actualFile = file.originFileObj;
-    } else if (file instanceof File) {
-      actualFile = file as File;
-    } else {
-      console.error('Não foi possível obter o arquivo original no handleUploadRequest');
-      return of(null).subscribe();
-    }
-    
-    this.processFile(actualFile);
-    return of(null).subscribe();
-  };
-
-  handleRemove = (file: any): boolean => {
-    this.fileList = this.fileList.filter(f => f.uid !== file.uid);
-    return true;
-  };
 }

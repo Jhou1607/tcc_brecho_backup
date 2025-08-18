@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService, User, UserProfileUpdateData } from '../../auth.service';
-import { UsuarioService } from '../../services/usuario.service';
+import { UsuarioService, UserStats } from '../../services/usuario.service';
 import { environment } from '../../../environments/environment';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { FooterComponent } from '../../shared/components/footer/footer.component';
@@ -27,6 +27,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
   private userSubscription?: Subscription;
   imageBaseUrl = environment.imageBaseUrl;
   private notificationTimer: any;
+  userStats = { looks_favoritados: 0, pecas_salvas: 0 };
 
   constructor(
     public authService: AuthService, // ALTERADO DE private PARA public
@@ -63,6 +64,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
         // }
         this.isLoading = false;
         this.error = null;
+        this.carregarEstatisticas();
       } else if (!this.authService.getToken() && !this.isLoading) {
         this.router.navigate(['/login']);
       }
@@ -93,6 +95,19 @@ export class PerfilComponent implements OnInit, OnDestroy {
     if (this.user) {
       this.user.foto_url = 'assets/default-user-avatar.svg';
     }
+  }
+
+  carregarEstatisticas(): void {
+    this.usuarioService.getEstatisticas().subscribe({
+      next: (stats: UserStats) => {
+        this.userStats = stats;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Erro ao carregar estatísticas:', error);
+        // Não mostrar erro para o usuário, apenas manter os valores padrão
+      }
+    });
   }
 
   startEdit(): void {

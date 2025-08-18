@@ -4,11 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Database\Seeders\UsuarioSeeder;
-use Database\Seeders\ProdutoSeeder;
-use Database\Seeders\ProdutoUsuarioSeeder;
-use Database\Seeders\ImagemSeeder;
-use Database\Seeders\ArmarioSeeder;
 use Database\Seeders\FilterOptionsSeeder;
+use Database\Seeders\RealProdutoSeeder;
 use App\Models\Usuario;
 
 class DatabaseSeeder extends Seeder
@@ -21,10 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UsuarioSeeder::class,
             FilterOptionsSeeder::class,
-            ProdutoSeeder::class,
-            ProdutoUsuarioSeeder::class,
-            ImagemSeeder::class,
-            ArmarioSeeder::class,
+            RealProdutoSeeder::class,
         ]);
     }
 

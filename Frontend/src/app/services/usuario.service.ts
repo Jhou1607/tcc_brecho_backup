@@ -4,6 +4,11 @@ import { Observable, from, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
+export interface UserStats {
+  looks_favoritados: number;
+  pecas_salvas: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -41,5 +46,22 @@ export class UsuarioService {
         return of(null);
       })
     );
+  }
+
+  /**
+   * Busca as estatísticas do usuário (looks favoritados e peças salvas)
+   * @returns Observable com as estatísticas do usuário
+   */
+  getEstatisticas(): Observable<UserStats> {
+    return this.http.get<{success: boolean, data: UserStats}>(`${this.apiUrl}/usuario/estatisticas`)
+      .pipe(
+        switchMap(response => {
+          if (response.success) {
+            return of(response.data);
+          } else {
+            throw new Error('Erro ao buscar estatísticas');
+          }
+        })
+      );
   }
 }

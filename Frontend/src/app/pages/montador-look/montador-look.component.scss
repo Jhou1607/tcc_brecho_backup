@@ -799,3 +799,220 @@
   display: flex;
   gap: 10px;
 }
+
+/* Estilos para responsividade mobile */
+.show-mobile {
+  display: none;
+}
+
+.hidden-mobile {
+  display: block;
+}
+
+/* Seção de itens mobile */
+.mobile-items-section {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 400px;
+  max-height: 80vh;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.mobile-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+  button {
+    color: white;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* Overlay de fundo para o popup mobile */
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Media queries para responsividade */
+@media (max-width: 768px) {
+  .show-mobile {
+    display: flex !important;
+  }
+  
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  .btn-wrapper.show-mobile {
+    button {
+      border-radius: 8px;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      
+      &.active {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+        transform: scale(1.05);
+      }
+      
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+  
+  .montador-box {
+    margin: 20px auto 0 auto;
+    padding: 20px 15px;
+    min-width: 320px;
+  }
+  
+  .main-layout {
+    flex-direction: column;
+  }
+  
+  .canvas-column {
+    width: 100%;
+  }
+  
+  .groups-column {
+    display: none;
+  }
+
+  /* Estilos específicos para itens dentro do popup mobile */
+  .mobile-items-section .items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 12px;
+    padding: 20px;
+    
+    .add-item {
+      width: 80px;
+      height: 80px;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        border-color: #667eea;
+        background: rgba(102, 126, 234, 0.05);
+      }
+      
+      nz-icon {
+        font-size: 24px;
+        color: #999;
+      }
+    }
+    
+    .item {
+      width: 80px;
+      height: 80px;
+      
+      .image-container {
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        border: 2px solid transparent;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          border-color: #667eea;
+          transform: scale(1.05);
+        }
+        
+        .item-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        
+        .heart-btn {
+          position: absolute;
+          top: 4px;
+          right: 4px;
+          background: rgba(255, 255, 255, 0.9);
+          border: none;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 10px;
+          
+          &:hover {
+            background: white;
+            transform: scale(1.1);
+          }
+        }
+      }
+    }
+  }
+}

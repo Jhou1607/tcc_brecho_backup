@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::put('/usuario/profile', [UsuarioController::class, 'updateProfile']);
     Route::post('/usuario/foto', [UsuarioController::class, 'uploadFoto'])->name('usuario.uploadFoto');
+    Route::get('/usuario/estatisticas', [UsuarioController::class, 'getEstatisticas']);
 
     Route::post('/produtos', [ProdutoController::class, 'store']);
     Route::post('/produtos/{produtoId}/imagens', [ProdutoController::class, 'uploadImagem']);

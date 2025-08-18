@@ -125,9 +125,40 @@
 
     <div class="canvas-column">
       <div class="btn-wrapper show-mobile" nz-flex [nzGap]="'middle'" nzWrap="wrap" nzJustify="space-evenly" style="margin-bottom: 10px; gap: 3px">
-        <button *ngFor="let group of clothingGroups"  style="width: 50px; height: 50px; padding: 0" nz-button >
+        <button *ngFor="let group of clothingGroups"  
+                style="width: 50px; height: 50px; padding: 0" 
+                nz-button 
+                [class.active]="isMobileGroupActive(group)"
+                (click)="selectMobileGroup(group)">
           <img [src]="group.icon" style="width: 40px" />
         </button>
+      </div>
+      
+      <!-- Overlay e Seção de itens mobile -->
+      <div class="mobile-overlay" *ngIf="activeMobileGroup" (click)="activeMobileGroup = null"></div>
+      <div class="mobile-items-section" *ngIf="activeMobileGroup">
+        <div class="mobile-group-header">
+          <h3>{{ activeMobileGroup.name }}</h3>
+          <button nz-button nzType="text" (click)="activeMobileGroup = null">
+            <nz-icon nzType="close"></nz-icon>
+          </button>
+        </div>
+        <div class="items" style="max-height: calc(80vh - 80px); overflow-y: auto; padding: 20px;">
+          <div class="add-item" title="Carregar item" (click)="addItem(activeMobileGroup)">
+            <nz-icon nzType="plus"></nz-icon>
+          </div>
+          <div class="proccess-image" *ngIf="loadingImg">
+            <nz-spin nzTip="aguarde..."></nz-spin>
+          </div>
+          <div *ngFor="let item of activeMobileGroup.items" class="item">
+            <div class="image-container">
+              <img [src]="item.canvasUrl" [alt]="item.name" [title]="item.name" class="item-image" (click)="selectClothingItem(activeMobileGroup, item)" />
+              <button *ngIf="item.origem === 'catalog'" class="heart-btn" (click)="onToggleFavorite(item, activeMobileGroup)" title="Remover dos favoritos">
+                <fa-icon [icon]="faSolidHeart" style="color: #e74c3c;"></fa-icon>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="canvas-container">
         <canvas #canvas></canvas>

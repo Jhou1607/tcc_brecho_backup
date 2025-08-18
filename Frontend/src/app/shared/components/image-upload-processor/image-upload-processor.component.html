@@ -5,26 +5,18 @@
   [nzClosable]="true"
   [nzMaskClosable]="true"
   (nzOnCancel)="closeModal()"
-  [nzWidth]="'800px'">
+  [nzWidth]="'1000px'">
   
   <ng-container *nzModalContent>
     <!-- Steps -->
-    <nz-steps [nzCurrent]="currentStep" style="margin-bottom: 24px;">
+    <nz-steps [nzCurrent]="currentStep" style="margin-bottom: 32px;">
       <nz-step nzTitle="Carregar imagem"></nz-step>
-      <nz-step nzTitle="Remover fundo"></nz-step>
+      <nz-step nzTitle="Processar imagem"></nz-step>
       <nz-step nzTitle="Recortar imagem"></nz-step>
     </nz-steps>
 
-    <!-- Step 0: Image Upload -->
+    <!-- Step 1: Image Upload -->
     <div *ngIf="currentStep === 0" class="upload-step">
-      <!-- Processing overlay -->
-      <div *ngIf="isProcessing" class="processing-overlay">
-        <div class="processing-content">
-          <nz-spin [nzTip]="processingMessage" [nzSize]="'large'">
-          </nz-spin>
-        </div>
-      </div>
-
       <div class="upload-content">
         <!-- Image Preview (if image is loaded) -->
         <div *ngIf="previewUrl && selectedFile" class="uploaded-image-preview">
@@ -39,6 +31,7 @@
             <p><strong>Nome:</strong> {{ selectedFile.name }}</p>
             <p><strong>Tamanho:</strong> {{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</p>
             <p><strong>Tipo:</strong> {{ selectedFile.type }}</p>
+            <p><strong>Dimensões:</strong> {{ imageDimensions.width }} x {{ imageDimensions.height }}px</p>
           </div>
         </div>
 
@@ -99,67 +92,113 @@
       </div>
     </div>
 
-    <!-- Step 0.5: Background Removal -->
-    <div *ngIf="currentStep === 0.5" class="background-removal-step">
-      <div class="image-preview" *ngIf="previewUrl">
-        <img [src]="previewUrl" alt="Preview da imagem" />
-      </div>
-      
-      <div class="processing-status" *ngIf="isProcessing">
-        <nz-spin nzSize="large"></nz-spin>
-        <p>{{ processingMessage }}</p>
-      </div>
-      
-      <div class="step-actions" *ngIf="!isProcessing">
-        <button 
-          nz-button 
-          nzType="primary" 
-          (click)="nextStep()"
-          class="action-button">
-          Remover Fundo
-        </button>
-        <button 
-          nz-button 
-          nzType="default" 
-          (click)="skipBackgroundRemoval()"
-          class="action-button skip-button">
-          Pular Remoção de Fundo
-        </button>
+    <!-- Step 2: Image Processing (Background Removal) -->
+    <div *ngIf="currentStep === 1" class="processing-step">
+      <div class="processing-content">
+        <!-- Image Preview -->
+        <div class="image-preview-section">
+          <div class="preview-container">
+            <img [src]="previewUrl" alt="Preview da imagem" />
+          </div>
+        </div>
+        
+        <!-- Processing Options -->
+        <div class="processing-options">
+          <div class="options-header">
+            <h3>Processar Imagem</h3>
+            <p>Escolha como deseja processar sua imagem:</p>
+          </div>
+          
+          <!-- Background Removal -->
+          <div class="option-card">
+            <div class="option-header">
+              <nz-icon nzType="scissor" nzTheme="twotone" nzTwotoneColor="#52c41a"></nz-icon>
+              <h4>Remover Fundo</h4>
+            </div>
+            <p>Remove automaticamente o fundo da imagem usando IA</p>
+            
+            <div class="option-actions">
+              <button 
+                nz-button 
+                nzType="primary" 
+                (click)="removeBackground()"
+                [nzLoading]="isProcessing"
+                [disabled]="isProcessing"
+                class="action-button">
+                {{ isProcessing ? 'Processando...' : 'Remover Fundo' }}
+              </button>
+            </div>
+            
+            <!-- Processing Status -->
+            <div *ngIf="isProcessing" class="processing-status">
+              <nz-spin nzSize="small"></nz-spin>
+              <span>{{ processingMessage }}</span>
+            </div>
+          </div>
+          
+          <!-- Skip Option -->
+          <div class="option-card skip-option">
+            <div class="option-header">
+              <nz-icon nzType="forward" nzTheme="twotone" nzTwotoneColor="#faad14"></nz-icon>
+              <h4>Pular Processamento</h4>
+            </div>
+            <p>Use a imagem original sem modificações</p>
+            
+            <div class="option-actions">
+              <button 
+                nz-button 
+                nzType="default" 
+                (click)="skipProcessing()"
+                [disabled]="isProcessing"
+                class="action-button skip-button">
+                Pular e Continuar
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Step 1: Image Cropping -->
-    <div *ngIf="currentStep === 1" class="cropping-step">
-      <div class="cropper-wrapper">
-        <div class="cropper-instructions">
-          <nz-icon nzType="scissor" style="margin-right: 8px;"></nz-icon>
-          Recorte a imagem removendo espaços desnecessários
+    <!-- Step 3: Image Cropping -->
+    <div *ngIf="currentStep === 2" class="cropping-step">
+      <div class="cropping-content">
+        <div class="cropping-header">
+          <nz-icon nzType="scissor" nzTheme="twotone" nzTwotoneColor="#52c41a"></nz-icon>
+          <h4>Recortar Imagem (Opcional)</h4>
+          <p>Recorte a imagem para remover espaços desnecessários ou ajustar o enquadramento</p>
         </div>
         
-        <image-cropper
-          #imageCropperRef
-          [imageChangedEvent]="imageChangedEvent"
-          [imageURL]="objectUrl || undefined"
-          [onlyScaleDown]="true"
-          [maintainAspectRatio]="false"
-          output="blob"
-          format="png"
-          (imageCropped)="imageCropped($event)"
-          (imageLoaded)="imageLoaded($event)"
-          (cropperReady)="cropperReady()"
-          (loadImageFailed)="loadImageFailed()">
-        </image-cropper>
+        <div class="cropper-wrapper">
+          <image-cropper
+            #imageCropperRef
+            [imageChangedEvent]="imageChangedEvent"
+            [imageURL]="objectUrl || undefined"
+            [onlyScaleDown]="true"
+            [maintainAspectRatio]="false"
+            output="blob"
+            format="png"
+            (imageCropped)="imageCropped($event)"
+            (imageLoaded)="imageLoaded($event)"
+            (cropperReady)="cropperReady()"
+            (loadImageFailed)="loadImageFailed()">
+          </image-cropper>
+        </div>
+        
+        <div class="cropping-info">
+          <p><strong>Dica:</strong> Você pode pular o recorte se estiver satisfeito com a imagem atual</p>
+        </div>
       </div>
     </div>
 
     <!-- Step Actions -->
     <div class="step-actions">
       <button 
-        *ngIf="currentStep === 0.5 || currentStep === 1" 
+        *ngIf="currentStep > 0" 
         nz-button 
         nzType="default" 
         (click)="previousStep()"
-        style="margin-right: 8px;">
+        class="action-button back-button">
+        <nz-icon nzType="left"></nz-icon>
         <span>Voltar</span>
       </button>
       
@@ -168,17 +207,29 @@
         nz-button 
         nzType="primary" 
         (click)="nextStep()"
-        [disabled]="!selectedFile">
+        [disabled]="!selectedFile"
+        class="action-button continue-button">
         <span>Continuar</span>
+        <nz-icon nzType="right"></nz-icon>
       </button>
       
       <button 
-        *ngIf="currentStep === 1" 
+        *ngIf="currentStep === 1 && !isProcessing" 
+        nz-button 
+        nzType="primary" 
+        (click)="nextStep()"
+        class="action-button continue-button">
+        <span>Continuar</span>
+        <nz-icon nzType="right"></nz-icon>
+      </button>
+      
+      <button 
+        *ngIf="currentStep === 2" 
         nz-button 
         nzType="primary" 
         (click)="finalizeProcessing()"
-        [disabled]="!lastCroppedBlob">
-        <span>Finalizar</span>
+        class="action-button submit-button">
+        Finalizar
       </button>
     </div>
   </ng-container>

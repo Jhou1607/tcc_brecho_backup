@@ -1,122 +1,152 @@
+// Color variables
+$light-bg: #fbf9f4;
+$dark-green: #385246;
+$brown: #8c624d;
+$border-color: #d0c9c0;
+$pastel-green: #9bad9a;
+
 // ========================================
 // IMAGE UPLOAD PROCESSOR COMPONENT STYLES
 // ========================================
 
-.upload-step {
-  position: relative;
-  min-height: 300px;
-}
-
-.processing-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.95);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-}
-
-.processing-content {
-  text-align: center;
-  
-  ::ng-deep .ant-spin {
-    .ant-spin-dot {
-      font-size: 32px;
+// Modal customization
+::ng-deep .ant-modal {
+  .ant-modal-content {
+    border-radius: 16px;
+    border: 1px solid #d0c9c0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    
+    .ant-modal-header {
+      background: #fbf9f4;
+      border-bottom: 1px solid #d0c9c0;
+      border-radius: 16px 16px 0 0;
+      
+      .ant-modal-title {
+        color: #385246;
+        font-size: 24px;
+        font-weight: 700;
+        text-align: center;
+      }
     }
     
-    .ant-spin-text {
-      font-size: 16px;
-      color: #9bad9a;
-      margin-top: 16px;
+    .ant-modal-body {
+      padding: 32px;
+      background: white;
     }
   }
 }
 
-.upload-content {
-  .uploaded-image-preview {
-    text-align: center;
-    padding: 24px;
-    background: #fbf9f4;
-    border: 2px solid #9bad9a;
-    border-radius: 12px;
-    margin-bottom: 20px;
+// Steps customization
+::ng-deep .ant-steps {
+  .ant-steps-item {
+    .ant-steps-item-icon {
+      background: #d0c9c0;
+      border-color: #d0c9c0;
+      
+      .ant-steps-icon {
+        color: #8c624d;
+      }
+    }
     
-    .preview-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
-      color: #52c41a;
+    &.ant-steps-item-process .ant-steps-item-icon {
+      background: #9bad9a;
+      border-color: #9bad9a;
+      
+      .ant-steps-icon {
+        color: white;
+      }
+    }
+    
+    &.ant-steps-item-finish .ant-steps-item-icon {
+      background: #8c624d;
+      border-color: #8c624d;
+      
+      .ant-steps-icon {
+        color: white;
+      }
+    }
+    
+    .ant-steps-item-title {
+      color: #385246;
       font-weight: 600;
-      font-size: 16px;
-      
-      nz-icon {
-        margin-right: 8px;
-        font-size: 20px;
-      }
     }
-    
-    .preview-image {
-      margin-bottom: 16px;
+  }
+}
+
+// Step 1: Upload Step
+.upload-step {
+  .upload-content {
+    .uploaded-image-preview {
+      text-align: center;
+      margin-bottom: 24px;
       
-      img {
-        max-width: 100%;
-        max-height: 200px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-    }
-    
-    .preview-info {
-      text-align: left;
-      background: white;
-      padding: 12px;
-      border-radius: 6px;
-      border: 1px solid #d0c9c0;
-      
-      p {
-        margin: 4px 0;
-        color: #385246;
-        font-size: 14px;
+      .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 16px;
+        color: #52c41a;
+        font-weight: 600;
+        font-size: 16px;
         
-        strong {
-          color: #8c624d;
+        nz-icon {
+          font-size: 20px;
+        }
+      }
+      
+      .preview-image {
+        margin-bottom: 16px;
+        
+        img {
+          max-width: 300px;
+          max-height: 300px;
+          border-radius: 12px;
+          border: 2px solid #d0c9c0;
+          object-fit: cover;
+        }
+      }
+      
+      .preview-info {
+        background: #fbf9f4;
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid #d0c9c0;
+        
+        p {
+          margin: 4px 0;
+          color: #385246;
+          font-size: 14px;
+          
+          strong {
+            color: #8c624d;
+          }
         }
       }
     }
-  }
-  
-  .upload-area {
-    .ant-upload-drag {
-      border: 2px dashed #d0c9c0;
-      border-radius: 12px;
-      background: #fbf9f4;
-      transition: all 0.3s ease;
+    
+    .upload-area {
+      margin-bottom: 24px;
       
-      &:hover {
-        border-color: #9bad9a;
-        background: #dde5db;
-      }
-      
-      .ant-upload-drag-container {
-        padding: 40px 20px;
+      ::ng-deep .ant-upload-drag {
+        border: 2px dashed #d0c9c0;
+        border-radius: 12px;
+        background: #fbf9f4;
+        
+        &:hover {
+          border-color: #9bad9a;
+          background: #dde5db;
+        }
         
         .ant-upload-drag-icon {
+          color: #8c624d;
           font-size: 48px;
-          color: #9bad9a;
-          margin-bottom: 16px;
         }
         
         .ant-upload-text {
+          color: #385246;
           font-size: 18px;
           font-weight: 600;
-          color: #385246;
-          margin-bottom: 8px;
         }
         
         .ant-upload-hint {
@@ -125,285 +155,532 @@
         }
       }
     }
+    
+    .url-input-section {
+      .divider {
+        text-align: center;
+        margin: 16px 0;
+        position: relative;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: #d0c9c0;
+        }
+        
+        span {
+          background: white;
+          padding: 0 16px;
+          color: #8c624d;
+          font-size: 14px;
+        }
+      }
+      
+      ::ng-deep .ant-input-group {
+        .ant-input {
+          border: 2px solid #d0c9c0;
+          border-radius: 8px 0 0 8px;
+          padding: 12px 16px;
+          background: #fbf9f4;
+          color: #385246;
+          
+          &:focus {
+            border-color: #9bad9a;
+            box-shadow: 0 0 0 2px rgba(155, 173, 154, 0.2);
+            background: white;
+          }
+          
+          &::placeholder {
+            color: #8c624d;
+            opacity: 0.6;
+          }
+        }
+        
+        .ant-input-group-addon {
+          background: #9bad9a;
+          border: 2px solid #9bad9a;
+          border-left: none;
+          border-radius: 0 8px 8px 0;
+          
+          button {
+            border: none;
+            background: transparent;
+            color: white;
+            
+            &:hover {
+              background: rgba(255, 255, 255, 0.1);
+            }
+          }
+        }
+      }
+    }
   }
 }
 
-.url-input-section {
-  margin-top: 24px;
-  
-  .divider {
-    text-align: center;
-    margin: 20px 0;
-    position: relative;
+// Step 2: Processing Step
+.processing-step {
+  .processing-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
     
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: #d0c9c0;
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 24px;
     }
     
-    span {
-      background: white;
-      padding: 0 16px;
-      color: #8c624d;
-      font-size: 14px;
-      position: relative;
-      z-index: 1;
-    }
-  }
-  
-  .ant-input-group {
-    .ant-input {
-      border-radius: 8px 0 0 8px;
-      border: 2px solid #d0c9c0;
-      transition: all 0.3s ease;
-      
-      &:focus {
-        border-color: #9bad9a;
-        box-shadow: 0 0 0 2px rgba(155, 173, 154, 0.2);
+    .image-preview-section {
+      .preview-container {
+        text-align: center;
+        
+        img {
+          max-width: 100%;
+          max-height: 400px;
+          border-radius: 12px;
+          border: 2px solid #d0c9c0;
+          object-fit: cover;
+        }
       }
     }
     
-    .ant-input-group-addon {
-      border-radius: 0 8px 8px 0;
-      border: 2px solid #d0c9c0;
-      border-left: none;
-      background: #fbf9f4;
+    .processing-options {
+      .options-header {
+        margin-bottom: 24px;
+        text-align: center;
+        
+        h3 {
+          color: #385246;
+          font-size: 20px;
+          font-weight: 700;
+          margin-bottom: 8px;
+        }
+        
+        p {
+          color: #8c624d;
+          font-size: 14px;
+          margin: 0;
+        }
+      }
       
-      button {
-        border: none;
-        background: transparent;
-        color: #8c624d;
+      .option-card {
+        background: #fbf9f4;
+        border: 2px solid #d0c9c0;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
         transition: all 0.3s ease;
         
         &:hover {
-          color: #9bad9a;
+          border-color: #9bad9a;
+          background: #dde5db;
         }
         
-        &:disabled {
-          color: #d0c9c0;
-          cursor: not-allowed;
+        .option-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 12px;
+          
+          nz-icon {
+            font-size: 24px;
+          }
+          
+          h4 {
+            color: #385246;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+          }
+        }
+        
+        p {
+          color: #8c624d;
+          font-size: 14px;
+          margin-bottom: 16px;
+        }
+        
+        .option-actions {
+          .action-button {
+            width: 100%;
+            height: 44px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            
+            &.ant-btn-primary {
+              background: linear-gradient(135deg, #9bad9a 0%, #8c624d 100%);
+              border: none;
+              box-shadow: 0 4px 12px rgba(155, 173, 154, 0.4);
+              
+              &:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(155, 173, 154, 0.5);
+              }
+            }
+            
+            &.skip-button {
+              border: 2px solid #d0c9c0;
+              background: white;
+              color: #8c624d;
+              
+              &:hover {
+                border-color: #9bad9a;
+                background: #fbf9f4;
+                color: #385246;
+              }
+            }
+          }
+        }
+        
+        .processing-status {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 12px;
+          color: #8c624d;
+          font-size: 14px;
+          
+          nz-spin {
+            ::ng-deep .ant-spin-dot {
+              i {
+                background-color: #9bad9a;
+              }
+            }
+          }
+        }
+        
+        &.skip-option {
+          background: white;
+          border-color: #faad14;
+          
+          .option-header nz-icon {
+            color: #faad14;
+          }
+        }
+      }
+    }
+    
+    .cropping-section {
+      grid-column: 1 / -1;
+      margin-top: 24px;
+      padding: 24px;
+      background: #fbf9f4;
+      border-radius: 12px;
+      border: 1px solid #d0c9c0;
+      
+      .cropping-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+        
+        nz-icon {
+          font-size: 20px;
+          color: #52c41a;
+        }
+        
+        h4 {
+          color: #385246;
+          font-size: 16px;
+          font-weight: 600;
+          margin: 0;
+        }
+        
+        p {
+          color: #8c624d;
+          font-size: 14px;
+          margin: 0;
+        }
+      }
+      
+      .cropper-wrapper {
+        ::ng-deep ngx-image-cropper {
+          .cropper-container {
+            border-radius: 8px;
+            overflow: hidden;
+          }
         }
       }
     }
   }
 }
 
-.cropping-step {
-  .cropper-wrapper {
-    .cropper-instructions {
+// Step 3: Product Form Step
+.product-form-step {
+  .form-content {
+    .final-image-preview {
       text-align: center;
-      color: #9bad9a;
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      padding: 16px;
-      background: #dde5db;
-      border-radius: 8px;
-      border: 1px solid #9bad9a;
-    }
-    
-    ::ng-deep .ngx-image-cropper {
-      border: 2px solid #d0c9c0;
-      border-radius: 8px;
-      overflow: hidden;
+      margin-bottom: 24px;
       
-      .cropper-container {
-        background: #fbf9f4;
+      img {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 12px;
+        border: 2px solid #d0c9c0;
+        object-fit: cover;
       }
     }
-  }
-}
-
-.background-removal-step {
-  text-align: center;
-  padding: 20px;
-  
-  .image-preview {
-    margin-bottom: 20px;
     
-    img {
-      max-width: 100%;
-      max-height: 300px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-  }
-  
-  .processing-status {
-    margin: 20px 0;
-    
-    p {
-      margin-top: 10px;
-      color: #8c624d;
-      font-weight: 500;
-    }
-  }
-  
-  .step-actions {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    
-    .action-button {
-      min-width: 140px;
-      
-      &.skip-button {
-        border-color: #d0c9c0;
-        color: #8c624d;
+    .product-form {
+      .form-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 32px;
+        margin-bottom: 32px;
         
-        &:hover {
-          border-color: #8c624d;
-          background-color: rgba(139, 98, 77, 0.1);
+        @media (max-width: 768px) {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+      }
+      
+      .form-column {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        
+        .field-label {
+          color: #385246;
+          font-weight: 600;
+          font-size: 14px;
+          margin: 0;
+          
+          .required {
+            color: #ff4d4f;
+            margin-left: 4px;
+          }
+        }
+        
+        .field-input {
+          border: 2px solid #d0c9c0 !important;
+          border-radius: 8px !important;
+          padding: 12px 16px !important;
+          font-size: 14px !important;
+          transition: all 0.3s ease !important;
+          background: #fbf9f4 !important;
+          height: 44px !important;
+          
+          &:focus {
+            border-color: #9bad9a !important;
+            box-shadow: 0 0 0 2px rgba(155, 173, 154, 0.2) !important;
+            background: white !important;
+          }
+          
+          &:hover {
+            border-color: #9bad9a !important;
+          }
+          
+          &::placeholder {
+            color: #8c624d !important;
+            opacity: 0.6 !important;
+          }
         }
       }
     }
   }
 }
 
+// Ng-Zorro Select customization
+::ng-deep .product-form {
+  .ant-select {
+    .ant-select-selector {
+      border: 2px solid #d0c9c0 !important;
+      border-radius: 8px !important;
+      padding: 10px 14px !important;
+      background: #fbf9f4 !important;
+      transition: all 0.3s ease !important;
+      height: 44px !important;
+      
+      &:hover {
+        border-color: #9bad9a !important;
+      }
+    }
+    
+    &.ant-select-focused .ant-select-selector {
+      border-color: #9bad9a !important;
+      box-shadow: 0 0 0 2px rgba(155, 173, 154, 0.2) !important;
+      background: white !important;
+    }
+  }
+}
+
+// Step Actions
 .step-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid #d0c9c0;
   margin-top: 24px;
-  text-align: right;
-  padding-top: 16px;
-  border-top: 1px solid #f0f0f0;
   
-  .ant-btn {
-    height: 40px;
+  .action-button {
+    height: 44px;
     border-radius: 8px;
     font-weight: 600;
     font-size: 14px;
     transition: all 0.3s ease;
+    min-width: 120px;
     
-    &.ant-btn-primary {
-      background: linear-gradient(135deg, #9bad9a 0%, #8c624d 100%);
-      border: none;
-      box-shadow: 0 4px 12px rgba(155, 173, 154, 0.4);
-      
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(155, 173, 154, 0.5);
-      }
-      
-      &:active {
-        transform: translateY(0);
-      }
-    }
-    
-    &.ant-btn-default {
+    &.back-button {
       border: 2px solid #d0c9c0;
+      background: white;
       color: #8c624d;
       
       &:hover {
         border-color: #9bad9a;
-        color: #9bad9a;
+        background: #fbf9f4;
+        color: #385246;
+      }
+      
+      nz-icon {
+        margin-right: 6px;
       }
     }
-  }
-}
-
-// Modal customization
-::ng-deep .ant-modal {
-  .ant-modal-header {
-    background: linear-gradient(135deg, #9bad9a 0%, #8c624d 100%);
-    border-radius: 8px 8px 0 0;
     
-    .ant-modal-title {
-      color: white;
-      font-weight: 600;
-    }
-    
-    .ant-modal-close {
+    &.continue-button {
+      background: linear-gradient(135deg, #9bad9a 0%, #8c624d 100%);
+      border: none;
+      box-shadow: 0 4px 12px rgba(155, 173, 154, 0.4);
       color: white;
       
-      &:hover {
-        color: rgba(255, 255, 255, 0.8);
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(155, 173, 154, 0.5);
       }
-    }
-  }
-  
-  .ant-modal-body {
-    padding: 24px;
-  }
-}
-
-// Steps customization
-::ng-deep .ant-steps {
-  .ant-steps-item {
-    .ant-steps-item-icon {
-      background: #f0f0f0;
-      border-color: #d0c9c0;
       
-      .ant-steps-icon {
-        color: #8c624d;
+      &:disabled {
+        background: #d0c9c0;
+        transform: none;
+        box-shadow: none;
+      }
+      
+      nz-icon {
+        margin-left: 6px;
       }
     }
     
-    &.ant-steps-item-process {
-      .ant-steps-item-icon {
-        background: #9bad9a;
-        border-color: #9bad9a;
-        
-        .ant-steps-icon {
-          color: white;
-        }
+    &.submit-button {
+      background: linear-gradient(135deg, #9bad9a 0%, #8c624d 100%);
+      border: none;
+      box-shadow: 0 4px 12px rgba(155, 173, 154, 0.4);
+      color: white;
+      min-width: 180px;
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(155, 173, 154, 0.5);
+      }
+      
+      &:disabled {
+        background: #d0c9c0;
+        transform: none;
+        box-shadow: none;
       }
     }
-    
-    &.ant-steps-item-finish {
-      .ant-steps-item-icon {
-        background: #8c624d;
-        border-color: #8c624d;
-        
-        .ant-steps-icon {
-          color: white;
-        }
-      }
-    }
-  }
-  
-  .ant-steps-item-title {
-    font-weight: 600;
-    color: #385246;
   }
 }
 
-// Responsive adjustments
+// Responsive Design
 @media (max-width: 768px) {
   ::ng-deep .ant-modal {
-    width: 95% !important;
-    margin: 10px;
+    .ant-modal-content {
+      .ant-modal-body {
+        padding: 24px;
+      }
+    }
+  }
+  
+  .processing-step .processing-content {
+    gap: 20px;
+  }
+  
+  .product-form-step .form-content .product-form .form-columns {
+    gap: 20px;
+  }
+  
+  .step-actions {
+    flex-direction: column;
+    gap: 16px;
     
-    .ant-modal-body {
-      padding: 16px;
-    }
-  }
-  
-  .upload-content {
-    .ant-upload-drag {
-      .ant-upload-drag-container {
-        padding: 24px 16px;
-        
-        .ant-upload-drag-icon {
-          font-size: 36px;
-        }
-        
-        .ant-upload-text {
-          font-size: 16px;
-        }
-      }
-    }
-  }
-  
-  .cropping-step {
-    .cropper-wrapper {
-      .cropper-instructions {
-        font-size: 14px;
-        padding: 12px;
-      }
+    .action-button {
+      width: 100%;
+      min-width: auto;
     }
   }
 }
+
+  .cropping-step {
+    .cropping-content {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      
+      .cropping-header {
+        text-align: center;
+        margin-bottom: 16px;
+        
+        h4 {
+          color: $dark-green;
+          margin: 8px 0 4px 0;
+          font-size: 18px;
+        }
+        
+        p {
+          color: $brown;
+          margin: 0;
+          font-size: 14px;
+        }
+        
+        nz-icon {
+          font-size: 24px;
+          color: $pastel-green;
+        }
+      }
+      
+      .cropper-wrapper {
+        border: 2px dashed $border-color;
+        border-radius: 8px;
+        padding: 16px;
+        background: $light-bg;
+        margin: 0 auto;
+        max-width: 600px;
+        
+        ::ng-deep .ngx-image-cropper {
+          .cropper-container {
+            border-radius: 6px;
+            overflow: hidden;
+          }
+        }
+      }
+      
+      .cropping-info {
+        text-align: center;
+        padding: 16px;
+        background: $light-bg;
+        border-radius: 8px;
+        border: 1px solid $border-color;
+        
+        p {
+          margin: 0;
+          color: $brown;
+          font-size: 14px;
+          
+          strong {
+            color: $dark-green;
+          }
+        }
+      }
+    }
+  }
+

@@ -16,15 +16,8 @@ return new class extends Migration
             $table->string('modelo', 55)->nullable();
             $table->string('estado_conservacao')->nullable();
             $table->string('estacao')->nullable();
-            $table->enum('categoria', [
-                'chapeu', 'tiara', 'bone', 'lenco',
-                'camiseta', 'camisa', 'blusa', 'jaqueta', 'casaco', 'sueter', 'regata', 'colete',
-                'calca', 'saia', 'short', 'legging', 'bermuda', 'jardineira',
-                'tenis', 'sandalia', 'bota', 'sapato', 'chinelo',
-                'cinto', 'oculos', 'bolsa', 'relogio', 'brinco', 'colar', 'pulseira', 'anel',
-                'outro_acessorios_cabeca', 'outro_tops', 'outro_calcas_saias', 'outro_calcados', 'outro_acessorios'
-            ])->nullable();
-            $table->enum('genero', ['masculino', 'feminino', 'unissex'])->nullable();
+            $table->string('categoria')->nullable();
+            $table->string('genero')->nullable();
             $table->string('cor')->nullable();
             $table->string('numeracao', 20)->nullable();
             $table->json('ocasioes')->nullable();
