@@ -6,7 +6,7 @@ import {
   CategoriaTops, 
   CategoriaCalcasSaias, 
   CategoriaCalcados, 
-  CategoriaAcessorios 
+  CategoriaAcessorios
 } from '../../../interfaces/categorias';
 
 export interface CategoriaSelecionada {
@@ -122,16 +122,20 @@ export interface CategoriaSelecionada {
       align-items: center;
       justify-content: center;
       z-index: 1000;
+      padding: 20px;
     }
 
     .modal-content {
       background: white;
       border-radius: 12px;
       padding: 0;
-      min-width: 320px;
-      max-width: 400px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 80vh;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .modal-header {
@@ -141,6 +145,7 @@ export interface CategoriaSelecionada {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-shrink: 0;
     }
 
     .modal-header h3 {
@@ -171,13 +176,17 @@ export interface CategoriaSelecionada {
 
     .modal-body {
       padding: 24px;
+      overflow-y: auto;
+      flex: 1;
     }
 
     .group-selection,
     .category-selection {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 12px;
+      max-height: 400px;
+      overflow-y: auto;
     }
 
     .selection-btn {
@@ -191,6 +200,9 @@ export interface CategoriaSelecionada {
       text-align: left;
       cursor: pointer;
       transition: all 0.3s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .selection-btn:hover {
@@ -210,6 +222,8 @@ export interface CategoriaSelecionada {
       font-size: 14px;
       cursor: pointer;
       transition: all 0.3s ease;
+      grid-column: 1 / -1;
+      justify-self: center;
     }
 
     .back-btn:hover {
@@ -219,9 +233,15 @@ export interface CategoriaSelecionada {
 
     @media (max-width: 768px) {
       .modal-content {
-        margin: 20px;
-        min-width: auto;
-        width: calc(100% - 40px);
+        width: 95%;
+        max-height: 90vh;
+        margin: 10px;
+      }
+      
+      .group-selection,
+      .category-selection {
+        grid-template-columns: 1fr;
+        max-height: 300px;
       }
     }
   `]

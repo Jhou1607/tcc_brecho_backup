@@ -95,7 +95,6 @@ $brecho-spacing-xlarge: 32px;
   100% { transform: scale(1); }
 }
 
-
 html, body {
   margin: 0;
   padding: 0;
@@ -107,18 +106,26 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 app-root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
 }
 
 main, .page-content-area {
   flex: 1 0 auto;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 input, textarea, button {
@@ -152,6 +159,7 @@ a {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
 }
 
 .content-area {
@@ -159,6 +167,7 @@ a {
   display: flex;
   justify-content: center;
   padding: $brecho-spacing-medium;
+  width: 100%;
 }
 
 .form-graphic-layout {
@@ -183,29 +192,140 @@ a {
 
   .graphic-panel {
     flex: 0.8;
-    background-color: #cad2c5;
-    background-size: cover;
-    background-position: center;
-    display: none;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $brecho-spacing-large;
+    position: relative;
+    overflow: hidden;
 
-    @media (min-width: 992px) {
-      display: block;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(0,0,0,0.05) 25%, transparent 25%), 
+                  linear-gradient(-45deg, rgba(0,0,0,0.05) 25%, transparent 25%), 
+                  linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.05) 75%), 
+                  linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.05) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      opacity: 0.1;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .graphic-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      color: $brecho-primary-text;
+
+      .graphic-icon {
+        font-size: 4rem;
+        margin-bottom: $brecho-spacing-medium;
+        color: $brecho-logo-color;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      .graphic-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: $brecho-spacing-small;
+        color: $brecho-primary-text;
+      }
+
+      .graphic-subtitle {
+        font-size: 1rem;
+        color: $brecho-secondary-text;
+        line-height: 1.5;
+      }
     }
   }
 }
 
-.loading-indicator, .error-message, .no-results {
-  text-align: center;
-  padding: $brecho-spacing-xlarge $brecho-spacing-medium;
-  color: $brecho-secondary-text;
-  font-size: 1.1rem;
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }
 
-.error-message {
-  color: #c0392b;
-  font-weight: 500;
+// Responsividade - APENAS CORREÇÕES MÍNIMAS PARA MOBILE
+@media (max-width: 768px) {
+  html, body {
+    font-size: 15px;
+  }
+  
+  h1 { font-size: 2.2rem; }
+  h2 { font-size: 1.8rem; }
+  h3 { font-size: 1.5rem; }
+  
+  .content-area {
+    padding: $brecho-spacing-small;
+  }
+  
+  .form-graphic-layout {
+    flex-direction: column;
+    
+    .form-panel {
+      padding: $brecho-spacing-medium;
+    }
+    
+    .graphic-panel {
+      padding: $brecho-spacing-medium;
+      
+      .graphic-content {
+        .graphic-icon {
+          font-size: 3rem;
+        }
+        
+        .graphic-title {
+          font-size: 1.3rem;
+        }
+        
+        .graphic-subtitle {
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
 }
 
-.no-results {
-  color: $brecho-secondary-text;
+@media (max-width: 480px) {
+  html, body {
+    font-size: 14px;
+  }
+  
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.6rem; }
+  h3 { font-size: 1.4rem; }
+  
+  .content-area {
+    padding: $brecho-spacing-xsmall;
+  }
+  
+  .form-graphic-layout {
+    .form-panel {
+      padding: $brecho-spacing-small;
+    }
+    
+    .graphic-panel {
+      padding: $brecho-spacing-small;
+      
+      .graphic-content {
+        .graphic-icon {
+          font-size: 2.5rem;
+        }
+        
+        .graphic-title {
+          font-size: 1.2rem;
+        }
+        
+        .graphic-subtitle {
+          font-size: 0.85rem;
+        }
+      }
+    }
+  }
 }

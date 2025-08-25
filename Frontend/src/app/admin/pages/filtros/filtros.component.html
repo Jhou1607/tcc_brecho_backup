@@ -1,72 +1,115 @@
-<div class="filtros-page">
+<div class="filtros-container">
+  <!-- Header -->
   <div class="page-header">
-    <h1>Gerenciamento de Filtros</h1>
-    <button nz-button nzType="primary" (click)="showCreateModal()">
-      <span nz-icon nzType="plus"></span>
-      Novo Filtro
-    </button>
+    <h1>Gerenciar Filtros</h1>
+    <p class="subtitle">Controle a visibilidade dos filtros por categoria</p>
   </div>
 
-  <nz-spin [nzSpinning]="loading">
-    <div class="filtros-grid">
-      <nz-card *ngFor="let filterType of filterTypes" [nzTitle]="filterType.label">
-        <div class="filter-header">
-          <h3>{{ filterType.label }}</h3>
-          <span class="filter-count">{{ getFiltrosByType(filterType.value).length }} itens</span>
+  <!-- Botões das Categorias -->
+  <div class="categorias-grid">
+    <div 
+      *ngFor="let categoria of categorias" 
+      class="categoria-card"
+      (click)="abrirPopUpCategoria(categoria)">
+      
+      <div class="categoria-icon">
+        <nz-icon [nzType]="categoria.icon"></nz-icon>
+      </div>
+      
+      <div class="categoria-info">
+        <h3>{{ categoria.nome }}</h3>
+        <p>{{ categoria.descricao }}</p>
+        <div class="categoria-stats">
+          <span class="ativos">{{ getFiltrosAtivos(categoria.tipo) }} ativos</span>
+          <span class="total">/ {{ getFiltrosTotal(categoria.tipo) }} total</span>
         </div>
+      </div>
+      
+      <div class="categoria-arrow">
+        <nz-icon nzType="right"></nz-icon>
+      </div>
+    </div>
+  </div>
 
-        <div class="filter-items">
-          <nz-tag *ngFor="let filter of getFiltrosByType(filterType.value)" 
-                  class="filter-tag">
-            {{ filter.value }}
-            <button nz-button nzType="text" nzSize="small" 
-                    (click)="deleteFiltro(filter.type, filter.id)"
-                    class="delete-btn">
-              <span nz-icon nzType="close"></span>
-            </button>
-          </nz-tag>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <nz-spin nzSize="large"></nz-spin>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && filtros.length === 0" class="empty-container">
+    <nz-empty nzNotFoundImage="simple" nzNotFoundContent="Nenhum filtro encontrado"></nz-empty>
+  </div>
+</div>
+
+<!-- Pop-up de Categoria -->
+<nz-modal
+  [(nzVisible)]="isPopUpVisible"
+  [nzTitle]="categoriaSelecionada?.nome"
+  [nzFooter]="null"
+  [nzClosable]="true"
+  [nzMaskClosable]="true"
+  (nzOnCancel)="fecharPopUp()"
+  [nzWidth]="'800px'"
+  [nzStyle]="{ top: '20px' }">
+  
+  <ng-container *nzModalContent>
+    <div class="popup-content">
+      <!-- Barra de Pesquisa -->
+      <div class="search-section">
+        <input 
+          nz-input 
+          placeholder="Pesquisar filtros..."
+          [(ngModel)]="termoPesquisa"
+          (ngModelChange)="filtrarFiltros()" />
+      </div>
+
+      <!-- Lista de Filtros da Categoria -->
+      <div class="filtros-lista">
+        <div 
+          *ngFor="let filtro of filtrosFiltrados" 
+          class="filtro-item"
+          [class.inactive]="!filtro.is_active">
           
-          <div *ngIf="getFiltrosByType(filterType.value).length === 0" class="empty-state">
-            <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="'Nenhum filtro cadastrado'">
-            </nz-empty>
+          <div class="filtro-info">
+            <span class="filtro-label" [class.inactive-text]="!filtro.is_active">
+              {{ filtro.label }}
+            </span>
+            <span class="filtro-value" [class.inactive-text]="!filtro.is_active">
+              ({{ filtro.value }})
+            </span>
+          </div>
+          
+          <div class="filtro-actions">
+            <nz-tag 
+              [nzColor]="filtro.is_active ? 'green' : 'red'"
+              (click)="toggleFilterStatus(filtro.id)">
+              {{ filtro.is_active ? 'Ativo' : 'Inativo' }}
+            </nz-tag>
+            
+            <button 
+              nz-button 
+              nzType="text" 
+              nzSize="small"
+              (click)="toggleFilterStatus(filtro.id)"
+              class="visibility-btn"
+              [class.inactive-btn]="!filtro.is_active"
+              [title]="filtro.is_active ? 'Clique para desativar' : 'Clique para ativar'">
+              <nz-icon [nzType]="filtro.is_active ? 'eye' : 'eye-invisible'"></nz-icon>
+            </button>
           </div>
         </div>
-      </nz-card>
+      </div>
+
+      <!-- Contadores -->
+      <div class="filtros-summary">
+        <span class="summary-text">
+          {{ filtrosFiltrados.length }} filtros encontrados
+        </span>
+        <span class="summary-active">
+          {{ getFiltrosAtivos(categoriaSelecionada?.tipo ?? '') }} ativos
+        </span>
+      </div>
     </div>
-  </nz-spin>
-
-  <!-- Modal de Filtro -->
-  <nz-modal
-    [(nzVisible)]="isModalVisible"
-    [nzTitle]="isEditMode ? 'Editar Filtro' : 'Novo Filtro'"
-    (nzOnCancel)="handleCancel()"
-    (nzOnOk)="handleOk()">
-    
-    <ng-container *nzModalContent>
-      <form nz-form [formGroup]="filterForm" nz-row [nzGutter]="16">
-        <div nz-col [nzSpan]="12">
-          <nz-form-item>
-            <nz-form-label [nzSpan]="8" nzRequired>Tipo de Filtro</nz-form-label>
-            <nz-form-control [nzSpan]="16" nzErrorTip="Por favor, selecione o tipo de filtro!">
-              <nz-select formControlName="type" placeholder="Selecione o tipo">
-                <nz-option *ngFor="let type of filterTypes" 
-                          [nzValue]="type.value" 
-                          [nzLabel]="type.label">
-                </nz-option>
-              </nz-select>
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-
-        <div nz-col [nzSpan]="12">
-          <nz-form-item>
-            <nz-form-label [nzSpan]="8" nzRequired>Valor</nz-form-label>
-            <nz-form-control [nzSpan]="16" nzErrorTip="Por favor, insira o valor do filtro!">
-              <input formControlName="value" placeholder="Valor do filtro" />
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-      </form>
-    </ng-container>
-  </nz-modal>
-</div> 
+  </ng-container>
+</nz-modal> 

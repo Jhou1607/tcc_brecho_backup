@@ -59,11 +59,21 @@ export class CadastroComponent implements OnInit {
   initGoogle(clientId: string) {
     google.accounts.id.initialize({
       client_id: clientId,
-      callback: (response: any) => this.handleGoogleCredential(response)
+      callback: (response: any) => this.handleGoogleCredential(response),
+      // Adicionar origem autorizada
+      auto_select: false,
+      cancel_on_tap_outside: true
     });
     google.accounts.id.renderButton(
       document.getElementById('google-signup-btn'),
-      { theme: 'outline', size: 'large', width: 300 }
+      { 
+        theme: 'outline', 
+        size: 'large', 
+        width: 300,
+        text: 'signup_with',
+        shape: 'rectangular',
+        logo_alignment: 'left'
+      }
     );
   }
 

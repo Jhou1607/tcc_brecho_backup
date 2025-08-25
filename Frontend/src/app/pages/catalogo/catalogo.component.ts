@@ -49,16 +49,25 @@ export class CatalogoComponent implements OnInit {
   loadProducts(): void {
     this.isLoading = true;
     this.error = null;
+    
+    console.log('🔍 Iniciando carregamento de produtos...');
+    console.log('🌐 API URL:', this.produtoService['apiUrl']);
+    
     this.produtos$ = this.produtoService.getProdutos(undefined, this.currentPage).pipe(
       tap((response: PaginatedResponse<Product>) => {
+        console.log('✅ Produtos carregados com sucesso:', response);
         this.currentPage = response.current_page;
         this.lastPage = response.last_page;
         this.isLoading = false;
       }),
       catchError(err => {
+        console.error('❌ Erro ao carregar produtos:', err);
+        console.error('❌ Status:', err.status);
+        console.error('❌ Message:', err.message);
+        console.error('❌ Error:', err.error);
+        
         this.error = 'Não foi possível carregar os produtos. Tente novamente mais tarde.';
         this.isLoading = false;
-        console.error('Erro ao carregar produtos:', err);
         return of({ data: [], current_page: 1, last_page: 1, per_page: 8, total: 0, links: [] } as PaginatedResponse<Product>);
       })
     );

@@ -82,17 +82,16 @@ class ProdutoController extends Controller
     public function getFiltros()
     {
         try {
-            // Buscar filtros da tabela filter_options
-            $filterOptions = \App\Models\FilterOption::all()->groupBy('type');
+            // Buscar filtros administráveis ativos
+            $adminFilterOptions = \App\Models\AdminFilterOption::active()
+                ->ordered()
+                ->get()
+                ->groupBy('filter_type');
             
             $filtros = [];
-            foreach ($filterOptions as $type => $options) {
-                $filtros[$type] = $options->pluck('value')->toArray();
+            foreach ($adminFilterOptions as $type => $options) {
+                $filtros[$type] = $options->pluck('label')->toArray();
             }
-            
-            // Adicionar filtros que não estão na tabela (mantendo compatibilidade)
-            $filtros['numeracao'] = ['PP', 'P', 'M', 'G', 'GG', 'XG', '34', '35', '36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'];
-            $filtros['estado_conservacao'] = ['novo', 'seminovo', 'usado', 'com defeito', 'restaurado'];
             
             return response()->json([
                 'success' => true,
@@ -131,11 +130,10 @@ class ProdutoController extends Controller
         $estilos = ['classico', 'moderno', 'boho', 'minimalista', 'rocker', 'romantico', 'esportivo', 'urbano', 'vintage'];
         $materiais = ['algodao', 'linho', 'la', 'seda', 'jeans', 'couro', 'moletom', 'viscose', 'poliester'];
 
-        $validator = Validator::make($request->all(), [
+        $validatedData = $request->validate([
             'nome_produto' => 'required|string|max:55',
             'preco' => 'required|numeric|min:0',
             'marca' => 'nullable|string|max:55',
-            'modelo' => 'nullable|string|max:55',
             'estado_conservacao' => 'nullable|string|in:' . implode(',', $estadosConservacao),
             'estacao' => 'nullable|string|in:' . implode(',', $estacoes),
             'categoria' => 'nullable|string|in:' . implode(',', $categorias),
@@ -148,17 +146,6 @@ class ProdutoController extends Controller
             'estilos' => 'nullable',
             'material' => 'nullable|string',
         ]);
-
-        if ($validator->fails()) {
-            Log::error('Erro de validação ao criar produto:', $validator->errors()->toArray());
-            return response()->json([
-                'success' => false,
-                'message' => 'Dados inválidos.',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $validatedData = $validator->validated();
 
         // Processar arrays manualmente
         $ocasioes = $request->input('ocasioes');
@@ -188,7 +175,6 @@ class ProdutoController extends Controller
                 'nome_produto' => $validatedData['nome_produto'],
                 'preco' => $validatedData['preco'],
                 'marca' => $validatedData['marca'] ?? null,
-                'modelo' => $validatedData['modelo'] ?? null,
                 'estado_conservacao' => $validatedData['estado_conservacao'] ?? null,
                 'estacao' => $validatedData['estacao'] ?? null,
                 'categoria' => $validatedData['categoria'] ?? null,

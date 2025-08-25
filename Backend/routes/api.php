@@ -34,6 +34,9 @@ Route::get('/produtos/search', [ProdutoController::class, 'search']);
 Route::get('/produtos/filtros', [ProdutoController::class, 'getFiltros']);
 Route::get('/produtos/{id}', [ProdutoController::class, 'show']);
 
+// Rota pública para filtros disponíveis
+Route::get('/filtros-disponiveis', [FilterController::class, 'getFiltrosDisponiveis']);
+
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/looks/{id}', [LookController::class, 'show']);
@@ -94,6 +97,9 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     
     // Filtros Admin
     Route::get('/filtros', [FilterController::class, 'getAllFiltros']);
+    Route::get('/filtros-admin', [FilterController::class, 'getAdminFiltros']);
+    Route::put('/filtros-admin/{id}/toggle', [FilterController::class, 'toggleFilterStatus']);
+    Route::put('/filtros-admin/order', [FilterController::class, 'updateFilterOrder']);
 });
 
 // Rota para servir imagens com CORS

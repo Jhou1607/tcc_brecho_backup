@@ -11,6 +11,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { Look, LookConfig } from '../../interfaces/interfaces';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-meus-looks',
@@ -24,6 +25,7 @@ export class MeusLooksComponent implements OnInit {
   looks: Look[] = [];
   isLoading = false;
   error: string | null = null;
+  imageBaseUrl = environment.apiUrl.replace('/api', '');
 
   constructor(
     private produtoService: ProdutoService,

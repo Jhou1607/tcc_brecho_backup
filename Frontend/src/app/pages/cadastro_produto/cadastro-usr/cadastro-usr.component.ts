@@ -19,8 +19,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzRowDirective } from 'ng-zorro-antd/grid';
-import { NzColDirective } from 'ng-zorro-antd/grid';
+// Removidas importações não utilizadas
 
 // Components
 import { HeaderComponent } from '../../../shared/components/header/header.component';
@@ -41,8 +40,7 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
     NzCardModule,
     NzGridModule,
     NzIconModule,
-    NzRowDirective,
-    NzColDirective,
+    // Removidas importações não utilizadas
     HeaderComponent,
     FooterComponent,
     ImageUploadProcessorComponent,

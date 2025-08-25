@@ -18,7 +18,7 @@
   padding: styles.$brecho-spacing-medium;
   box-sizing: border-box;
   animation: fadeIn 0.5s ease-out;
-  overflow: hidden;
+  overflow: auto;
   height: 100%;
 }
 
@@ -28,7 +28,7 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   color: styles.$brecho-secondary-text;
 }
 
@@ -38,39 +38,41 @@
 
 .product-detail-content-box {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: auto;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   height: 100%;
-  overflow: hidden;
+  overflow: auto;
+  min-height: 0;
 }
 
 .product-detail-card {
   display: flex;
   flex-direction: column;
-  gap: styles.$brecho-spacing-medium;
+  gap: styles.$brecho-spacing-large;
   background-color: var(--brecho-content-bg);
   border-radius: var(--brecho-border-radius-large);
-  padding: styles.$brecho-spacing-medium;
+  padding: styles.$brecho-spacing-large;
   box-shadow: 0 8px 25px rgba(styles.$brecho-secondary-text, 0.08);
-  height: 100%;
-  overflow: hidden;
+  height: auto;
+  overflow: visible;
   width: 100%;
+  min-height: 0;
 
   @media (min-width: 768px) {
     flex-direction: row;
-    padding: styles.$brecho-spacing-large;
-    gap: styles.$brecho-spacing-large;
+    padding: styles.$brecho-spacing-xlarge;
+    gap: styles.$brecho-spacing-xlarge;
   }
 }
 
 .product-image-column {
   display: flex;
   flex-direction: row;
-  gap: styles.$brecho-spacing-medium;
-  flex: 1 1 50%;
+  gap: styles.$brecho-spacing-large;
+  flex: 1 1 60%; // Aumentado para dar mais espaço à imagem
   max-height: 100%;
   overflow: hidden;
 
@@ -88,7 +90,7 @@
   overflow-y: auto;
   padding-right: styles.$brecho-spacing-xsmall;
   flex-shrink: 0;
-  width: 80px;
+  width: 100px;
 
   &::-webkit-scrollbar {
     width: 3px;
@@ -97,262 +99,243 @@
     background-color: rgba(styles.$brecho-secondary-text, 0.25);
     border-radius: 1.5px;
   }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  scrollbar-width: thin;
-  scrollbar-color: rgba(styles.$brecho-secondary-text, 0.25) transparent;
+}
 
-  @media (max-width: 767px) {
-    flex-direction: row;
-    overflow-y: visible;
-    overflow-x: auto;
-    max-height: none;
-    width: 100%;
-    padding-right: 0;
-    padding-bottom: styles.$brecho-spacing-xsmall;
-    order: 2;
-    &::-webkit-scrollbar {
-      height: 3px;
-    }
+.thumbnail-item {
+  width: 100%;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--brecho-border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: scale(1.05);
+    border-color: styles.$brecho-accent-color;
   }
 
-  .thumbnail-list {
-    display: flex;
-    flex-direction: column;
-    gap: styles.$brecho-spacing-xsmall;
-    align-items: center;
-
-    @media (max-width: 767px) {
-      flex-direction: row;
-    }
-
-    .thumbnail-item {
-      width: 60px;
-      height: calc(60px * 1.25);
-      border-radius: math.div(styles.$brecho-border-radius, 3);
-      overflow: hidden;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: border-color 0.2s ease, transform 0.2s ease;
-      object-fit: cover;
-      background-color: var(--brecho-placeholder-bg);
-      flex-shrink: 0;
-
-      &:hover {
-        border-color: color.scale(styles.$brecho-accent-color, $alpha: -50%);
-        transform: scale(1.05);
-      }
-      &.selected {
-        border-color: styles.$brecho-accent-color;
-        box-shadow: 0 0 6px rgba(styles.$brecho-accent-color, 0.4);
-      }
-    }
+  &.selected {
+    border-color: styles.$brecho-accent-color;
+    box-shadow: 0 0 0 2px rgba(styles.$brecho-accent-color, 0.3);
   }
 }
 
 .main-product-image-wrapper {
-  flex-grow: 1;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 500px; // Aumentado ainda mais
+  max-height: 700px; // Aumentado ainda mais
+}
+
+.main-product-image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: var(--brecho-border-radius-large);
   overflow: hidden;
-  min-width: 0;
-  max-height: 100%;
-  @media (max-width: 767px) {
-    order: 1;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa; // Tom pastel suave
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   }
 
-  .main-product-image-container {
+  img {
     width: 100%;
     height: 100%;
-    border-radius: var(--brecho-border-radius);
-    overflow: hidden;
-    background-color: var(--brecho-placeholder-bg);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    img {
-      display: block;
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+    transition: all 0.3s ease;
   }
 }
 
 .product-info-column {
-  flex: 1 1 50%;
+  flex: 1 1 40%; // Ajustado para dar mais espaço à imagem
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  max-height: 100%;
-  padding-left: styles.$brecho-spacing-medium;
+  gap: styles.$brecho-spacing-large;
+  padding: styles.$brecho-spacing-large;
+  background-color: #f8f9fa; // Tom pastel suave
+  border-radius: var(--brecho-border-radius-large);
+  min-height: 500px; // Aumentado para combinar com a imagem
+}
 
-  @media (max-width: 767px) {
-    padding-left: 0;
-    flex: 1 1 auto;
-    margin-top: styles.$brecho-spacing-medium;
-  }
-
-  .product-title {
-    font-family: styles.$brecho-font-headings;
-    font-size: 1.9rem;
-    color: styles.$brecho-primary-text;
-    margin-bottom: styles.$brecho-spacing-xsmall;
-    font-weight: 600;
-    line-height: 1.25;
-    @media (min-width: 1024px) {
-      font-size: 2.2rem;
-    }
-  }
-
-  .product-price-display {
-    font-family: styles.$brecho-font-headings;
-    font-size: 1.5rem;
-    color: styles.$brecho-logo-color;
-    font-weight: 700;
-    margin-bottom: styles.$brecho-spacing-large;
-    line-height: 1.3;
-    @media (min-width: 1024px) {
-      font-size: 1.8rem;
-    }
-  }
-
-  .product-attributes-container {
-    flex-grow: 1;
-    overflow-y: auto;
-    margin-bottom: styles.$brecho-spacing-large;
-    padding-right: styles.$brecho-spacing-xsmall;
-    min-height: 100px;
-
-    &::-webkit-scrollbar {
-      width: 3px;
-    }
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    &::-webkit-scrollbar-thumb {
-      background-color: transparent;
-      border-radius: 1.5px;
-      transition: background-color 0.3s ease-in-out;
-    }
-    &:hover::-webkit-scrollbar-thumb {
-      background-color: rgba(styles.$brecho-secondary-text, 0.3);
-    }
-    scrollbar-width: thin;
-    scrollbar-color: rgba(styles.$brecho-secondary-text, 0.3) transparent;
-  }
-
-  .product-attributes {
-    font-family: styles.$brecho-font-primary;
-    display: flex;
-    flex-direction: column;
-    gap: styles.$brecho-spacing-small;
-
-    .attribute-item {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: baseline;
-      gap: 0.6em;
-      font-size: 1.0rem;
-      line-height: 1.5;
-      color: styles.$brecho-secondary-text;
-      position: relative;
-
-      @media (min-width: 1024px) {
-        font-size: 1.05rem;
-      }
-
-      .attribute-label {
-        font-weight: 500;
-        color: styles.$brecho-primary-text;
-        white-space: nowrap;
-        grid-column: 1 / 2;
-      }
-
-      &::after {
-        content: "";
-        grid-column: 2 / 3;
-        border-bottom: 1.5px dotted rgba(styles.$brecho-secondary-text, 0.35);
-        align-self: center;
-        position: relative;
-        bottom: -0.2em;
-        margin-left: 0.5em;
-        margin-right: 0.5em;
-      }
-
-      .attribute-value {
-        color: styles.$brecho-secondary-text;
-        font-weight: 400;
-        grid-column: 3 / 4;
-        justify-self: start;
-        white-space: normal;
-        word-break: break-word;
-      }
-    }
+.product-title {
+  font-family: styles.$brecho-font-headings;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: styles.$brecho-primary-text;
+  margin: 0;
+  line-height: 1.2;
+  text-align: center;
+  
+  @media (min-width: 768px) {
+    font-size: 3rem;
   }
 }
 
-.image-modal-overlay {
+.product-price-display {
+  font-size: 2rem;
+  font-weight: 700;
+  color: styles.$brecho-logo-color;
+  text-align: center;
+  margin: styles.$brecho-spacing-medium 0;
+  
+  @media (min-width: 768px) {
+    font-size: 2.5rem;
+  }
+}
+
+.product-attributes-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: styles.$brecho-spacing-small; // Reduzido para aproveitar mais espaço
+  overflow-y: auto;
+  padding: styles.$brecho-spacing-medium;
+  background-color: white;
+  border-radius: var(--brecho-border-radius);
+  border: 1px solid #e9ecef; // Borda mais suave
+}
+
+.product-attributes {
+  display: flex;
+  flex-direction: column;
+  gap: styles.$brecho-spacing-small; // Reduzido para aproveitar mais espaço
+}
+
+.attribute-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: styles.$brecho-spacing-small styles.$brecho-spacing-medium; // Padding reduzido
+  background-color: transparent; // Sem background
+  border: none; // Sem borda
+  border-bottom: 1px solid #e9ecef; // Apenas linha separadora sutil
+  transition: all 0.3s ease;
+
+  &:last-child {
+    border-bottom: none; // Último item sem borda
+  }
+
+  &:hover {
+    background-color: #f8f9fa; // Hover sutil
+  }
+}
+
+.attribute-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: styles.$brecho-secondary-text;
+  flex: 1;
+  
+  @media (min-width: 768px) {
+    font-size: 1.2rem;
+  }
+}
+
+.attribute-value {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: styles.$brecho-primary-text;
+  text-align: right;
+  flex: 1;
+  
+  @media (min-width: 768px) {
+    font-size: 1.2rem;
+  }
+}
+
+.btn-action {
+  width: 100%;
+  padding: styles.$brecho-spacing-large;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: var(--brecho-border-radius-large);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: styles.$brecho-spacing-medium;
+  
+  @media (min-width: 768px) {
+    font-size: 1.3rem;
+    padding: styles.$brecho-spacing-xlarge;
+  }
+}
+
+.btn-action.favorited-btn {
+  background-color: color.scale(styles.$brecho-heart-favorited-color, $lightness: -5%);
+  color: white;
+  
+  &:hover {
+    background-color: color.scale(styles.$brecho-heart-favorited-color, $lightness: -15%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(styles.$brecho-heart-favorited-color, 0.4);
+  }
+}
+
+.btn-action.btn-secondary {
+  background-color: #a0a0a0;
+  color: white;
+
+  &:hover {
+    background-color: #888888;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.btn-action.btn-primary {
+  background: linear-gradient(135deg, styles.$brecho-accent-color 0%, color.adjust(styles.$brecho-accent-color, $lightness: -10%) 100%);
+  color: white;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(styles.$brecho-accent-color, 0.4);
+  }
+}
+
+// Modal de imagem com zoom restaurado
+.image-modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(0, 0, 0, 0.9);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 2000;
-  animation: fadeIn 0.3s ease-out;
-  padding: styles.$brecho-spacing-small;
-  box-sizing: border-box;
+  justify-content: center;
+  z-index: 1000;
+  padding: styles.$brecho-spacing-large;
 }
 
 .image-modal-content {
   position: relative;
-  background-color: var(--brecho-dark-page-bg);
-  padding: styles.$brecho-spacing-small;
-  border-radius: var(--brecho-border-radius);
-  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 95vw;
-  max-height: 95vh;
-  width: auto;
-  height: auto;
-  color: var(--brecho-button-text-color);
-}
-
-.modal-close-btn {
-  position: absolute;
-  top: styles.$brecho-spacing-small;
-  right: styles.$brecho-spacing-small;
-  background: none;
-  border: none;
-  font-size: 1.8rem;
-  color: var(--brecho-button-text-color);
-  cursor: pointer;
-  padding: styles.$brecho-spacing-xsmall;
-  line-height: 1;
-  z-index: 10;
-  transition: color 0.2s ease, transform 0.2s ease;
-
-  &:hover {
-    color: var(--brecho-accent-color);
-    transform: scale(1.1);
-  }
+  max-width: 90vw;
+  max-height: 90vh;
+  background-color: white;
+  border-radius: var(--brecho-border-radius-large);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
 
 .modal-image-wrapper {
   width: auto;
   height: auto;
-  max-width: calc(95vw - 40px);
-  max-height: calc(95vh - 100px);
+  max-width: calc(90vw - 40px);
+  max-height: calc(90vh - 100px);
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -371,7 +354,6 @@
   max-height: none;
   transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
   transform-origin: 0 0;
-
   image-rendering: crisp-edges;
   image-rendering: -moz-crisp-edges;
   image-rendering: -webkit-crisp-edges;
@@ -405,6 +387,63 @@
       background-color: rgba(styles.$brecho-accent-color, 0.8);
       color: var(--brecho-content-bg);
     }
-    i { margin: 0; }
+    
+    i { 
+      margin: 0; 
+    }
+  }
+}
+
+.image-modal-close {
+  position: absolute;
+  top: styles.$brecho-spacing-medium;
+  right: styles.$brecho-spacing-medium;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+    transform: scale(1.1);
+  }
+}
+
+// Responsividade
+@media (max-width: 767px) {
+  .product-detail-card {
+    padding: styles.$brecho-spacing-medium;
+    gap: styles.$brecho-spacing-medium;
+  }
+  
+  .product-info-column {
+    padding: styles.$brecho-spacing-medium;
+    min-height: auto;
+  }
+  
+  .product-title {
+    font-size: 2rem;
+  }
+  
+  .product-price-display {
+    font-size: 1.8rem;
+  }
+  
+  .attribute-label,
+  .attribute-value {
+    font-size: 1rem;
+  }
+  
+  .btn-action {
+    font-size: 1.1rem;
+    padding: styles.$brecho-spacing-medium;
   }
 }

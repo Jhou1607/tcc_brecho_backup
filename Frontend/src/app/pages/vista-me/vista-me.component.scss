@@ -104,3 +104,32 @@
     color: var(--brecho-secondary-text);
   }
 }
+
+// Responsividade - APENAS CORREÇÕES MÍNIMAS PARA MOBILE
+@media (max-width: 768px) {
+  .menu-box {
+    max-width: 90%;
+    padding: styles.$brecho-spacing-medium;
+  }
+  
+  .menu-button {
+    font-size: 1rem;
+    padding: styles.$brecho-spacing-medium;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-banner h1 {
+    font-size: 1.6rem;
+  }
+  
+  .menu-box {
+    max-width: 85%;
+    padding: styles.$brecho-spacing-small;
+  }
+  
+  .menu-button {
+    font-size: 0.95rem;
+    padding: styles.$brecho-spacing-small;
+  }
+}

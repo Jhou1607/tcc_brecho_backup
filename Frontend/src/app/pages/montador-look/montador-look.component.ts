@@ -4,7 +4,7 @@ import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, NgZone, OnInit,
 import {CommonModule} from '@angular/common';
 import {NzCollapseModule} from 'ng-zorro-antd/collapse';
 import * as fabric from 'fabric';
-import {NzRateComponent} from 'ng-zorro-antd/rate';
+// Removida importação não utilizada
 import {FormsModule} from '@angular/forms';
 import {NzIconDirective} from 'ng-zorro-antd/icon';
 import {removeBackground} from '@imgly/background-removal';
@@ -36,6 +36,7 @@ import { LookNameModalComponent } from '../../shared/components/look-name-modal/
 import { CadastroProdutoModalComponent } from './cadastro-produto-modal.component';
 import { CategoriaAcessoriosCabeca, CategoriaTops, CategoriaCalcasSaias, CategoriaCalcados, CategoriaAcessorios } from '../../interfaces/categorias';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-montador-look',
@@ -47,7 +48,7 @@ import { HttpClient } from '@angular/common/http';
     ImageCropperComponent,
     NgxPicaModule,
     NzCollapseModule,
-    NzRateComponent,
+        // Removida importação não utilizada
     FormsModule,
     NzIconDirective,
     NzSpinComponent,
@@ -547,13 +548,9 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     });
     
-    // Escuta o evento produtoCriado do modal
-    modalRef.afterOpen.subscribe(() => {
-      if (modalRef.componentInstance?.produtoCriado) {
-        modalRef.componentInstance.produtoCriado.subscribe(() => {
-          this.refreshItens();
-        });
-      }
+    // Escuta o fechamento do modal para atualizar os itens
+    modalRef.afterClose.subscribe(() => {
+      this.refreshItens();
     });
   }
 
@@ -1038,8 +1035,8 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
         formData.append('height', this.aiLookHeight.toString());
       }
 
-      // Ajustando a URL para usar o backend do projeto Frontend
-      this.http.post('http://localhost:8000/api/look-ia', formData, { responseType: 'blob' })
+      // Ajustando a URL para usar a base do environment
+      this.http.post(`${environment.apiUrl}/look-ia`, formData, { responseType: 'blob' })
         .subscribe({
           next: (response: Blob) => {
             const reader = new FileReader();
@@ -1188,8 +1185,8 @@ export class MontadorLookComponent implements AfterViewInit, OnInit, OnDestroy {
       const formData = new FormData();
       formData.append('image', blob, 'ai-look.png');
 
-      // Ajustando a URL para usar o backend do projeto Frontend
-      this.http.post('http://localhost:8000/api/look-comment', formData, { responseType: 'text' })
+      // Ajustando a URL para usar a base do environment
+      this.http.post(`${environment.apiUrl}/look-comment`, formData, { responseType: 'text' })
         .subscribe({
           next: (response: string) => {
             this.aiComment = response;

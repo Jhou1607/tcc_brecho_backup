@@ -71,13 +71,14 @@ export interface ProductImage {
 export interface UserProductFormData {
   nome_produto: string;
   marca?: string;
-  categoria?: string;
-  estacao?: string;
+  categoria: string;
+  estacao: string;
   cor?: string;
+  ocasioes: string[];
+  estilos: string[];
+  material: string;
+  descricao?: string;
   imagem_principal: File;
-  ocasioes?: string[];
-  estilos?: string[];
-  material?: string;
 }
 
 export interface Product {
@@ -85,7 +86,6 @@ export interface Product {
   nome_produto: string;
   preco: number;
   marca?: string;
-  modelo?: string;
   estado_conservacao?: string;
   estacao?: string;
   categoria?: string;
@@ -122,7 +122,6 @@ export interface ProductFormData {
   nome_produto: string;
   preco: number;
   marca?: string;
-  modelo?: string;
   estado_conservacao?: string;
   estacao?: string;
   categoria?: string;

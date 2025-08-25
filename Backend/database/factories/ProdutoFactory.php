@@ -35,7 +35,6 @@ class ProdutoFactory extends Factory
             'nome_produto' => fake()->words(2, true),
             'preco' => fake()->randomFloat(2, 10, 500),
             'marca' => fake()->company(),
-            'modelo' => fake()->word(),
             'estado_conservacao' => fake()->randomElement($estadosConservacao),
             'estacao' => fake()->randomElement($estacoes),
             'categoria' => fake()->randomElement($categorias),

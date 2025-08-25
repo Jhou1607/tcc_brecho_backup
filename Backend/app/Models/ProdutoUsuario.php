@@ -17,12 +17,9 @@ class ProdutoUsuario extends Model
     protected $fillable = [
         'nome_produto',
         'marca',
-        'modelo',
         'estacao',
         'categoria',
         'cor',
-        'estado_conservacao',
-        'numeracao',
         'usuario_id',
         'ocasioes',
         'estilos',

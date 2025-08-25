@@ -6,13 +6,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 styles.$brecho-spacing-medium; // Ajustado padding vertical para 0, altura controlada por height
+  padding: 0 styles.$brecho-spacing-medium;
   background-color: var(--brecho-header-bg);
-  height: var(--header-height); // Usando a variável CSS
+  height: var(--header-height);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 0;
-  z-index: 1000; // Padrão para headers
+  z-index: 1000;
   width: 100%;
   box-sizing: border-box;
 }
@@ -23,23 +23,23 @@
   cursor: pointer;
   padding: styles.$brecho-spacing-small;
   color: var(--brecho-secondary-text);
-  font-size: 1.4rem; // Ligeiramente maior
+  font-size: 1.4rem;
   transition: color 0.2s ease, transform 0.2s ease;
 
   &:hover {
-    color: var(--brecho-logo-color); // Cor de destaque no hover
+    color: var(--brecho-logo-color);
     transform: scale(1.1);
   }
 
   i {
-    display: block; // Garante que o ícone se comporte como bloco
+    display: block;
   }
 }
 
 .header-left-icons, .header-right-icons {
   display: flex;
   align-items: center;
-  gap: styles.$brecho-spacing-small; // Reduzido gap entre ícones
+  gap: styles.$brecho-spacing-small;
 }
 
 .logo-container {
@@ -47,32 +47,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%; // Ocupar altura do header
-  // Remoção de position absolute para melhor fluidez, mas pode ser reavaliado
-  // position: absolute;
-  // left: 50%;
-  // transform: translateX(-50%);
-  // Em vez disso, fazer o logo centralizar com flex-grow no espaço se necessário,
-  // ou se os ícones tiverem larguras fixas.
-  // Para manter centralizado com os ícones nas laterais:
-  flex-grow: 1; // Permite que o logo ocupe o espaço central
+  height: 100%;
+  flex-grow: 1;
 
   .logo-image {
-    max-height: calc(var(--header-height) * 0.7); // Logo com 70% da altura do header
-    width: auto; // Mantém proporção
+    max-height: calc(var(--header-height) * 0.7);
+    width: auto;
   }
 }
-
-// Centralização do logo se os ícones tiverem larguras desiguais:
-// .header-left-icons { flex-basis: 100px; justify-content: flex-start; } // Exemplo de largura
-// .header-right-icons { flex-basis: 100px; justify-content: flex-end; } // Exemplo de largura
-// .logo-container { position: absolute; left: 50%; transform: translateX(-50%); } // Se voltar a absolute
-
 
 .menu-lateral {
   position: fixed;
   top: 0;
-  left: -320px; // Largura aumentada para mais conforto visual
+  left: -320px;
   width: 310px;
   height: 100%;
   background-color: #fff;
@@ -88,7 +75,7 @@
 }
 
 .menu-lateral-content {
-  padding: 0 32px 24px 32px;
+  padding: 0 32px 20px 32px;
   padding-top: 40px;
   height: 100%;
   overflow-y: auto;
@@ -186,6 +173,7 @@
     i {
       color: #b38b5e;
       margin-right: 4px;
+      font-size: 1.1rem;
     }
     &:hover {
       color: #b38b5e;
@@ -196,45 +184,96 @@
 .social-links {
   display: flex;
   gap: 18px;
+  margin-top: 12px;
+  justify-content: center;
+  
   a {
-    color: #b38b5e;
-    font-size: 1.25rem;
-    transition: color 0.18s;
+    color: #666;
+    font-size: 1.2rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+    
     &:hover {
-      color: #222;
+      color: #b38b5e;
+      transform: scale(1.1);
     }
   }
 }
 
-.menu-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.55);
-  z-index: 1001;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.35s, visibility 0s linear 0.35s;
-  &.ativo {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.35s, visibility 0s linear 0s;
-  }
-}
-
-// Responsivo
-@media (max-width: 500px) {
+// Responsividade - APENAS CORREÇÕES MÍNIMAS PARA MOBILE
+@media (max-width: 768px) {
   .menu-lateral {
-    width: 100vw;
-    left: -100vw;
-    &.ativo {
-      left: 0;
+    width: 280px;
+    left: -280px;
+  }
+  
+  .menu-lateral-content {
+    padding: 0 24px 16px 24px;
+    padding-top: 32px;
+  }
+  
+  .menu-nav-list li a {
+    font-size: 1.1rem;
+    gap: 12px;
+    padding: 12px 0;
+    
+    i {
+      font-size: 1.2rem;
+      min-width: 24px;
     }
   }
+  
+  .ajuda-contato {
+    font-size: 0.95rem;
+    
+    .ajuda-telefone {
+      font-size: 0.93rem;
+    }
+  }
+  
+  .social-links {
+    gap: 16px;
+    
+    a {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-lateral {
+    width: 260px;
+    left: -260px;
+  }
+  
   .menu-lateral-content {
-    padding-left: 18px;
-    padding-right: 18px;
+    padding: 0 20px 14px 20px;
+    padding-top: 28px;
+  }
+  
+  .menu-nav-list li a {
+    font-size: 1.05rem;
+    gap: 10px;
+    padding: 10px 0;
+    
+    i {
+      font-size: 1.1rem;
+      min-width: 22px;
+    }
+  }
+  
+  .ajuda-contato {
+    font-size: 0.9rem;
+    
+    .ajuda-telefone {
+      font-size: 0.88rem;
+    }
+  }
+  
+  .social-links {
+    gap: 14px;
+    
+    a {
+      font-size: 1rem;
+    }
   }
 }

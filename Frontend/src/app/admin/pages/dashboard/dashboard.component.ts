@@ -1,7 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminService } from '../../../services/admin.service';
-import { DashboardStats } from '../../../services/admin.service';
+
+// Interface local para evitar problemas de importação
+interface DashboardStats {
+  totalUsers: number;
+  totalProducts: number;
+  totalFilters: number;
+  activeFilters: number;
+  recentUsers: any[];
+  recentProducts: any[];
+}
 
 // Ng-Zorro Modules
 import { NzCardModule } from 'ng-zorro-antd/card';

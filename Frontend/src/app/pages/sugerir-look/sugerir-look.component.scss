@@ -207,9 +207,8 @@
   
   canvas {
     border: 1px solid #ccc;
-    width: 500px !important;
-    height: 650px !important;
-    max-width: 100%;
+    width: 500px;
+    height: 650px;
     display: block;
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
   }
@@ -220,6 +219,7 @@
   display: flex;
   gap: 10px;
   width: 100%;
+  margin-top: 20px;
   
   button {
     flex: 1;
@@ -241,7 +241,7 @@
   border: 1px solid rgba(255,255,255,0.2);
   transition: all 0.3s ease;
   height: fit-content;
-  min-height: 650px; // Mesma altura do canvas
+  min-height: 650px;
   display: flex;
   flex-direction: column;
   
@@ -320,7 +320,7 @@
   
   .peca-miniatura {
     width: 100%;
-    height: 80px; // Reduzido para melhor proporção
+    height: 80px;
     object-fit: cover;
     border-radius: 6px;
     margin-bottom: 8px;
@@ -415,7 +415,7 @@
   
   .peca-miniatura {
     width: 100%;
-    height: 70px; // Reduzido para melhor proporção
+    height: 70px;
     object-fit: cover;
     border-radius: 6px;
     margin-bottom: 8px;
@@ -494,32 +494,16 @@
   }
 }
 
-// Mensagem de erro
-.erro-sugestao {
-  color: #b03838;
-  background: #fff3f3;
-  border: 1px solid #e0b4b4;
-  border-radius: 8px;
-  padding: 16px 10px;
-  text-align: center;
-  font-size: 1.08rem;
-  margin: 18px 0;
-  animation: shake 0.5s ease-in-out;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
-
-// Placeholder quando não há peça selecionada
+// Placeholder centralizado quando não há peça selecionada
 .sugestao-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
   color: styles.$brecho-secondary-text;
-  font-size: 1.08rem;
+  font-size: 1.1rem;
   text-align: center;
-  opacity: 0.85;
-  padding: 40px 20px;
+  opacity: 0.7;
   background: rgba(styles.$brecho-page-bg, 0.5);
   border-radius: 12px;
   border: 2px dashed #ddd;
@@ -527,37 +511,10 @@
   width: 100%;
   max-width: 500px;
   transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(179, 139, 94, 0.1), transparent);
-    transition: left 0.8s;
-  }
   
   &:hover {
     border-color: #b38b5e;
     background: rgba(179, 139, 94, 0.05);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(179, 139, 94, 0.2);
-    
-    &::before {
-      left: 100%;
-    }
-  }
-  
-  span {
-    position: relative;
-    z-index: 1;
   }
 }
 
@@ -653,40 +610,6 @@
   }
 }
 
-// Responsividade
-@media (max-width: 1200px) {
-  .main-layout {
-    flex-direction: column;
-  }
-  
-  .previews-column {
-    width: 100%;
-    min-height: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .sugestao-box {
-    padding: 20px;
-  }
-  
-  .filtro-origem-btns {
-    flex-wrap: wrap;
-  }
-  
-  .canvas-container {
-    padding: 15px;
-  }
-  
-  .canvas-container canvas {
-    height: 600px !important;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-  }
-}
-
 // Animações de entrada
 @keyframes fadeInUp {
   from {
@@ -720,4 +643,80 @@
 
 .canvas-column {
   animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+// Responsividade - APENAS CORREÇÕES MÍNIMAS PARA MOBILE
+@media (max-width: 768px) {
+  .sugestao-box {
+    padding: 20px 15px;
+    margin: 20px auto 0 auto;
+    min-width: 320px;
+    max-width: 95vw;
+  }
+  
+  .main-layout {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .canvas-column {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .canvas-container {
+    padding: 10px;
+    margin-bottom: 15px;
+    
+    canvas {
+      width: 100% !important;
+      height: 700px !important;
+      max-height: 700px;
+    }
+  }
+  
+  .action-buttons {
+    margin-top: 15px;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .previews-column {
+    width: 100%;
+    max-width: 500px;
+    min-height: auto;
+  }
+  
+  // Prevenir scroll horizontal apenas em mobile
+  .sugestao-box {
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .sugestao-box {
+    padding: 15px 10px;
+    margin: 15px auto 0 auto;
+    min-width: 280px;
+  }
+  
+  .canvas-container {
+    padding: 10px;
+    
+    canvas {
+      max-height: 400px;
+    }
+  }
+  
+  .previews-column {
+    padding: 15px;
+  }
+  
+  .filtro-origem-btns button {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
 } 

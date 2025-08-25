@@ -124,10 +124,15 @@
               <label class="field-label">
                 Categoria <span class="required">*</span>
               </label>
-              <app-hierarchical-category-selector
-                [selectedCategory]="selectedCategory"
-                (categorySelected)="onCategorySelected($event)">
-              </app-hierarchical-category-selector>
+              <nz-select 
+                formControlName="categoria" 
+                placeholder="Selecione a categoria">
+                <nz-option 
+                  *ngFor="let categoria of opcoesCategorias" 
+                  [nzValue]="categoria" 
+                  [nzLabel]="categoria">
+                </nz-option>
+              </nz-select>
             </div>
 
             <!-- Cor -->
@@ -135,11 +140,15 @@
               <label class="field-label">
                 Cor
               </label>
-              <input 
-                nz-input 
+              <nz-select 
                 formControlName="cor" 
-                placeholder="Cor do produto"
-                class="field-input" />
+                placeholder="Selecione a cor">
+                <nz-option 
+                  *ngFor="let cor of opcoesCores" 
+                  [nzValue]="cor" 
+                  [nzLabel]="cor">
+                </nz-option>
+              </nz-select>
             </div>
 
           </div>
@@ -161,17 +170,7 @@
               </nz-input-number>
             </div>
 
-            <!-- Modelo -->
-            <div class="form-field">
-              <label class="field-label">
-                Modelo
-              </label>
-              <input 
-                nz-input 
-                formControlName="modelo" 
-                placeholder="Modelo do produto"
-                class="field-input" />
-            </div>
+
 
             <!-- Gênero -->
             <div class="form-field">
@@ -234,10 +233,15 @@
               <label class="field-label">
                 Numeração
               </label>
-              <input 
-                nz-input 
+              <nz-select 
                 formControlName="numeracao" 
-                placeholder="Tamanho ou numeração" />
+                placeholder="Selecione a numeração">
+                <nz-option 
+                  *ngFor="let numeracao of opcoesNumeracao" 
+                  [nzValue]="numeracao" 
+                  [nzLabel]="numeracao">
+                </nz-option>
+              </nz-select>
             </div>
 
           </div>

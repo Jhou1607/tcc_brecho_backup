@@ -1,5 +1,6 @@
 .admin-layout {
   height: 100vh;
+  overflow: hidden; // Previne scroll no container principal
 
   .logo {
     height: 64px;
@@ -21,6 +22,9 @@
     justify-content: space-between;
     box-shadow: 0 1px 4px rgba(155, 173, 154, 0.15);
     border-bottom: 2px solid #d0c9c0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 
     .header-content {
       width: 100%;
@@ -64,6 +68,8 @@
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(155, 173, 154, 0.15);
     border: 1px solid #d0c9c0;
+    overflow-y: auto; // Permite scroll apenas no conteúdo
+    max-height: calc(100vh - 112px); // Altura total menos header e margens
 
     .content-wrapper {
       height: 100%;
@@ -72,8 +78,16 @@
 
   // Sidebar customization - usando as cores exatas da imagem
   ::ng-deep nz-sider {
+    position: fixed; // Menu fixo
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 1001;
+    
     .ant-layout-sider-children {
       background: #385246; // Cor escura sólida como na faixa horizontal da imagem
+      height: 100vh;
+      overflow-y: auto; // Scroll no menu se necessário
     }
 
     .ant-menu {
@@ -99,6 +113,15 @@
           color: #fbf9f4;
         }
       }
+    }
+  }
+
+  // Ajustar o conteúdo principal para compensar o menu fixo
+  nz-layout {
+    margin-left: 200px; // Largura do menu quando expandido
+    
+    &.collapsed {
+      margin-left: 80px; // Largura do menu quando colapsado
     }
   }
 

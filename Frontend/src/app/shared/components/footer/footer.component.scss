@@ -77,47 +77,80 @@
   }
 }
 
-// Responsive Design
+// Responsividade - APENAS CORREÇÕES MÍNIMAS PARA MOBILE
 @media (max-width: 768px) {
   .app-footer {
-    padding: 30px 0 15px;
+    padding: 20px 0 15px;
   }
   
   .footer-content {
-    grid-template-columns: 1fr;
-    gap: 30px;
-    padding: 0 20px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 0 15px;
   }
   
   .footer-section {
     text-align: center;
     
-    h3, h4 {
+    h3 {
+      font-size: 1.3rem;
       margin-bottom: 10px;
+    }
+    
+    h4 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    
+    p {
+      font-size: 0.9rem;
+      margin-bottom: 6px;
     }
   }
   
   .footer-bottom {
     padding-top: 15px;
+    
+    p {
+      font-size: 0.85rem;
+    }
   }
 }
 
 @media (max-width: 480px) {
+  .app-footer {
+    padding: 15px 0 10px;
+  }
+  
   .footer-content {
-    gap: 25px;
+    gap: 15px;
+    padding: 0 12px;
   }
   
   .footer-section {
     h3 {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
     }
     
     h4 {
-      font-size: 1.1rem;
+      font-size: 1rem;
+      margin-bottom: 8px;
     }
     
     p {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+    }
+  }
+  
+  .footer-bottom {
+    padding-top: 12px;
+    
+    p {
+      font-size: 0.8rem;
     }
   }
 }
+
+

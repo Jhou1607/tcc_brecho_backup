@@ -55,12 +55,12 @@ export class UsuariosComponent implements OnInit {
   loadUsuarios(): void {
     this.loading = true;
     this.adminService.getUsuarios(this.currentPage, this.pageSize).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.usuarios = response.data;
         this.total = response.total;
         this.loading = false;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Erro ao carregar usuários:', error);
         this.loading = false;
       }
@@ -69,11 +69,11 @@ export class UsuariosComponent implements OnInit {
 
   deleteUsuario(id: number): void {
     this.adminService.deleteUsuario(id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('Usuário deletado:', response.message);
         this.loadUsuarios();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Erro ao deletar usuário:', error);
       }
     });
@@ -82,11 +82,11 @@ export class UsuariosComponent implements OnInit {
   toggleRole(usuario: User): void {
     const newRole = usuario.role === 'admin' ? 'user' : 'admin';
     this.adminService.updateUsuarioRole(usuario.id, newRole).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log('Role atualizada:', response);
         this.loadUsuarios();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Erro ao atualizar role:', error);
       }
     });

@@ -154,6 +154,8 @@
     border-radius: 8px;
     background: #f8f9fa;
     transition: border-color 0.3s ease;
+    width: 500px;
+    height: 650px;
     
     &:hover {
       border-color: #b38b5e;
@@ -387,36 +389,6 @@
   }
 }
 
-// Responsividade
-@media (max-width: 1200px) {
-  .main-layout {
-    flex-direction: column;
-  }
-  
-  .groups-column {
-    width: 100%;
-    min-height: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .montador-box {
-    padding: 20px;
-  }
-  
-  .canvas-container {
-    padding: 15px;
-  }
-  
-  .canvas-container canvas {
-    height: 600px !important;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-  }
-}
-
 // Animações de entrada
 @keyframes fadeInUp {
   from {
@@ -476,38 +448,45 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px;
+  padding: 15px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border: 1px solid #dee2e6;
   border-radius: 8px;
   margin: 15px;
-  gap: 15px;
+  gap: 10px;
   flex-shrink: 0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap;
 }
 
 .control-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 200px;
 
   .label {
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
     color: #4b5563;
+    white-space: nowrap;
+    min-width: 70px;
   }
 
   .color-palette {
     display: flex;
-    gap: 2px;
+    gap: 1px;
     border-radius: 6px;
     overflow: hidden;
     border: 1px solid #d1d5db;
+    flex-shrink: 0;
   }
 
   .color-swatch {
-    width: 25px;
-    height: 25px;
+    width: 22px;
+    height: 22px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     border: 2px solid transparent;
@@ -521,17 +500,18 @@
   .input-group {
     display: flex;
     gap: 0;
-    height: 25px;
+    height: 22px;
     border-radius: 6px;
     overflow: hidden;
     border: 1px solid #d1d5db;
+    flex-shrink: 0;
 
     input {
       height: 100%;
-      width: 60px;
-      padding: 0 4px;
+      width: 50px;
+      padding: 0 3px;
       border: none;
-      font-size: 12px;
+      font-size: 11px;
       text-align: center;
       background-color: #f9fafb;
       color: #4b5563;
@@ -549,13 +529,14 @@
 
   .gender-selector {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
+    flex-shrink: 0;
   }
 
   .gender-icon {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 6px;
     display: flex;
     align-items: center;
@@ -564,7 +545,7 @@
     transition: all 0.2s ease-in-out;
     border: 2px solid transparent;
     background-color: #f9fafb;
-    background-size: 20px 20px;
+    background-size: 18px 18px;
     background-repeat: no-repeat;
     background-position: center;
 
@@ -604,21 +585,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - 80px - 120px); /* Altura total menos espaçamento menos barra de controles */
+  height: calc(100vh - 80px - 100px);
   width: 100%;
 
   p {
-    font-size: 18px;
+    font-size: 16px;
     color: #666;
     text-align: center;
     margin: 0;
+    padding: 0 20px;
   }
 }
 
 .ai-look-container {
   position: relative;
   width: 100%;
-  height: calc(100vh - 80px - 120px); /* Altura total menos espaçamento menos barra de controles */
+  height: calc(100vh - 80px - 100px);
   padding: 15px;
   box-sizing: border-box;
 }
@@ -892,7 +874,7 @@
   }
 }
 
-/* Media queries para responsividade */
+/* Media queries para responsividade - APENAS CORREÇÕES MÍNIMAS PARA MOBILE */
 @media (max-width: 768px) {
   .show-mobile {
     display: flex !important;
@@ -925,18 +907,53 @@
     margin: 20px auto 0 auto;
     padding: 20px 15px;
     min-width: 320px;
+    max-width: 95vw;
   }
   
   .main-layout {
     flex-direction: column;
+    gap: 20px;
   }
   
   .canvas-column {
     width: 100%;
+    max-width: 100%;
+  }
+  
+  .canvas-container {
+    padding: 15px;
+    margin-bottom: 15px;
+    
+    canvas {
+      width: 100% !important;
+      height: 700px !important;
+      max-height: 700px;
+    }
   }
   
   .groups-column {
     display: none;
+  }
+  
+  // Centralizar botões de ação
+  .action-buttons {
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 15px;
+  }
+  
+  // Prevenir seleção fora do canvas
+  .montador-box {
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  // Centralizar botão de IA
+  .ai-look-button {
+    margin: 20px auto;
+    display: block;
   }
 
   /* Estilos específicos para itens dentro do popup mobile */
@@ -1014,5 +1031,129 @@
         }
       }
     }
+  }
+
+  .ai-look-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 12px;
+    margin: 10px;
+    max-width: 95vw;
+    
+    .control-group {
+      justify-content: center;
+      gap: 8px;
+      min-width: auto;
+      
+      .label {
+        font-size: 12px;
+        min-width: 60px;
+      }
+      
+      .color-palette {
+        gap: 2px;
+      }
+      
+      .color-swatch {
+        width: 24px;
+        height: 24px;
+      }
+      
+      .input-group {
+        height: 24px;
+        
+        input {
+          width: 55px;
+          font-size: 12px;
+        }
+      }
+      
+      .gender-icon {
+        width: 30px;
+        height: 30px;
+        background-size: 20px 20px;
+      }
+    }
+  }
+  
+  .ai-look-initial {
+    height: calc(100vh - 80px - 200px);
+    
+    p {
+      font-size: 14px;
+      padding: 0 15px;
+    }
+  }
+  
+  .ai-look-container {
+    height: calc(100vh - 80px - 200px);
+    padding: 10px;
+  }
+  
+  .ai-look-image-wrapper {
+    padding: 15px;
+  }
+  
+  // Prevenir scroll horizontal apenas em mobile
+  .montador-box {
+    overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .montador-box {
+    padding: 15px 10px;
+    margin: 15px auto 0 auto;
+    min-width: 280px;
+  }
+  
+  .canvas-container {
+    padding: 10px;
+    
+    canvas {
+      max-height: 400px;
+    }
+  }
+  
+  .ai-look-controls {
+    padding: 10px;
+    margin: 8px;
+    
+    .control-group {
+      gap: 6px;
+      
+      .label {
+        font-size: 11px;
+        min-width: 50px;
+      }
+      
+      .color-swatch {
+        width: 20px;
+        height: 20px;
+      }
+      
+      .input-group {
+        height: 20px;
+        
+        input {
+          width: 45px;
+          font-size: 11px;
+        }
+      }
+      
+      .gender-icon {
+        width: 26px;
+        height: 26px;
+        background-size: 16px 16px;
+      }
+    }
+  }
+  
+  .ai-look-initial p {
+    font-size: 13px;
+    padding: 0 10px;
   }
 }

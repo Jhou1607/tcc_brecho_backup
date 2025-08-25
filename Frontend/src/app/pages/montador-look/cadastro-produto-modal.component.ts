@@ -1224,4 +1224,4 @@ export class CadastroProdutoModalComponent {
     this.processingMessage = '';
     this.currentStep = 0;
   }
-} 
+}

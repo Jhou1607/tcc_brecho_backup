@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\FilterOption;
+use App\Models\AdminFilterOption;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -207,6 +208,129 @@ class FilterController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Erro ao buscar tipos: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Retorna todos os filtros administráveis agrupados por tipo
+     */
+    public function getAdminFiltros(): JsonResponse
+    {
+        try {
+            $filtros = AdminFilterOption::active()
+                ->ordered()
+                ->get()
+                ->groupBy('filter_type')
+                ->map(function ($options, $type) {
+                    return [
+                        'type' => $type,
+                        'options' => $options->map(function ($option) {
+                            return [
+                                'id' => $option->id,
+                                'value' => $option->value,
+                                'label' => $option->label,
+                                'is_active' => $option->is_active,
+                                'sort_order' => $option->sort_order
+                            ];
+                        })
+                    ];
+                })->values();
+
+            return response()->json([
+                'success' => true,
+                'data' => $filtros
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao buscar filtros administráveis: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Atualiza o status ativo/inativo de um filtro
+     */
+    public function toggleFilterStatus(int $id): JsonResponse
+    {
+        try {
+            $filterOption = AdminFilterOption::find($id);
+            
+            if (!$filterOption) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Filtro não encontrado'
+                ], 404);
+            }
+
+            $filterOption->update([
+                'is_active' => !$filterOption->is_active
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $filterOption,
+                'message' => 'Status do filtro atualizado com sucesso'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar status do filtro: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Atualiza a ordem dos filtros
+     */
+    public function updateFilterOrder(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'filters' => 'required|array',
+                'filters.*.id' => 'required|integer|exists:admin_filter_options,id',
+                'filters.*.sort_order' => 'required|integer|min:0'
+            ]);
+
+            foreach ($request->filters as $filter) {
+                AdminFilterOption::where('id', $filter['id'])
+                    ->update(['sort_order' => $filter['sort_order']]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Ordem dos filtros atualizada com sucesso'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar ordem dos filtros: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Retorna todos os filtros disponíveis (apenas os ativos) para uso público
+     */
+    public function getFiltrosDisponiveis(): JsonResponse
+    {
+        try {
+            $filtros = AdminFilterOption::where('is_active', true)
+                ->orderBy('sort_order')
+                ->get()
+                ->groupBy('filter_type')
+                ->map(function ($options, $type) {
+                    return $options->map(function ($option) {
+                        return $option->label;
+                    })->toArray();
+                });
+
+            return response()->json($filtros);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao buscar filtros disponíveis: ' . $e->getMessage()
             ], 500);
         }
     }

@@ -36,7 +36,6 @@ class ProdutoAdminController extends Controller
                 'nome_produto' => 'required|string|max:255',
                 'preco' => 'required|numeric|min:0',
                 'marca' => 'nullable|string|max:255',
-                'modelo' => 'nullable|string|max:255',
                 'estado_conservacao' => 'nullable|string',
                 'estacao' => 'nullable|string',
                 'categoria' => 'nullable|string',
@@ -89,11 +88,13 @@ class ProdutoAdminController extends Controller
         try {
             $produto = Produto::findOrFail($id);
 
+            // Log para debug
+            \Log::info('Dados recebidos para atualização:', $request->all());
+
             $validator = Validator::make($request->all(), [
-                'nome_produto' => 'required|string|max:255',
-                'preco' => 'required|numeric|min:0',
+                'nome_produto' => 'nullable|string|max:255',
+                'preco' => 'nullable|numeric|min:0',
                 'marca' => 'nullable|string|max:255',
-                'modelo' => 'nullable|string|max:255',
                 'estado_conservacao' => 'nullable|string',
                 'estacao' => 'nullable|string',
                 'categoria' => 'nullable|string',
@@ -101,19 +102,31 @@ class ProdutoAdminController extends Controller
                 'cor' => 'nullable|string',
                 'numeracao' => 'nullable|string',
                 'material' => 'nullable|string',
-                'ocasioes' => 'nullable|array',
-                'estilos' => 'nullable|array',
+                'ocasioes' => 'nullable',
+                'estilos' => 'nullable',
                 'imagens.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
             ]);
 
             if ($validator->fails()) {
+                \Log::error('Validação falhou:', $validator->errors()->toArray());
                 return response()->json([
                     'error' => 'Dados inválidos',
                     'errors' => $validator->errors()
                 ], 422);
             }
 
-            $produto->update($request->except(['imagens']));
+            // Preparar dados para atualização
+            $updateData = $request->except(['imagens']);
+            
+            // Converter arrays para JSON se necessário
+            if (isset($updateData['ocasioes']) && is_array($updateData['ocasioes'])) {
+                $updateData['ocasioes'] = json_encode($updateData['ocasioes']);
+            }
+            if (isset($updateData['estilos']) && is_array($updateData['estilos'])) {
+                $updateData['estilos'] = json_encode($updateData['estilos']);
+            }
+
+            $produto->update($updateData);
 
             // Upload de novas imagens
             if ($request->hasFile('imagens')) {
@@ -134,6 +147,12 @@ class ProdutoAdminController extends Controller
             return response()->json($produto);
 
         } catch (\Exception $e) {
+            \Log::error('Erro ao atualizar produto:', [
+                'id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'error' => 'Erro ao atualizar produto',
                 'message' => $e->getMessage()

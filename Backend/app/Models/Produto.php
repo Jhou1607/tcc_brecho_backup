@@ -19,7 +19,6 @@ class Produto extends Model
         'nome_produto',
         'preco',
         'marca',
-        'modelo',
         'estado_conservacao',
         'estacao',
         'categoria',

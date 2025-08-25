@@ -38,10 +38,6 @@
                 <span class="attribute-label">Marca</span>
                 <span class="attribute-value">{{ product.marca }}</span>
               </div>
-              <div class="attribute-item" *ngIf="product.modelo && pageMode === 'catalogo'">
-                <span class="attribute-label">Modelo</span>
-                <span class="attribute-value">{{ product.modelo }}</span>
-              </div>
               <div class="attribute-item" *ngIf="product.estacao">
                 <span class="attribute-label">Estação</span>
                 <span class="attribute-value">{{ product.estacao }}</span>
@@ -108,10 +104,10 @@
   </ng-template>
 </div>
 
-<div class="image-modal-overlay" *ngIf="isModalOpen" (click)="closeImageModal()">
-  <div class="image-modal-content" (click)="$event.stopPropagation()" #modalContent>
-    <button class="modal-close-btn" (click)="closeImageModal()" aria-label="Fechar modal">
-      <i class="fas fa-times"></i>
+<div class="image-modal" *ngIf="isModalOpen" (click)="closeImageModal()">
+  <div class="image-modal-content" (click)="$event.stopPropagation()">
+    <button class="image-modal-close" (click)="closeImageModal()" aria-label="Fechar modal">
+      ×
     </button>
     <div class="modal-image-wrapper" (wheel)="onWheelZoom($event)" #modalImageWrapper>
       <img [src]="modalImageUrl"

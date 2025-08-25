@@ -1,0 +1,107 @@
+@use '../../../../styles' as styles;
+
+.login-required-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: styles.$brecho-spacing-medium;
+  background-color: styles.$brecho-page-bg;
+}
+
+.login-required-card {
+  background: styles.$brecho-content-bg;
+  padding: styles.$brecho-spacing-xlarge;
+  border-radius: styles.$brecho-border-radius-large;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+.icon-container {
+  margin-bottom: styles.$brecho-spacing-large;
+  
+  svg {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.title {
+  font-family: styles.$brecho-font-headings;
+  font-size: 2rem;
+  color: styles.$brecho-primary-text;
+  margin-bottom: styles.$brecho-spacing-medium;
+  font-weight: 700;
+}
+
+.message {
+  font-size: 1.1rem;
+  color: styles.$brecho-secondary-text;
+  margin-bottom: styles.$brecho-spacing-xlarge;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  gap: styles.$brecho-spacing-medium;
+  justify-content: center;
+  margin-bottom: styles.$brecho-spacing-large;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  text-align: center;
+  min-width: 140px;
+  
+  &.btn-primary {
+    background: linear-gradient(135deg, styles.$brecho-accent-color 0%, color.adjust(styles.$brecho-accent-color, $lightness: -10%) 100%);
+    color: styles.$brecho-button-text-color;
+    box-shadow: 0 4px 15px rgba(styles.$brecho-accent-color, 0.3);
+    
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(styles.$brecho-accent-color, 0.4);
+    }
+  }
+  
+  &.btn-secondary {
+    background: white;
+    color: styles.$brecho-primary-text;
+    border: 2px solid styles.$brecho-input-border;
+    
+    &:hover {
+      border-color: styles.$brecho-accent-color;
+      background: styles.$brecho-placeholder-bg;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.back-link {
+  display: inline-block;
+  color: styles.$brecho-link-color;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    color: styles.$brecho-accent-color;
+    text-decoration: underline;
+  }
+}

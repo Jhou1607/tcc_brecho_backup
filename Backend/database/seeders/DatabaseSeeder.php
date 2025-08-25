@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\UsuarioSeeder;
 use Database\Seeders\FilterOptionsSeeder;
 use Database\Seeders\RealProdutoSeeder;
+use Database\Seeders\AdminFilterOptionsSeeder;
 use App\Models\Usuario;
 
 class DatabaseSeeder extends Seeder
@@ -19,6 +20,7 @@ class DatabaseSeeder extends Seeder
             UsuarioSeeder::class,
             FilterOptionsSeeder::class,
             RealProdutoSeeder::class,
+            AdminFilterOptionsSeeder::class,
         ]);
     }
 

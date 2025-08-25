@@ -7,12 +7,11 @@ import { AuthService, User, UserProfileUpdateData } from '../../auth.service';
 import { UsuarioService, UserStats } from '../../services/usuario.service';
 import { environment } from '../../../environments/environment';
 import { HeaderComponent } from '../../shared/components/header/header.component';
-import { FooterComponent } from '../../shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, FooterComponent, DatePipe],
+  imports: [CommonModule, FormsModule, HeaderComponent, DatePipe],
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.scss']
 })
@@ -25,7 +24,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
   error: string | null = null;
   successMessage: string | null = null;
   private userSubscription?: Subscription;
-  imageBaseUrl = environment.imageBaseUrl;
+  imageBaseUrl = environment.apiUrl.replace('/api', '');
   private notificationTimer: any;
   userStats = { looks_favoritados: 0, pecas_salvas: 0 };
 

@@ -195,3 +195,30 @@
     font-weight: 500;
   }
 }
+
+// Estilos para indicadores de estado
+.loading-indicator, .error-message, .no-results {
+  text-align: center;
+  padding: styles.$brecho-spacing-xlarge;
+  font-size: 1.2rem;
+  color: styles.$brecho-secondary-text;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.loading-indicator {
+  color: styles.$brecho-accent-color;
+  font-weight: 600;
+}
+
+.error-message {
+  color: #c0392b;
+  font-weight: 600;
+}
+
+.no-results {
+  color: styles.$brecho-secondary-text;
+  font-style: italic;
+}

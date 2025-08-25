@@ -6,122 +6,333 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - var(#{styles.$header-height}) - var(#{styles.$footer-height}));
-  padding: styles.$brecho-spacing-large;
+  min-height: 100vh;
+  padding: styles.$brecho-spacing-medium;
   background-color: styles.$brecho-page-bg;
   box-sizing: border-box;
+  overflow: hidden;
+}
+
+.form-graphic-layout {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  background: styles.$brecho-content-bg;
+  border-radius: styles.$brecho-border-radius-large;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  
+  @media (max-width: 767px) {
+    flex-direction: column;
+    max-width: 100%;
+    margin: 0 16px;
+  }
+}
+
+.form-panel {
+  flex: 1;
+  padding: styles.$brecho-spacing-xlarge;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  // Layout melhorado para PC
+  @media (min-width: 768px) {
+    padding: 50px 60px;
+  }
+  
+  @media (min-width: 1200px) {
+    padding: 60px 80px;
+  }
+}
+
+.graphic-panel {
+  flex: 1;
+  background: linear-gradient(135deg, styles.$brecho-accent-color 0%, color.adjust(styles.$brecho-accent-color, $lightness: -15%) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  
+  // Ocultar em mobile
+  @media (max-width: 767px) {
+    display: none;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+  }
 }
 
 .form-title {
   font-family: styles.$brecho-font-headings;
-  font-size: 2rem;
+  font-size: 2.2rem;
   color: styles.$brecho-primary-text;
   margin-bottom: styles.$brecho-spacing-small;
   text-align: center;
-  font-weight: 600;
+  font-weight: 700;
+  
+  @media (min-width: 768px) {
+    font-size: 2.5rem;
+  }
+  
+  @media (min-width: 1200px) {
+    font-size: 2.8rem;
+  }
 }
 
 .form-subtitle {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: styles.$brecho-secondary-text;
-  margin-bottom: styles.$brecho-spacing-large;
+  margin-bottom: styles.$brecho-spacing-xlarge;
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.5;
+  
+  @media (min-width: 768px) {
+    font-size: 1.2rem;
+  }
 }
 
 .form-row {
   display: flex;
-  gap: styles.$brecho-spacing-medium;
+  gap: styles.$brecho-spacing-large;
   .form-field {
     flex: 1;
+  }
+  
+  @media (max-width: 767px) {
+    flex-direction: column;
+    gap: 0;
   }
 }
 
 .form-field {
-  margin-bottom: styles.$brecho-spacing-medium;
+  margin-bottom: styles.$brecho-spacing-large;
 
   label {
     display: block;
-    font-size: 0.875rem;
+    font-size: 1.1rem; // Aumentado
     color: styles.$brecho-secondary-text;
-    margin-bottom: math.div(styles.$brecho-spacing-small, 2);
-    font-weight: 500;
+    margin-bottom: styles.$brecho-spacing-small;
+    font-weight: 600;
+    
+    @media (min-width: 768px) {
+      font-size: 1.2rem;
+    }
   }
 
   input[type="text"], input[type="email"], input[type="password"], input[type="date"] {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid styles.$brecho-input-border;
-    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    border: 2px solid styles.$brecho-input-border;
+    border-radius: 0.75rem;
     background-color: styles.$brecho-input-bg;
-    font-size: 1rem;
+    font-size: 1.2rem; // Aumentado
     color: styles.$brecho-primary-text;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
 
     &::placeholder {
       color: color.adjust(styles.$brecho-secondary-text, $lightness: 25%);
+      font-size: 1.1rem; // Aumentado
     }
 
     &:focus {
       outline: none;
       border-color: styles.$brecho-accent-color;
-      box-shadow: 0 0 0 2px rgba(styles.$brecho-accent-color, 0.2);
+      box-shadow: 0 0 0 3px rgba(styles.$brecho-accent-color, 0.2);
+      transform: translateY(-2px);
+    }
+    
+    &:hover {
+      border-color: styles.$brecho-accent-color;
     }
   }
 }
 
 .sexo-options {
   display: flex;
-  gap: styles.$brecho-spacing-medium;
+  gap: styles.$brecho-spacing-large;
   margin-top: styles.$brecho-spacing-small;
+  
   .radio-label {
     display: flex;
     align-items: center;
-    font-size: 0.95rem;
+    font-size: 1.1rem; // Aumentado
     color: styles.$brecho-primary-text;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
     input[type="radio"] {
-      margin-right: math.div(styles.$brecho-spacing-small, 2);
-      accent-color: styles.$brecho-primary-text;
+      margin-right: styles.$brecho-spacing-small;
+      accent-color: styles.$brecho-accent-color;
+      transform: scale(1.3);
+    }
+    
+    &:hover {
+      color: styles.$brecho-accent-color;
     }
   }
 }
 
-
 .btn {
-  padding: 0.85rem 1.5rem;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
-  text-align: center;
+  display: inline-block;
+  padding: 0.875rem 1.5rem;
   border: none;
-  margin-top: styles.$brecho-spacing-small;
-
+  border-radius: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  text-align: center;
+  font-family: inherit;
+  
   &.btn-primary {
-    background-color: styles.$brecho-accent-color;
-    color: styles.$brecho-button-text-color;
+    background: linear-gradient(135deg, styles.$brecho-accent-color 0%, color.adjust(styles.$brecho-accent-color, $lightness: -10%) 100%) !important;
+    color: styles.$brecho-button-text-color !important;
+    box-shadow: 0 4px 15px rgba(styles.$brecho-accent-color, 0.3);
+    border: none !important;
+    
     &:hover:not(:disabled) {
-      background-color: color.adjust(styles.$brecho-accent-color, $lightness: -10%);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(styles.$brecho-accent-color, 0.4);
+      background: linear-gradient(135deg, color.adjust(styles.$brecho-accent-color, $lightness: -5%) 0%, color.adjust(styles.$brecho-accent-color, $lightness: -15%) 100%) !important;
     }
-    &:disabled {
-      background-color: color.adjust(styles.$brecho-accent-color, $lightness: 15%);
-      cursor: not-allowed;
+    
+    &:active {
+      transform: translateY(-1px);
+    }
+    
+    &:focus {
+      outline: none !important;
+      box-shadow: 0 0 0 3px rgba(styles.$brecho-accent-color, 0.3) !important;
+      background: linear-gradient(135deg, styles.$brecho-accent-color 0%, color.adjust(styles.$brecho-accent-color, $lightness: -10%) 100%) !important;
+    }
+    
+    &:visited {
+      background: linear-gradient(135deg, styles.$brecho-accent-color 0%, color.adjust(styles.$brecho-accent-color, $lightness: -10%) 100%) !important;
+      color: styles.$brecho-button-text-color !important;
     }
   }
-
+  
   &.btn-full-width {
     width: 100%;
-    display: block;
+    padding: 1.125rem 1.5rem;
+    font-size: 1.2rem;
+    margin-bottom: styles.$brecho-spacing-large;
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
   }
 }
 
 .form-footer-link {
   text-align: center;
-  margin-top: styles.$brecho-spacing-medium;
-  font-size: 0.9rem;
+  margin-bottom: styles.$brecho-spacing-large;
+  font-size: 1.1rem; // Aumentado
   color: styles.$brecho-secondary-text;
+  
   a {
     color: styles.$brecho-link-color;
-    font-weight: bold;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: styles.$brecho-accent-color;
+      text-decoration: underline;
+    }
+  }
+}
+
+.social-login-buttons {
+  text-align: center;
+  
+  #google-signup-btn {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    
+    // Estilo para o botão do Google
+    .gsi-material-button {
+      width: 100% !important;
+      height: 56px !important; // Aumentado
+      border-radius: 0.75rem !important;
+      font-size: 1.2rem !important; // Aumentado
+      font-weight: 600 !important;
+      border: 2px solid styles.$brecho-input-border !important;
+      background: white !important;
+      color: styles.$brecho-primary-text !important;
+      transition: all 0.3s ease !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      
+      &:hover {
+        border-color: styles.$brecho-accent-color !important;
+        background: styles.$brecho-placeholder-bg !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+      }
+      
+      &:focus {
+        outline: none !important;
+        box-shadow: 0 0 0 3px rgba(styles.$brecho-accent-color, 0.2) !important;
+      }
+    }
+  }
+}
+
+// Responsividade para mobile
+@media (max-width: 767px) {
+  .form-panel {
+    padding: styles.$brecho-spacing-large;
+  }
+  
+  .form-title {
+    font-size: 1.8rem;
+  }
+  
+  .form-subtitle {
+    font-size: 1rem;
+  }
+  
+  .form-field {
+    margin-bottom: styles.$brecho-spacing-medium;
+    
+    label {
+      font-size: 1rem;
+    }
+    
+    input[type="text"], input[type="email"], input[type="password"], input[type="date"] {
+      padding: 0.875rem 1rem;
+      font-size: 1.1rem;
+    }
+  }
+  
+  .btn.btn-full-width {
+    padding: 1rem 1.25rem;
+    font-size: 1.1rem;
+  }
+  
+  .sexo-options {
+    font-size: 1rem;
+  }
+  
+  .form-footer-link {
+    font-size: 1rem;
   }
 }

@@ -14,7 +14,6 @@ return new class extends Migration
             $table->string('nome_produto', 55);
             $table->string('marca', 55)->nullable();
             $table->string('categoria', 55)->nullable();
-            $table->enum('genero', ['masculino', 'feminino', 'unissex'])->nullable();
             $table->string('estacao', 55)->nullable();
             $table->string('cor', 55)->nullable();
             $table->json('ocasioes')->nullable();

@@ -14,6 +14,7 @@ import {
   UserProductFormData,
   Look // Importe Look
 } from '../interfaces/interfaces';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -119,11 +120,21 @@ export class ProdutoService {
     let requestUrl = `${this.apiUrl}/produtos`;
     if (term) requestUrl = `${this.apiUrl}/produtos/search`;
     
+    console.log('🚀 ProdutoService - Fazendo requisição para:', requestUrl);
+    console.log('🔧 Parâmetros:', params.toString());
+    console.log('🌐 API URL base:', this.apiUrl);
+    
     // Tenta usar headers de autenticação se disponível, senão faz sem
     const token = localStorage.getItem('authToken');
     const headers = token ? this.getAuthHeaders() : new HttpHeaders();
     
+    console.log('🔑 Token disponível:', token ? 'Sim' : 'Não');
+    console.log('📋 Headers:', headers);
+    
     return this.http.get<{ success: boolean; data: PaginatedResponse<Product> }>(requestUrl, { params, headers }).pipe(
+      tap(response => {
+        console.log('✅ Resposta da API recebida:', response);
+      }),
       map(response => response.data)
     );
   }
@@ -132,11 +143,14 @@ export class ProdutoService {
    * Busca as opções de filtros dinâmicos do backend (categorias, cores, tamanhos, etc)
    */
   getFiltrosDisponiveis(): Observable<any> {
-    const token = localStorage.getItem('authToken');
-    const headers = token ? this.getAuthHeaders() : new HttpHeaders();
-    
-    return this.http.get<{ success: boolean, data: any }>(`${this.apiUrl}/produtos/filtros`, { headers })
-      .pipe(map(res => res.data));
+    return this.http.get<any>(`${this.apiUrl}/filtros-disponiveis`);
+  }
+
+  // Método para buscar filtros por tipo
+  getFiltrosPorTipo(tipo: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/admin/filtros-admin?tipo=${tipo}`, {
+      headers: this.getAuthHeaders()
+    });
   }
 
   getProdutoById(id: number | string): Observable<Product> {
@@ -147,16 +161,28 @@ export class ProdutoService {
 
   createProduto(data: ProductFormData): Observable<Product> {
     const formData = new FormData();
-    formData.append('nome_produto', data.nome_produto);
-    formData.append('preco', data.preco.toString());
+    // Adicionar campos do produto
+    if (data.nome_produto !== undefined && data.nome_produto !== null) formData.append('nome_produto', data.nome_produto);
     if (data.marca !== undefined && data.marca !== null) formData.append('marca', data.marca);
-    if (data.modelo !== undefined && data.modelo !== null) formData.append('modelo', data.modelo);
-    if (data.estado_conservacao) formData.append('estado_conservacao', data.estado_conservacao);
-    if (data.estacao) formData.append('estacao', data.estacao);
-    if (data.categoria) formData.append('categoria', data.categoria);
-    if (data.genero) formData.append('genero', data.genero);
-    if (data.cor) formData.append('cor', data.cor);
-    if (data.numeracao !== undefined && data.numeracao !== null && data.numeracao !== '') {
+    if (data.categoria !== undefined && data.categoria !== null) formData.append('categoria', data.categoria);
+    if (data.estacao !== undefined && data.estacao !== null) formData.append('estacao', data.estacao);
+    if (data.cor !== undefined && data.cor !== null) formData.append('cor', data.cor);
+    if (data.ocasioes !== undefined && data.ocasioes !== null) {
+      data.ocasioes.forEach((ocasiao: string) => {
+        formData.append('ocasioes[]', ocasiao);
+      });
+    }
+    if (data.estilos !== undefined && data.estilos !== null) {
+      data.estilos.forEach((estilo: string) => {
+        formData.append('estilos[]', estilo);
+      });
+    }
+    if (data.material !== undefined && data.material !== null) formData.append('material', data.material);
+    if (data.preco !== undefined && data.preco !== null) {
+      formData.append('preco', data.preco.toString());
+    }
+    if (data.estado_conservacao !== undefined && data.estado_conservacao !== null) formData.append('estado_conservacao', data.estado_conservacao);
+    if (data.numeracao !== undefined && data.numeracao !== null) {
       formData.append('numeracao', data.numeracao.toString());
     }
     if (data.imagem_principal instanceof File) {
@@ -166,15 +192,6 @@ export class ProdutoService {
       data.imagens_adicionais.forEach((file, index) => {
         formData.append(`imagens_adicionais[${index}]`, file, file.name);
       });
-    }
-    if (data.ocasioes && Array.isArray(data.ocasioes)) {
-      data.ocasioes.forEach((o, i) => formData.append(`ocasioes[${i}]`, o));
-    }
-    if (data.estilos && Array.isArray(data.estilos)) {
-      data.estilos.forEach((e, i) => formData.append(`estilos[${i}]`, e));
-    }
-    if (data.material) {
-      formData.append('material', data.material);
     }
     return this.http.post<{ success: boolean, message: string, data: Product }>(`${this.apiUrl}/produtos`, formData, { headers: this.getAuthHeaders() }).pipe(
       map(response => response.data)
@@ -219,7 +236,7 @@ export class ProdutoService {
         items: grupo.items.map(item => ({
           ...item,
           // Adapte as URLs de imagem se necessário para o seu backend
-          thumbnailUrl: item.thumbnailUrl ? `${environment.imageBaseUrl}${item.thumbnailUrl}` : 'assets/produtos/placeholder-product.png',
+          thumbnailUrl: item.thumbnailUrl ? `${this.apiUrl.replace('/api', '')}${item.thumbnailUrl}` : 'assets/produtos/placeholder-product.png',
           canvasUrl: item.canvasUrl ? item.canvasUrl : ''
         }))
       })))

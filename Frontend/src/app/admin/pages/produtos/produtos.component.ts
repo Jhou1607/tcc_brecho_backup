@@ -7,7 +7,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { Product, PaginatedResponse } from '../../../interfaces/interfaces';
 import { ImageUploadProcessorComponent } from '../../../shared/components/image-upload-processor/image-upload-processor.component';
 import type { ProcessedImage } from '../../../shared/components/image-upload-processor/image-upload-processor.component';
-import { HierarchicalCategorySelectorComponent, CategoriaSelecionada } from '../../../shared/components/hierarchical-category-selector/hierarchical-category-selector.component';
+
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 // Ng-Zorro Modules
@@ -58,8 +58,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
     NzSpinModule,
     NzEmptyModule,
     NzToolTipModule,
-    ImageUploadProcessorComponent,
-    HierarchicalCategorySelectorComponent
+    ImageUploadProcessorComponent
   ]
 })
 export class ProdutosComponent implements OnInit {
@@ -79,19 +78,21 @@ export class ProdutosComponent implements OnInit {
   imagePreviews: SafeUrl[] = [];
   processedImageFiles: File[] = [];
   
-  // Category selection
-  selectedCategory: CategoriaSelecionada | null = null;
+
   
   // Form submission state
   isSubmitting = false;
 
-  // Options for dropdowns
-  opcoesEstacoes = ['verao', 'outono', 'inverno', 'primavera', 'todas', 'neutra'];
-  opcoesOcasioes = ['trabalho', 'festa', 'casual', 'esporte', 'praia', 'balada', 'dia a dia', 'casamento', 'formatura', 'viagem'];
-  opcoesEstilos = ['classico', 'moderno', 'boho', 'minimalista', 'rocker', 'romantico', 'esportivo', 'urbano', 'vintage'];
-  opcoesMateriais = ['algodao', 'linho', 'la', 'seda', 'jeans', 'couro', 'moletom', 'viscose', 'poliester'];
-  opcoesGenero = ['feminino', 'masculino', 'unissex'];
-  opcoesEstado = ['novo', 'seminovo', 'usado', 'desgastado'];
+  // Options for dropdowns - serão carregadas dos filtros administráveis
+  opcoesEstacoes: string[] = [];
+  opcoesOcasioes: string[] = [];
+  opcoesEstilos: string[] = [];
+  opcoesMateriais: string[] = [];
+  opcoesGenero: string[] = [];
+  opcoesEstado: string[] = [];
+  opcoesCores: string[] = [];
+  opcoesCategorias: string[] = [];
+  opcoesNumeracao: string[] = [];
 
   constructor(
     private adminService: AdminService,
@@ -102,14 +103,13 @@ export class ProdutosComponent implements OnInit {
   ) {
     this.produtoForm = this.fb.group({
       nome_produto: ['', [Validators.required]],
-      preco: ['', [Validators.required, Validators.min(0)]],
+      preco: [null, [Validators.required, Validators.min(0)]],
       marca: [''],
-      modelo: [''],
+      categoria: ['', [Validators.required]],
+      cor: [''],
+      genero: [''],
       estado_conservacao: [''],
       estacao: [''],
-      categoria: [''],
-      genero: [''],
-      cor: [''],
       numeracao: [''],
       material: [''],
       ocasioes: [[]],
@@ -118,7 +118,82 @@ export class ProdutosComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.produtoForm = this.fb.group({
+      nome_produto: ['', [Validators.required]],
+      preco: [null, [Validators.required, Validators.min(0)]],
+      marca: [''],
+      categoria: ['', [Validators.required]],
+      cor: [''],
+      genero: [''],
+      estado_conservacao: [''],
+      estacao: [''],
+      numeracao: [''],
+      material: [''],
+      ocasioes: [[]],
+      estilos: [[]]
+    });
+
     this.loadProdutos();
+    this.loadAdminFiltros();
+  }
+
+  loadAdminFiltros(): void {
+    this.adminService.getAdminFiltros().subscribe({
+      next: (response: any) => {
+        if (response.success) {
+          response.data.forEach((filterGroup: any) => {
+            const options = filterGroup.options.map((option: any) => option.label);
+            
+            switch (filterGroup.type) {
+              case 'estacao':
+                this.opcoesEstacoes = options;
+                break;
+              case 'ocasioes':
+                this.opcoesOcasioes = options;
+                break;
+              case 'estilos':
+                this.opcoesEstilos = options;
+                break;
+              case 'material':
+                this.opcoesMateriais = options;
+                break;
+              case 'genero':
+                this.opcoesGenero = options;
+                break;
+              case 'estado':
+                this.opcoesEstado = options;
+                break;
+              case 'cor':
+                this.opcoesCores = options;
+                break;
+              case 'categoria':
+                this.opcoesCategorias = options;
+                break;
+              case 'numeracao':
+                this.opcoesNumeracao = options;
+                break;
+            }
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar filtros administráveis:', error);
+        // Fallback para opções básicas em caso de erro
+        this.loadFallbackOptions();
+      }
+    });
+  }
+
+  private loadFallbackOptions(): void {
+    this.opcoesEstacoes = ['primavera', 'verao', 'outono', 'inverno', 'todas_as_estacoes'];
+    this.opcoesOcasioes = ['casual', 'trabalho', 'festa', 'esporte', 'formal', 'praia', 'academia'];
+    this.opcoesEstilos = ['vintage', 'retro', 'moderno', 'classico', 'esportivo', 'elegante', 'casual'];
+    this.opcoesMateriais = ['algodao', 'poliester', 'linho', 'seda', 'la', 'couro', 'jeans'];
+    this.opcoesGenero = ['masculino', 'feminino', 'unissex'];
+    this.opcoesEstado = ['novo', 'semi-novo', 'usado', 'vintage'];
+    this.opcoesCores = ['branco', 'preto', 'azul', 'vermelho', 'verde', 'amarelo', 'rosa'];
+    this.opcoesCategorias = ['camisetas', 'calcas', 'vestidos', 'saias', 'blusas', 'jaquetas'];
+    this.opcoesNumeracao = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG'];
   }
 
   loadProdutos(): void {
@@ -160,7 +235,7 @@ export class ProdutosComponent implements OnInit {
     this.produtoForm.reset();
     this.imagePreviews = [];
     this.processedImageFiles = [];
-    this.selectedCategory = null;
+
     this.isSubmitting = false;
   }
 
@@ -169,7 +244,6 @@ export class ProdutosComponent implements OnInit {
       nome_produto: produto.nome_produto,
       preco: produto.preco,
       marca: produto.marca,
-      modelo: produto.modelo,
       estado_conservacao: produto.estado_conservacao,
       estacao: produto.estacao,
       categoria: produto.categoria,
@@ -180,26 +254,9 @@ export class ProdutosComponent implements OnInit {
       ocasioes: produto.ocasioes || [],
       estilos: produto.estilos || []
     });
-    
-    // Set selected category if exists
-    if (produto.categoria) {
-      // You might need to map the category value to the hierarchical structure
-      // This is a simplified version
-      this.selectedCategory = {
-        grupo: 'Categoria',
-        categoria: produto.categoria,
-        value: produto.categoria,
-        label: produto.categoria
-      };
-    }
   }
 
-  onCategorySelected(category: CategoriaSelecionada): void {
-    this.selectedCategory = category;
-    this.produtoForm.patchValue({
-      categoria: category.value
-    });
-  }
+
 
   openImageProcessor(): void {
     this.imageProcessor.openModal();

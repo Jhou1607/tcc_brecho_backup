@@ -24,8 +24,9 @@
 
       <nz-card>
         <nz-statistic
-          nzTitle="Total de Filtros"
-          [nzValue]="stats.totalFilters"
+          nzTitle="Filtros Ativos"
+          [nzValue]="stats.activeFilters"
+          [nzSuffix]="'/' + stats.totalFilters"
           nzPrefix="🔍">
         </nz-statistic>
       </nz-card>

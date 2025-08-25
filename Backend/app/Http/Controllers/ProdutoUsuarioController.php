@@ -47,25 +47,22 @@ class ProdutoUsuarioController extends Controller
 
     public function store(Request $request)
     {
-        $estacoes = ['verao', 'outono', 'inverno', 'primavera', 'todas', 'neutra'];
-        $categorias = [
-            'chapeu', 'tiara', 'bone', 'lenco',
-            'camiseta', 'camisa', 'blusa', 'jaqueta', 'casaco', 'sueter', 'regata', 'colete',
-            'calca', 'saia', 'short', 'legging', 'bermuda', 'jardineira',
-            'tenis', 'sandalia', 'bota', 'sapato', 'chinelo',
-            'cinto', 'oculos', 'bolsa', 'relogio', 'brinco', 'colar', 'pulseira', 'anel',
-            'outro_acessorios_cabeca', 'outro_tops', 'outro_calcas_saias', 'outro_calcados', 'outro_acessorios'
-        ];
-        $ocasioes = ['trabalho', 'festa', 'casual', 'esporte', 'praia', 'balada', 'dia a dia', 'casamento', 'formatura', 'viagem'];
-        $estilos = ['classico', 'moderno', 'boho', 'minimalista', 'rocker', 'romantico', 'esportivo', 'urbano', 'vintage'];
-        $materiais = ['algodao', 'linho', 'la', 'seda', 'jeans', 'couro', 'moletom', 'viscose', 'poliester'];
+        // Buscar filtros administráveis ativos
+        $adminFilterOptions = \App\Models\AdminFilterOption::active()->get()->groupBy('filter_type');
+        
+        $estacoes = $adminFilterOptions->get('estacao', collect())->pluck('value')->toArray();
+        $categorias = $adminFilterOptions->get('categoria', collect())->pluck('value')->toArray();
+        $ocasioes = $adminFilterOptions->get('ocasioes', collect())->pluck('value')->toArray();
+        $estilos = $adminFilterOptions->get('estilos', collect())->pluck('value')->toArray();
+        $materiais = $adminFilterOptions->get('material', collect())->pluck('value')->toArray();
+        $cores = $adminFilterOptions->get('cor', collect())->pluck('value')->toArray();
 
         $validator = Validator::make($request->all(), [
             'nome_produto' => 'required|string|max:55',
             'marca' => 'nullable|string|max:55',
             'estacao' => 'nullable|string|in:' . implode(',', $estacoes),
             'categoria' => 'nullable|string|in:' . implode(',', $categorias),
-            'cor' => 'nullable|string|max:55',
+            'cor' => 'nullable|string|in:' . implode(',', $cores),
             'imagem_principal' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'ocasioes' => 'nullable|array',
             'ocasioes.*' => 'string|in:' . implode(',', $ocasioes),

@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('nome_produto', 55);
             $table->double('preco');
             $table->string('marca', 55)->nullable();
-            $table->string('modelo', 55)->nullable();
             $table->string('estado_conservacao')->nullable();
             $table->string('estacao')->nullable();
             $table->string('categoria')->nullable();
